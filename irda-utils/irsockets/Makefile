@@ -28,7 +28,7 @@ CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a client
+RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a 
 
 INCLUDES  = $(SYS_INCLUDES) -I../include
 LIBRARIES = $(SYS_LIBRARIES)
@@ -66,7 +66,7 @@ install: all
 	install irdaspray $(ROOT)/usr/bin
 
 clean::
-	$(RM_CMD)
+	$(RM_CMD) echo discard irdaspray
 
 depend::
 	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)

@@ -46,6 +46,7 @@
 #define OBEX_SUCCESS               0x20
 #define OBEX_CREATED               0x21
 #define OBEX_ACCEPTED              0x22
+#define OBEX_BAD_REQUEST	   0x40
 #define OBEX_FORBIDDEN             0x43
 #define OBEX_CONFLICT              0x49
 #define OBEX_INTERNAL_SERVER_ERROR 0x50

@@ -65,7 +65,7 @@ void     g_netbuf_set_size(GNetBuf *msg, guint len);
 void     g_netbuf_print(GNetBuf *msg);
 
 static inline guint8 *g_netbuf_get_data(GNetBuf *msg) { return msg->data; }
-static inline guint8 g_netbuf_get_len(GNetBuf *msg) { return msg->len; }
+static inline guint g_netbuf_get_len(GNetBuf *msg) { return msg->len; }
 
 #endif
 

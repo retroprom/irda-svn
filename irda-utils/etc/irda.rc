@@ -3,7 +3,9 @@
 # irda          This shell script takes care of starting and stopping
 #               IrDA support
 #
-# description: 
+# chkconfig: 2345 45 96
+#
+# description: IrDA stack for Linux
 #
 
 # Source function library.
@@ -18,7 +20,7 @@
 [ -f /usr/sbin/irattach ] || exit 0
 
 ARGS=
-if $DONGLE ; then
+if [ $DONGLE ]; then
 	ARGS="$ARGS -d $DONGLE"
 fi
 if [ "$DISCOVERY" = "yes" ];then

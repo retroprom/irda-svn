@@ -200,6 +200,7 @@ inline void parse_obex_connect(GNetBuf *buf, GString *str)
 
 /*
  * The first success frame contains the negociated Obex parameters
+ * We also need to parse the anser to GET request properly
  * Jean II
  */
 inline void parse_obex_success(GNetBuf *buf, GString *str)
@@ -214,8 +215,9 @@ inline void parse_obex_success(GNetBuf *buf, GString *str)
 
 	length  = ntohs(frame->len);
 
-	/* Check if it contains connection setup parameters */
-	if(length == 7) {
+	switch(length) {
+	case 7:
+		/* Frame contains connection setup parameters */
 		version = frame->version;
 		flags   = frame->flags;
 		mtu     = ntohs(frame->mtu);
@@ -224,8 +226,17 @@ inline void parse_obex_success(GNetBuf *buf, GString *str)
 				  "SUCCESS len=%d ver=%d.%d flags=%d mtu=%d ", 
 				  length, ((version & 0xf0) >> 4),
 				  version & 0x0f, flags, mtu);
-	} else
+		break;
+	case 3:
+		/* Frame contains nothing */
 		g_string_sprintfa(str, "SUCCESS len=%d ", length);
+		break;
+	default:
+		/* Frame contains some headers (probably a GET reply) */
+		g_string_append(str, "SUCCESS ");
+		parse_obex_headers(buf, str);
+		break;
+	}
 }
 
 /*
@@ -233,6 +244,8 @@ inline void parse_obex_success(GNetBuf *buf, GString *str)
  *
  *    Parse OBEX commands and responses
  *
+ * Note : in the case of Ultra frames, this function will be called
+ * with (conn == NULL). We should handle that gracefully.
  */
 inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
 		       int cmd)
@@ -240,14 +253,14 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
 	guint8	opcode;
 	int	len;
 
+	/* g_print(__FUNCTION__);fflush(stdout); */
+
+	g_string_append(str, "\n\tOBEX ");
+
 	/* Check for empty frames - Jean II */
 	len = g_netbuf_get_len(buf);
 	if(len == 0)
 	  return;
-
-	/* g_print(__FUNCTION__);fflush(stdout); */
-
-	g_string_append(str, "\n\tOBEX ");
 
 	opcode = buf->data[0] & ~OBEX_FINAL; /* Remove final bit */
 
@@ -269,6 +282,9 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
 		case OBEX_ACCEPTED:
 			g_string_append(str, "ACCEPTED ");
 			break;
+		case OBEX_BAD_REQUEST:
+			g_string_append(str, "BAD REQUEST ");
+			break;
 		case OBEX_FORBIDDEN:
 			g_string_append(str, "FORBIDDEN ");
 			break;
@@ -280,8 +296,6 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
 					  opcode);
 			break;
 		}
-		/* Next frame is a command (maybe) */
-		conn->obex_rsp = 0;
 	} else {
 		switch (opcode) {
 		case OBEX_CONNECT:
@@ -314,7 +328,5 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
 						 opcode);
 			break;
 		}
-		/* Next frame should be a response (maybe) */
-		conn->obex_rsp = 1;
 	}
 }

@@ -327,10 +327,10 @@ inline void parse_irlmp(GNetBuf *buf, GString *str, int type, int cmd)
 			if (conn[i].valid && conn[i].ttp)
 				parse_irttp(buf, str);
 			if (conn[i].valid && conn[i].obex)
-				parse_obex(&conn[0], buf, str, cmd);
+				parse_obex(&conn[i], buf, str, cmd);
 #if 0
 			if (conn[i].valid && conn[i].ircomm)
-				parse_ircomm(&conn[0], buf, str);
+				parse_ircomm(&conn[i], buf, str);
 #endif
 		}
 	}
@@ -366,5 +366,15 @@ inline void parse_ui_irlmp(GNetBuf *buf, GString *str, int type)
 	    g_netbuf_pull(buf, 1);
 
 	    g_string_sprintfa(str, " Ultra-PID=%02x ", upid);
+
+	    /* Check Obex over Ultra */
+	    if(upid == 0x01)
+	      {
+		/* Remove SAR field */
+		g_netbuf_pull(buf, 1);
+
+		/* Decode Obex stuff - no connection, always a command */
+		parse_obex(NULL, buf, str, 1);
+	      }
 	  }
 }

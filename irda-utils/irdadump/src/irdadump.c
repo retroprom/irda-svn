@@ -799,6 +799,10 @@ int irdadump_loop(GString *str)
 	if (ifindex && (from.sll_ifindex != ifindex))
 		return -1;
 
+	/* Filter away empty frames (forced speed change) */
+	if (len == 0)
+		return -1;
+
 	/* Data should be fine now */
 	g_netbuf_put(buf, len);
 
