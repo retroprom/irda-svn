@@ -11,3 +11,6 @@
 #	[<whitespace>]<filename><whitespace><error message><end-of-line>
 #
 # comment lines begin with '#'
+
+# loginfo.pl - used to send a log message to the kde-cvs@kde.org list
+loginfo.pl
