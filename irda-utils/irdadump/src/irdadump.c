@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include <string.h>		/* strncpy */
 #include <stdio.h>		/* perror */
+#include <stdlib.h>		/* exit */
 #include <irda.h>
 
 #include "irdadump.h"

@@ -57,7 +57,7 @@ int parse_obex_header(GNetBuf *buf, GString *str, int istext)
 	guint16 tmp_short;
 	int len = 0;
 
-	/* g_print(__FUNCTION__);fflush(stdout); */
+	/* g_print("%s()", __FUNCTION__);fflush(stdout); */
 
 	switch (buf->data[0] & OBEX_HI_MASK) {
 	case OBEX_UNICODE:

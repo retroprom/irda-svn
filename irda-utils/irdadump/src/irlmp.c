@@ -182,7 +182,7 @@ void parse_irias_value(GNetBuf *buf, GString *str)
 			g_string_append(str, "N/A ");
 		break;
 	default:
-		g_print(__FUNCTION__ "() Unknown IAS value type! ");
+		g_print("%s() Unknown IAS value type! ", __FUNCTION__);
 		break;
 	}
 }
@@ -207,13 +207,13 @@ inline void parse_iriap_response(GNetBuf *buf, GString *str, guint8 dlsap_sel)
 
 	switch(opcode) {
 	case GET_INFO_BASE:
-		g_print(__FUNCTION__ "Sorry, GET_INFO_BASE not implemented!\n");
+		g_print("%s() Sorry, GET_INFO_BASE not implemented!\n", __FUNCTION__);
 		break;
 	case GET_VALUE_BY_CLASS:
 		g_string_append(str, "GET_VALUE_BY_CLASS: ");
 		break;
 	default:
-		g_print( __FUNCTION__ "() Sorry, not implemented!\n");
+		g_print("%s() Sorry, not implemented!\n", __FUNCTION__);
 		break;
 	}
 

@@ -695,29 +695,32 @@ int ir_client(void)
 	}
 
 	if (echo) {
-		/* Fork off receiver */
+		/* Fork off transmitter */
 		pid = fork();
 		
-		if (pid) {
+		if (pid) {	/* parent */
 			total = irdaspray_receive(fd);
-		} else {
+		} else {	/* child */
 			total = irdaspray_transmit(fd);
 		}
-	} else
+	} else			/* single */
 		total = irdaspray_transmit(fd);
+
+	/* pid==0: single-thread(discard-tx) or child(echo-tx)
+	 * pid!=0: parent(echo-rx)
+	 */
 
 	gettimeofday(&end, (struct timezone*) 0);
 
 	time = (double) (end.tv_sec - start.tv_sec) + (double)
 		((double) (end.tv_usec - start.tv_usec) / 1000000.0);
 
-	if (pid) 
+	if (pid) {	/* parent */
+		wait(&status);
 		printf("Received %d bytes in %f seconds (%0.3f kbytes/s)\n",
 		       total, time, (double) (total / time) / 1024); 
-	else {
-		if (echo)
-			wait(&status);
-		
+	}
+	else {		/* child or single-thread */
 		printf("Transmitted %d bytes in %f seconds (%0.3f kbytes/s)\n",
 		       total, time, (double) (total / time) / 1024);
 	}
@@ -783,6 +786,11 @@ int ir_server(void)
 		addrlen = sizeof(struct sockaddr_irda);
 
 		printf("Waiting for connection!\n");
+
+		/* collect old server zombies */
+		while (waitpid(-1, NULL, WNOHANG) > 0)
+			;
+
 		conn_fd = accept(fd, (struct sockaddr *) &peer, &addrlen);
 		if (conn_fd < 0) {
 			perror("accept");
