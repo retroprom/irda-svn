@@ -1,0 +1,353 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - Development" />
+<set-var selected="docs" />
+<set-var subselected="developer" />
+
+
+<divert MENU>
+<navbar:render name="docsmenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<px width="1" height="10"><br>
+<small>
+<navbar:render name="docs3menu" select="t5100"><br>
+</small>
+
+<h1>IRDA on the Toshiba 5100</h1>
+
+<div align="left"><i>by Rob Miller &lt;rob&nbsp;<nobr>@</nobr>&nbsp;janerob.com&gt;</a></i></div>
+
+<p><font color="#008800"><i>
+These information are copied from
+<a href="http://www.janerob.com/rob/ts5100/irda.html">http://www.janerob.com/rob/ts5100/irda.html</a>
+maintained by Rob Miller. Rob made a great service for Toshiba users by experimenting a lot
+with IrDA hardware. I only made layout changes to have a more easy reading.
+Note that original local links point to Rob's server and are marked as [external]. -- Claudiu Costin.
+</i></font>
+
+<p>
+<small>
+<b>Contents:</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#intro">Introduction</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#setup">Setup</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tweak">Tweaking</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#swsusp">smc-ircc bug with SWSUSP</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#resources">Resources</a><br>
+</small>
+
+
+<a name="intro"></a><h2>Introduction</h2>
+
+<p>
+The 5100 has an Intel 82801CAM PCI bridge which includes an LPC interface; 
+on this interface is an SMSC LPC47N227 Super I/O chip.  The 47N227 has various
+interfaces (FDC, 2xRS232, IR, parallel), but it seems that only the IR is 
+connected out to a physical port on the case.  There are no standard serial 
+(RS232) ports on the 5100.  Unfortunately the BIOS does not set up either 
+the LPC interface or the SMC IR in a way that the Linux smc-ircc driver 
+expects.  
+
+<P>
+
+This is the same story as on the <a href="http://www.csai.unipa.it/peri/toshsat1800-irdasetup/"><strong>Satellite 1800</strong></a> 
+but a different
+ PCI bridge interface.  The work here is based directly on 
+<a href="http://www.geocrawler.com/archives/3/18052/2001/10/50/8836003/"><strong>Paul Hampson's post</strong></a> (updated link!) to 
+Linux-IrDA, although I made a small change to get it 
+working.
+
+
+<a name="setup"></a><h2>Setup</h2>
+
+<p>
+The program <a href="http://www.janerob.com/rob/ts5100/tosh5100-smcinit.c"><strong>tosh5100-smcinit.c</strong></a> 
+<i>[external]</i> 
+performs 
+both of these functions, (1) set up 
+the 82801 LPC interface to pass the standard COM1 port (and hopefully the SMC FIR 
+on DMA 3 as well - but see below), and (2) set up the 47N227 to enable SIR on its UART2, assign
+it to 0x3f8 irq 3, and assign the FIR interface to 0x130.  
+
+<p>
+You should end up with something like 
+<pre>
+ kernel: SMC IrDA Controller found
+ kernel:  IrCC version 2.0, firport 0x130, sirport 0x2f8 dma=3, irq=3
+ kernel: irport_open_R0016f49f()
+</pre>
+
+<p>
+in your logs after "modprobe smc-ircc".  I have seen it fail the first time when loaded by 
+modprobe due to 
+"irport_open_R0016f49f(), can't get iobase of 0x3f8", 
+just modprobe again.  I've not seen
+ this when loading by from <tt>/etc/modules</tt>.
+
+<p>
+Please note:  (1) I have only been able to test the SIR portion
+of this, as my motivator was to enable connecting a Palm III equivalent, and 
+(2) development of the code linked here stopped pretty quickly once it started
+working, so there are multiple silly ideas, tries, etc. commented out.
+
+<p>
+The set-up is as follows:
+<ol>
+<li>you need the lib files from pci-utils (pciutils-dev on debian).
+
+<li>the command to build it is 
+<pre>
+gcc -g -O2 -o tosh5100-smcinit tosh5100-smcinit.c \\
+   -lpci -L/usr/lib -I/usr/include/pci
+
+</pre>
+assuming your pci-utils lib is where mine is.  Put the binary in <tt>/usr/local/sbin</tt>.
+
+<li>enable the standard serial port (CONFIG_SERIAL) as a kernel module
+
+<li><tt>/etc/serial.conf</tt> (debian) includes the line
+:
+<pre>/dev/ttyS0 uart 16550 port 0x3F8 irq 3
+</pre>
+which shows up in dmesg
+
+<li>add this line to <tt>/etc/modules.conf</tt>:
+<pre>pre-install smc-ircc /usr/local/sbin/tosh5100-smcinit
+</pre>
+
+<li><tt>modprobe smc-ircc
+</tt>
+
+<li><tt>irattach /dev/ttyS0
+</tt>
+
+<li><tt>modprobe ircomm
+</tt>
+
+<li>if using a pilot with pilot-link, pilot-xfer -p /dev/ircomm0 -l
+
+</ol>
+
+I think that's it, although it's all buried in my start-up scripts now.
+Under Debian the the irattach etc. config files are stored in 
+<a href="http://www.janerob.com/rob/ts5100/irda.conf">/etc/irda.conf</a> <i>[external]</i>, and I place an 
+"<a href="http://www.janerob.com/rob/ts5100/irda">irda</a>" <i>[external]</i>
+file in <tt>/etc/init.d</tt> when I want the IR enabled at boot.
+
+
+<a name="tweak"></a><h2>Tweaking</h2>
+
+<p>
+If this doesn't work for you, or you need some slightly different 
+configuration (like different addresses, IRQs, or perhaps the 82801BAM), 
+I suggest you get a digital camera (to see the IR beam, best
+suggestion I've heard in ages!), the datasheets for the 82801 and the 
+47N227, and have a play with these files:
+
+<dl>
+<dt><a href="http://www.janerob.com/rob/ts5100/setpci.c"><strong>setpci.c</strong></a> <i>[external]</i></dt>
+<dd>PCI bridge set up
+</dd>
+<dt><a href="http://www.janerob.com/rob/ts5100/setsmc.c"><strong>setsmc.c</strong></a> <i>[external]</i></dt>
+<dd>SMC chip set up
+</dd>
+<dt><a href="http://www.janerob.com/rob/ts5100/dumpsmc.c"><strong>dumpsmc.c</strong></a> <i>[external]</i></dt>
+<dd>print SMC registers while r/w txmit/rcv (CPU burner! 
+sufficiently fast that rcv picks up the glow even if no camera)
+</dd>
+</dl>
+
+<p>
+Again I haven't abeen able to confirm whether the FIR does anything.  Furthermore,
+<a href="http://www.buzzard.org.uk/toshiba/docs.html">Jonathan Buzzard's Toshiba HCI docs</a>
+describe a call to set the SIR vs. FIR status which the work presented here does not access.  
+
+<p>
+<font color="red">(update 21 Aug 02)</font> According to results from hacking around on the 
+<a href="http://memebeam.org/toys/ToshibaAcpiDriver">Toshiba Extras</a> ACPI/HCI code, 
+the SIR/FIR 
+HCI call is not supported on this laptop.  
+
+<p>
+<font color="red">(update 30 Mar 03)</font> After someone asked more questions about 
+making this work
+ on another Toshiba laptop, I compiled the following selection of log files
+and result messages:.
+
+<p>
+On the first <tt>modprobe smc-ircc</tt> (from the command line) for me it claims to
+fail:
+
+<pre>
+vista:~# modprobe smc-ircc
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o: init_module: No such device
+Hint: insmod errors can be caused by incorrect module parameters,
+including invalid IO or IRQ parameters
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o: insmod
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o failed
+/lib/modules/2.4.21-pre4/kernel/drivers/net/irda/smc-ircc.o: insmod smc-ircc failed
+</pre>
+
+<p>
+dmesg and syslog have lots of
+debug announcements (still) but the interesting lines seem to be:
+
+<pre>
+found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+ircc_open()
+SMC IrDA Controller found
+ IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+irport_open_Ra001cb4a()
+irport_open_Ra001cb4a(), can't get iobase of 0x3f8
+...
+irport_close_R13d1bc18(), Releasing Region 3f8
+</pre>
+
+<p>
+<tt>/var/log/messages</tt> should (might ?) also survive the crash:
+
+<pre>
+vista kernel: found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+vista kernel: SMC IrDA Controller found
+vista kernel:  IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+</pre>
+
+<p>
+On the second <tt>modprobe smc-ircc</tt> attempt, no complaints at the command
+line.  dmesg/syslog say
+:
+
+<pre>
+found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+ircc_open()
+SMC IrDA Controller found
+ IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+irport_open_Ra001cb4a()
+IrDA: Registered device irda0
+</pre>
+
+<p>
+and now <tt>/var/log/messages</tt> has 2 more relevant lines:
+
+<pre>
+vista kernel: found SMC SuperIO Chip (devid=0x5a rev=00 base=0x002e): LPC47N227
+vista kernel: SMC IrDA Controller found
+vista kernel:  IrCC version 2.0, firport 0x130, sirport 0x3f8 dma=3, irq=3
+vista kernel: IrDA: Registered device irda0
+vista /etc/hotplug/net.agent: assuming irda0 is already up
+</pre>
+
+<p>
+Please note, as I discuss on the 
+<a href="http://www.janerob.com/rob/ts5100">5100</a> <i>[external]</i> page, there is a 
+conflict between using irda here and the non-kernel PCMCIA code, specifically the
+<tt>ide-cs</tt> module which is needed for e.g. mounting compact flash cards.  Under
+2.4.21-pre4/ACPI-patch I am able to rmmod/modprobe the various pcmcia and irda modules to go
+back and forth using both systems.
+
+<p>
+I have now added 
+<pre>
+pre-install ide-cs /etc/init.d/irda stop
+post-remove ide-cs /etc/init.d/irda start
+</pre>
+
+<p>
+to my <tt>/etc/modules.conf</tt> file, this way the IrDA shuts down when I plug in my 
+CompactFlash card (in a 
+PCMCIA adapter), then comes back when I pop the card out.  
+This didn't play well with SWSUSP because 
+<b>irattach</b> doesn't always go away on a 
+SIGTERM. In my <a href="http://www.janerob.com/rob/ts5100/irda">/etc/init.d/irda</a>  <i>[external]</i> script you will
+ see that I now 'kill -9' 
+it if it doesn't die nicely.
+
+<p>
+
+
+<a name="swsusp"></a><h2>smc-ircc bug with SWSUSP</h2>
+
+<p>
+The problem: once <tt>smc-ircc</tt> has been loaded (even if you later remove it), 
+SWSUSP crashes at the end of the suspend 
+when it says 'freeing memory'.  The line I 
+think is missing is not in in kernels 2.4.20, 2.4.21pre4, or 2.5.67.<br>
+Note: SWSUSP =" suspend to swap partition".
+
+<p>
+<b>The fix:</b> In the Linux source tree, find <tt>drivers/net/irda/smc-ircc.c.</tt>
+Go to the end of the file and find the routine <tt>ircc_close()</tt>.  Add a line to make the 
+beginning look like this:
+
+<pre>
+\#ifdef MODULE
+static int __exit ircc_close(struct ircc_cb *self)
+{
+        int iobase;
+
+        IRDA_DEBUG(0, "%s()\n", __FUNCTION__);
+        ASSERT(self != NULL, return -1;);
+        iobase = self-&gt;irport->io.fir_base;
+        pm_unregister(self-&gt;pmdev);    // &lt;&lt;&lt;&lt;---------- add this line
+        irport_close(self-&gt;irport);
+
+</pre>
+
+<p>
+That's it; do:
+<pre>
+make modules
+make modules_install
+rmmod smc-ircc
+modprobe smc-ircc
+</pre>
+
+<p>
+and at least this 
+part should not keep you from a sccessful suspend/resume.
+
+<p>
+One more thing, I'm now using <tt>smsc-ircc2</tt> (see 
+<a href="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrDA.html">Jean Tourrilhes' page</a>
+and the <a href="http://www.csai.unipa.it/peri/smsc-ircc2/">erratic source site</a> for this code.  
+This (currently) has the same <tt>pm_unregister()</tt> bug 
+as <tt>smc-ircc</tt> above.
+
+<p>
+I hope all of the above (<tt>smc-init</tt> and <tt>smc-ircc</tt> bugfix) works for you, 
+or maybe helps, but 
+there's absolutely no warranty -- if it doesn't work or 
+otherwise causes your world to collapse, you may keep all the pieces.
+
+
+<a name="resources"></a><h2>Resources</h2>
+
+<ul>
+
+<li>
+<a href="http://www.janerob.com/rob/ts5100">http://www.janerob.com/rob/ts5100</a>
+Linux on the Toshiba 5100-501
+
+<li>
+<a href="http://www.csai.unipa.it/peri/toshsat1800-irdasetup/">http://www.csai.unipa.it/peri/toshsat1800-irdasetup/</a>
+Linux-IrDA on Satellite 1800 by Daniel Peri
+
+<li><a href="http://www.csai.unipa.it/peri/smsc-ircc2/">http://www.csai.unipa.it/peri/smsc-ircc2</a>
+Daniel Peri's smc-ircc2 home page
+
+<li><a href="http://www.buzzard.org.uk/toshiba/docs.html">http://www.buzzard.org.uk/toshiba/docs.html</a>
+Jonathan Buzzard's Toshiba HCI docs
+
+<li><a href="http://memebeam.org/toys/ToshibaAcpiDriver">http://memebeam.org/toys/ToshibaAcpiDriver</a>
+Toshiba Extras ACPI/HCI code
+
+</ul>
+
+</divert>
+
+#include <layout2.inc>
+

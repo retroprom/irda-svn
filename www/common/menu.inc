@@ -117,6 +117,19 @@
   <navbar:button id="advanced"  txt="Advanced"       url="$(ROOT)docs/advanced.html">
 </navbar:define>
 
+<navbar:define name="docs3menu" imgstar="std:sel:ovr">
+  <navbar:header></navbar:header>
+  <navbar:footer></navbar:footer>
+
+  <navbar:prolog></navbar:prolog>
+  <navbar:epilog>&nbsp;|&nbsp;</navbar:epilog>
+  <navbar:epilog pos=4>&nbsp;</navbar:epilog>
+
+  <navbar:button id="intro"  txt="Intro"                url="$(ROOT)docs/developer.html">
+  <navbar:button id="t5100"  txt="Irda on Toshiba 5100" url="$(ROOT)docs/t5100.html">
+  <navbar:button id="tut1"   txt="Tutorial 1"           url="$(ROOT)docs/tutorial1.html">
+</navbar:define>
+
 
 <navbar:define name="homemenu" imgstar="std:sel:ovr">
   <navbar:header><table border="0" cellpadding="0" cellspacing="0" border="0"></navbar:header>

@@ -1,5 +1,24 @@
 
-<h2>Linux-IrDA Development</h2>
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - Development" />
+<set-var selected="docs" />
+<set-var subselected="developer" />
+
+
+<divert MENU>
+<navbar:render name="docsmenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<px width="1" height="10"><br>
+<small>
+<navbar:render name="docs3menu" select="tut1"><br>
+</small>
+
+<h1>Linux-IrDA Tutorial 1</h1>
 
 <p>
 While Linux already enjoy an Open Source implementation of
@@ -188,4 +207,10 @@ can tell what type of data had returned: <tt>IAS_MISSING</tt> (nothing),
 
 <p>
 <b>[TO BE CONTINUED]</b>
+
+
+</divert>
+
+#include <layout2.inc>
+
 

@@ -7,7 +7,8 @@ HTML_WML_FILES= index.wml home.wml news.wml sitemap.wml   \
                 resources.wml companies.wml chipsets.wml dongles.wml devices.wml       \
                 docs/index.wml docs/startirda.wml docs/communicating.wml               \
                 docs/advanced.wml                                                      \
-                docs/developer.wml docs/status.wml                                     \
+                docs/developer.wml docs/t5100.wml docs/tutorial1.wml \
+                docs/status.wml                                                         \
                 contact.wml
 
 
@@ -42,6 +43,11 @@ $(RELDIR)html/docs/startirda.html:     $(RELDIR)common/layout2.inc
 $(RELDIR)html/docs/communicating.html: $(RELDIR)common/layout2.inc 
 $(RELDIR)html/docs/advanced.html:      $(RELDIR)common/layout2.inc 
 $(RELDIR)html/resources.html:          $(RELDIR)common/layout2.inc
+$(RELDIR)html/docs/index.html:         $(RELDIR)common/layout2.inc
+
+$(RELDIR)html/docs/developer.html:     $(RELDIR)common/layout2.inc
+$(RELDIR)html/docs/t5100.html:         $(RELDIR)common/layout2.inc
+$(RELDIR)html/docs/tutorial1.html:     $(RELDIR)common/layout2.inc
 
 
 $(RELDIR)html/apps.html:              $(RELDIR)common/layout2.inc
@@ -56,8 +62,4 @@ $(RELDIR)html/companies.html:  $(RELDIR)data/companies.inc
 $(RELDIR)html/chipsets.html:   $(RELDIR)data/chipsets/*.data $(RELDIR)/common/chipsets.pl
 $(RELDIR)html/dongles.html:    $(RELDIR)data/dongles.inc
 $(RELDIR)html/devices.html:    $(RELDIR)data/devices.inc
-
-
-$(RELDIR)html/docs/index.html: $(RELDIR)data/docs/index.inc
-$(RELDIR)html/docs/developer.html: $(RELDIR)data/docs/developer.inc
 

@@ -29,6 +29,7 @@ and IrDA problems.
 <b>Contents</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#description">Description</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#download">Download</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#test">Testing</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#install">Install</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#configuration">Configuration</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#documentation">Documentation</a><br>
@@ -71,6 +72,42 @@ easy to install and use.
 <p>To grab the bleeding edge <b>smcinit</b>, see the 
 <a href="#anoncvs">Anonymous CVS access to source code</a> section.
 
+<a name="test"></a><h2>Testing</h2>
+
+<p>Bellow are configurations for which <b>SMCINIT</b> was tested. It's belived that
+it works on many systems. Please <a href="#contact">send</a> your success / failure story to know and 
+fix bugs:
+
+<table border="0" cellspacing="0" cellpadding="0" width="95%" bgcolor="#777777"><tr><td>
+<table border="0" cellspacing="1" cellpadding="3" width="100%">
+<tr bgcolor="#ffffe7">
+  <td><b>Hardware</b></td>
+  <td><b>Linux distro</b></td>
+  <td><b>Reporter</b></td>
+  <td><b>Notes</b></td>
+</tr>
+<tr bgcolor="#ffffe7" valign="top">
+  <td>Toshiba Tecra 9100</td>
+  <td>SuSE 8.1</td>
+  <td>Claudiu Costin &lt;claudiuc&nbsp;<nobr>@</nobr>&nbsp;kde.org&gt;</td>
+  <td>none</td>
+</tr>
+<tr bgcolor="#ffffe7" valign="top">
+  <td>Toshiba Tecra 9100</td>
+  <td>RedHat 9.0</td>
+  <td>Claudiu Costin &lt;claudiuc&nbsp;<nobr>@</nobr>&nbsp;kde.org&gt;</td>
+  <td>none</td>
+</tr>
+<tr bgcolor="#ffffe7" valign="top">
+  <td>Toshiba Satellite 2410-303</td>
+  <td>Gentoo Linux</td>
+  <td>Paul Kirk &lt;paolokirk&nbsp;<nobr>@</nobr>&nbsp;yahoo.com&gt;</td>
+  <td>none</td>
+</tr>
+</table>
+</td></tr></table>
+
+
 <a name="install"></a><h2>Install</h2>
 
 <p>Here are the prerequisites to 
@@ -88,7 +125,7 @@ make install</pre>
 
 <p><b>NOTE:</b> I tested the package on SuSE 8.1 and RedHat 9.0. It should work 
 for any recent Linux distribution.
-<p>Here are relevant packages to compile on SuSE 8.1:
+<p>Here are relevant packages to compile on <b>SuSE 8.1</b>:
 <pre>  pciutils-devel-2.1.10-33
   pciutils-2.1.10-33
   libgcc-3.2-39
@@ -97,7 +134,7 @@ for any recent Linux distribution.
   glibc-locale-2.2.5-154
   glibc-devel-2.2.5-154</pre>
 
-<p>Here are relevant packages to compile on RedHat 9.0:
+<p>Here are relevant packages to compile on <b>RedHat 9.0</b>:
 <pre>  pciutils-2.1.10-7
   pciutils-devel-2.1.10-7
   gcc-3.2.2-5
@@ -107,6 +144,13 @@ for any recent Linux distribution.
   glibc-common-2.3.2-11.9
   glibc-2.3.2-11.9
   glibc-kernheaders-2.4-8.10</pre>
+
+<p>Here are relevant packages to compile on <b>Gentoo Linux</b>:
+<pre>  sys-apps/pciutils-2.1.10-r1
+  sys-devel/gcc-3.2.3-r1
+  sys-libs/glibc-2.3.2-r1</pre>
+This information was provided by Paul Kirk &lt;paolokirk&nbsp;<nobr>@</nobr>&nbsp;yahoo.com&gt;.
+
 
 <p>Send me your story and packages when you compile these package on a system
 other than above ones. Thank you very much!
