@@ -1,0 +1,24 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - SMCINIT" />
+<set-var selected="apps" />
+<set-var subselected="smcinit" />
+
+
+<divert MENU>
+<navbar:render name="appsmenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<h1>SMCINIT</h1>
+
+<p>
+
+
+</divert>
+
+#include <layout2.inc>
+

@@ -1,9 +1,9 @@
 
 RELDIR=../
 
-HTML_WML_FILES= index.wml                  \
-                about.wml  credits.wml     \
-                download.wml               \
+HTML_WML_FILES= index.wml home.wml news.wml sitemap.wml   \
+                about.wml credits.wml      \
+                download.wml apps.wml smcinit/index.wml      \
                 resources.wml companies.wml chipsets.wml dongles.wml devices.wml       \
                 docs/index.wml docs/index2.wml docs/index3.wml docs/index4.wml         \
                 docs/developer.wml docs/status.wml                                     \
@@ -23,7 +23,7 @@ include $(RELDIR)Makefile
 
 SUBDIRS = 
 
-WWWDIRS = img docs
+WWWDIRS = img docs smcinit
 
 all-local: wwwdirs html
  
@@ -31,12 +31,18 @@ clean-local:  clean-html clean-dirs
 
 $(HTML_FILES): $(COMMON)
 
-$(RELDIR)html/about.html:      $(RELDIR)data/about.inc
+$(RELDIR)html/home.html:       $(RELDIR)common/layout2.inc $(RELDIR)common/news.pl $(RELDIR)data/news/*.data
+$(RELDIR)html/news.html:       $(RELDIR)common/layout2.inc $(RELDIR)common/news.pl $(RELDIR)data/news/*.data
+$(RELDIR)html/sitemap.html:    $(RELDIR)common/layout2.inc
+$(RELDIR)html/apps.html:       $(RELDIR)common/layout2.inc
+$(RELDIR)html/smcinit/index.html:  $(RELDIR)common/layout2.inc
+$(RELDIR)html/about.html:      $(RELDIR)common/layout2.inc
+
 $(RELDIR)html/credits.html:    $(RELDIR)data/credits.inc
 
 $(RELDIR)html/contact.html:    $(RELDIR)data/contact.inc
 
-$(RELDIR)html/resources.html:  $(RELDIR)data/resources.inc
+$(RELDIR)html/resources.html:  $(RELDIR)data/resources.inc $(RELDIR)common/layout2.inc
 $(RELDIR)html/companies.html:  $(RELDIR)data/companies.inc
 $(RELDIR)html/chipsets.html:   $(RELDIR)data/chipsets/*.data $(RELDIR)/common/chipsets.pl
 $(RELDIR)html/dongles.html:    $(RELDIR)data/dongles.inc

@@ -1,0 +1,26 @@
+
+#include <tags.inc>
+#include <news.pl>
+
+<set-var title="Linux-IrDA Project - News" />
+<set-var selected="home" />
+<set-var subselected="news" />
+
+
+<divert MENU>
+<navbar:render name="homemenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<h1>Linux-IrDA News</h1>
+
+<p>
+<perl>&render_news();</perl>
+
+
+</divert>
+
+#include <layout2.inc>
+

@@ -121,7 +121,7 @@ register
    [PF_COLOR, "standard", "Culoarea normala a meniului", "#000000" ],
    [PF_COLOR, "selectat", "Culoarea cind meniul este selectat", "#fb2020" ],
    [PF_COLOR, "deasupra", "Culoarea cind mouse-ul trece deasupra meniului", "#2066ff" ],
-   [PF_INT, "lungime", "Lungime meniului", 150 ],
+   [PF_INT, "lungime", "Lungime meniului", 100 ],
    [PF_INT, "inaltime", "Inaltimea meniului", 18 ],
   ],
   \&webmenu;

@@ -1,0 +1,26 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - Applications" />
+<set-var selected="apps" />
+<set-var subselected="home" />
+
+
+<divert MENU>
+<navbar:render name="appsmenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<h1>Linux-IrDA Applications</h1>
+
+<p>
+Here you will find information about Linux-IrDA enabled applications
+as well the index of Linux-IrDA Project host applications. Enjoy!
+
+
+</divert>
+
+#include <layout2.inc>
+

@@ -1,0 +1,22 @@
+
+# Format:
+# first line: Title
+# second line: Date
+# rest of lines: Content
+
+:::begin
+Site improved structure and design
+2003-07-12
+Lot of improvements on the site. I tried to recover for more
+than on year of inactivity. Here are the changes:
+<ul>
+  <li>News sections. Yes, you read it!
+  <li><a href="sitemap.html">Site map</a> to easy the navigation and overall look
+  on site; updated "Credits" section; "Download" sections is more easy to follow
+  <li>Desisgn was changed a bit and even the site structure; sectional icons
+  are "borrowed" from SVG Crystal theme by Everaldo.
+</ul>
+I hope you enjoy the new changes!
+:::end
+
+

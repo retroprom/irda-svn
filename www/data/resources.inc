@@ -5,11 +5,6 @@
 Here is a list of all the IrDA resources I could find. Please
 send me more links.
 <p>
-If your product is supported by Linux-IrDA, I hope that you will visit
-<a href="http://www.linuxjournal.com/cool.html">"Tell the World You
-Support Linux"</a> homepage and register ($1.00), so that you can show
-this really cool logo along with your products.
-<p>
 Next pages from this sections will guide you on Internet places where you can find
 companies which support IrDA, chipsets, IrDA dongles and adapters and, of course,
 devices which feature IrDA conectivity.

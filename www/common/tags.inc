@@ -63,3 +63,27 @@
 <restore height />\
 </define-tag>
 
+<define-tag t0>\
+<px width="16" height="16" alt="">\
+</define-tag>
+
+<define-tag t1>\
+<img src="$(ROOT)img/tree1.gif" width="16" height="16" alt="">\
+</define-tag>
+
+<define-tag t2>\
+<img src="$(ROOT)img/tree2.gif" width="16" height="16" alt="">\
+</define-tag>
+
+<define-tag t3>\
+<img src="$(ROOT)img/tree3.gif" width="16" height="16" alt="">\
+</define-tag>
+
+<define-tag t4>\
+<img src="$(ROOT)img/tree4.gif" width="16" height="16" alt="">\
+</define-tag>
+
+<define-tag t5>\
+<img src="$(ROOT)img/tree5.gif" width="16" height="16" alt="">\
+</define-tag>
+

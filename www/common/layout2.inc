@@ -1,0 +1,69 @@
+
+#include <tags.inc>
+#include <chipsets.pl>
+
+#include <pre-h.inc>
+
+<divert HEAD>
+<navbar:jsfuncs>
+</divert>
+
+#include <inside-head.inc>
+
+<div align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+ <tr>
+   <td width="30"><img src="$(ROOT)img/i1.png" width="30" height="1"></td>
+   <td bgcolor="#000000" width="100"><px width="1" height="1"></td>
+   <td bgcolor="#000000" width="10"><px width="10" height="1"></td>
+   <td bgcolor="#000000" width="100%"><px width="1" height="1"></td>
+   <td width="16"><img src="$(ROOT)img/i4.png" width="16" height="1"></td>
+ </tr>
+ <tr>
+   <td width="30" background="$(ROOT)img/i3.png"><px width="30" height="1"></td>
+   <td valign="top" width="100" bgcolor="#ffe496">
+     <table cellspacing="0" cellpadding="0" border="0">
+       <tr>
+         <td><img src="$(ROOT)img/item-<get-var selected />.png" width="100" height="110"></td>
+       </tr>
+       <tr>
+         <td bgcolor="#ffe496"><px width="100" height="20"></td>
+       </tr>
+<navbar:render name="mainmenu2" select="<get-var selected />">
+       <tr>
+         <td bgcolor="#ffe496"><px width="100" height="20"></td>
+       </tr>
+       <tr>
+         <td bgcolor="#777777"><px width="100" height="1"></td>
+       </tr>
+       <tr>
+         <td><dump MENU></td>
+       </tr>
+       <tr>
+         <td bgcolor="#777777"><px width="100" height="1"></td>
+       </tr>
+       <tr>
+         <td bgcolor="#ffe496"><px width="100" height="20"></td>
+       </tr>
+     </table>
+   </td>   
+   <td bgcolor="#ffe496"><px width="10" height="1"></td>
+   <td bgcolor="#ffe496" valign="top" width="100%">
+<dump CONTENT>
+   </td>     
+   <td background="$(ROOT)img/i4.png" width="16"><px width="16" height="1"></td>
+ </tr>
+ <tr>
+   <td><img src="$(ROOT)img/i6.png" width="30" height="60"></td>
+   <td><img src="$(ROOT)img/i5.png" width="100" height="60"></td>
+   <td background="$(ROOT)img/i7.png"><px width="10" height="60"></td>
+   <td background="$(ROOT)img/i7.png"><px width="1" height="60"></td>
+   <td width="16"><img src="$(ROOT)img/i8.png" width="16" height="60"></td>
+ </tr>
+</table>
+</div>
+
+#include <inside-bottom.inc>
+
+
+#include <post-h.inc>

@@ -1,5 +1,20 @@
 
-<h2>About Linux-IrDA Project</h2>
+#include <tags.inc>
+#include <news.pl>
+
+<set-var title="Linux-IrDA Project - Home" />
+<set-var selected="home" />
+<set-var subselected="home" />
+
+
+<divert MENU>
+<navbar:render name="homemenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<h1>Welcome to the Linux-IrDA Project</h1>
 
 <p>
 Welcome to the Linux-IrDA project. The overall goal of this project is to make an
@@ -19,15 +34,13 @@ fax, LAN, and other laptops. Speeds range from 2400bps-4Mbps.<br>
 and CVS resources to operate Linux-IrDA Project. We want to thank them for such nice support
 for open-source projects.
 
-<h2>Project History</h2>
+<h1>News</h1>
+<p>
+<perl>&render_news('5','1');</perl>
+<p>
+&nbsp;<b><a href="$(ROOT)news.html">More news...</a></b>
 
-<p>
-The project started at the end of 1997 with the name Linux/IrDA. Due to some troubles with the
-name IrDA, which is trademarked by the Infrared Data Association IrDA, the name was changed to
-Linux/IR. At the end of 1998 the the relationship between both became better and the name was
-changed to Linux/IrDA again. Since February 1999 the project is an official member of IrDA.<br>
-<p>
-Please notice that although we are a member of IrDA, the Linux-IrDA protocol stack is not
-certified by IrDA! (but this is definitively one of our future goals). Go
-<a href="http://www.irda.org/prodlist/linux.asp">here</a> to see what IrDA
-themselves has written about us.<br>
+</divert>
+
+#include <layout2.inc>
+

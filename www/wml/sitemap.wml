@@ -1,0 +1,107 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - Site Map" />
+<set-var selected="home" />
+<set-var subselected="sitemap" />
+
+
+<divert MENU>
+<navbar:render name="homemenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<h1>Linux-IrDA Site Map</h1>
+
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t4></td><td>&nbsp;<a href="index.php">Home</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t2></td><td>&nbsp;<a href="$(ROOT)news.html">News</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t2></td><td>&nbsp;<a href="$(ROOT)sitemap.html">Site Map</a></td></tr>
+</table>
+  
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t3></td><td>&nbsp;<a href="$(ROOT)index.html">Splash</a></td></tr>
+</table>
+  
+  
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t2></td><td>&nbsp;<a href="$(ROOT)about.html">About</a></td></tr>
+</table>
+
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t2></td><td>&nbsp;<a href="$(ROOT)contact.html">Contact</a></td></tr>
+</table>
+
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t2></td><td>&nbsp;<a href="$(ROOT)docs/index.html">Docs</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t2></td><td>&nbsp;<a href="$(ROOT)docs/index2.html"><i>Starting IrDA</i></a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t2></td><td>&nbsp;<a href="$(ROOT)docs/index4.html"><i>Advanced</i></a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t2></td><td>&nbsp;<a href="$(ROOT)docs/developer.html">Developer</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t3></td><td>&nbsp;<a href="$(ROOT)docs/status.html">Status</a></td></tr>
+</table>
+
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t2></td><td>&nbsp;<a href="$(ROOT)apps.html">Applications</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t5><t3></td><td>&nbsp;<a href="$(ROOT)smcinit/index.html">Smcinit</a></td></tr>
+</table>
+
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t2></td><td>&nbsp;<a href="$(ROOT)download.html">Download</a></td></tr>
+</table>
+  
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t3></td><td>&nbsp;<a href="resources.html">Resources</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t0><t2></td><td>&nbsp;<a href="$(ROOT)companies.html">Companies</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t0><t2></td><td>&nbsp;<a href="$(ROOT)chipsets.html">Chipsets</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t0><t2></td><td>&nbsp;<a href="$(ROOT)dongles.html">Dongles</a></td></tr>
+</table>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr><td><t0><t3></td><td>&nbsp;<a href="$(ROOT)devices.html">Devices</a></td></tr>
+</table>
+
+
+
+
+</divert>
+
+#include <layout2.inc>
+

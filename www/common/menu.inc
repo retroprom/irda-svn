@@ -28,12 +28,14 @@
   <navbar:epilog pos=3><br><img src="$(ROOT)img/i2.png" width="100" height="5"></td></tr></navbar:epilog>
   <navbar:epilog pos=4><br><img src="$(ROOT)img/i2.png" width="100" height="5"></td></tr></navbar:epilog>
   <navbar:epilog pos=5><br><img src="$(ROOT)img/i2.png" width="100" height="5"></td></tr></navbar:epilog>
-  <navbar:epilog pos=6></td></tr></navbar:epilog>
+  <navbar:epilog pos=6><br><img src="$(ROOT)img/i2.png" width="100" height="5"></td></tr></navbar:epilog>
+  <navbar:epilog pos=7></td></tr></navbar:epilog>
 
-  <navbar:button id="home"       txt="Home"           img="$(ROOT)img/home-*.gif"        url="$(ROOT)index.html">
+  <navbar:button id="home"       txt="Home"           img="$(ROOT)img/home-*.gif"        url="$(ROOT)home.html">
   <navbar:button id="about"      txt="About"          img="$(ROOT)img/about-*.gif"       url="$(ROOT)about.html">
   <navbar:button id="contact"    txt="Contact"        img="$(ROOT)img/contact-*.gif"     url="$(ROOT)contact.html">
   <navbar:button id="docs"       txt="Documentation"  img="$(ROOT)img/docs-*.gif"        url="$(ROOT)docs/index.html">
+  <navbar:button id="apps"       txt="Applications"   img="$(ROOT)img/apps-*.gif"        url="$(ROOT)apps.html">
   <navbar:button id="download"   txt="Download"       img="$(ROOT)img/download-*.gif"    url="$(ROOT)download.html">
   <navbar:button id="resources"  txt="Resources"      img="$(ROOT)img/resources-*.gif"   url="$(ROOT)resources.html">
 </navbar:define>
@@ -46,12 +48,13 @@
 
   <navbar:prolog></navbar:prolog>
   <navbar:epilog>&nbsp;|&nbsp;</navbar:epilog>
-  <navbar:epilog pos=6>&nbsp;</navbar:epilog>
+  <navbar:epilog pos=7>&nbsp;</navbar:epilog>
 
-  <navbar:button id="home"       txt="Home"           url="$(ROOT)index.html">
+  <navbar:button id="home"       txt="Home"           url="$(ROOT)home.html">
   <navbar:button id="about"      txt="About"          url="$(ROOT)about.html">
   <navbar:button id="contact"    txt="Contact"        url="$(ROOT)contact.html">
   <navbar:button id="docs"       txt="Documentation"  url="$(ROOT)docs/index.html">
+  <navbar:button id="apps"       txt="Applications"   url="$(ROOT)apps.html">
   <navbar:button id="download"   txt="Download"       url="$(ROOT)download.html">
   <navbar:button id="resources"  txt="Resources"      url="$(ROOT)resources.html">
 </navbar:define>
@@ -112,6 +115,31 @@
   <navbar:button id="starting"  txt="Starting IrDA"  url="$(ROOT)docs/index2.html">
   <navbar:button id="comm"      txt="Communicating"  url="$(ROOT)docs/index3.html">
   <navbar:button id="advanced"  txt="Advanced"       url="$(ROOT)docs/index4.html">
+</navbar:define>
+
+
+<navbar:define name="homemenu" imgstar="std:sel:ovr">
+  <navbar:header><table border="0" cellpadding="0" cellspacing="0" border="0"></navbar:header>
+  <navbar:footer></table></navbar:footer>
+
+  <navbar:prolog><tr><td></navbar:prolog>
+  <navbar:epilog></td></tr></navbar:epilog>
+
+  <navbar:button id="home"      txt="Home"      img="$(ROOT)img/home/menu0-*.gif"     url="$(ROOT)home.html">
+  <navbar:button id="news"      txt="News"      img="$(ROOT)img/home/menu1-*.gif"     url="$(ROOT)news.html">
+  <navbar:button id="sitemap"   txt="Site Map"  img="$(ROOT)img/home/menu2-*.gif"     url="$(ROOT)sitemap.html">
+  <navbar:button id="splash"    txt="Splash"    img="$(ROOT)img/home/menu3-*.gif"     url="$(ROOT)index.html">
+</navbar:define>
+
+<navbar:define name="appsmenu" imgstar="std:sel:ovr">
+  <navbar:header><table border="0" cellpadding="0" cellspacing="0" border="0"></navbar:header>
+  <navbar:footer></table></navbar:footer>
+
+  <navbar:prolog><tr><td></navbar:prolog>
+  <navbar:epilog></td></tr></navbar:epilog>
+
+  <navbar:button id="home"        txt="Home"      img="$(ROOT)img/apps/menu0-*.gif"     url="$(ROOT)apps.html">
+  <navbar:button id="smcinit"     txt="Smcinit"   img="$(ROOT)img/apps/menu1-*.gif"     url="$(ROOT)smcinit/index.html">
 </navbar:define>
 
 
