@@ -1,0 +1,28 @@
+#! /bin/sh
+#
+# drivers
+#
+# Initialize and shutdown IrDA device drivers.
+#
+# This script should be invoked with two arguments.  The first is the
+# action to be taken, either "start", "stop", or "restart".
+#
+
+action=$1
+device=$2
+
+case "${action:?}" in
+'start')
+	#irattach /dev/ttyS2          # The third serial port is an IrDA port
+	# irattach /dev/ttyS0 -d esi # Attach a ESI dongle to the first serial port
+	irattach /dev/ttyS0 -d tekram
+	# insmod pc87108             # If your machine as a pc87108 FIR chipset
+	# modprobe uircc             # Sharp UIRCC chipset
+    ;;
+'stop')
+	killall irattach             # ... or something. Currently not used
+    ;;
+'restart')
+	/sbin/ifconfig ${device:?} down up
+    ;;
+esac

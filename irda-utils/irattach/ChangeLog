@@ -1,0 +1,8 @@
+1999-10-09  Dag Brattli  <dagb@cs.uit.no>
+
+	* irattach.c (cleanup): fixed function, so it will actually exit
+	  when a signal arrives
+	
+1999-10-07  Dag Brattli  <dagb@cs.uit.no>
+
+	* Added AirPort support to irattach and dongle_attach
