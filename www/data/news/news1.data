@@ -5,6 +5,25 @@
 # rest of lines: Content
 
 :::begin
+Site update and new development irda-utils 0.9.16 package
+2003-07-24
+There are lot of new things on the site. The 
+<a href="http://irda.sourceforge.net/docs/status.html">Status</a> page have now sections 
+more easily to follow. On <a href="http://irda.sourceforge.net/docs/index.html">Documentation</a>,
+even if first page is yet not finished, the 
+<a href="http://irda.sourceforge.net/docs/startirda.html">Starting IrDA</a>,
+<a href="http://irda.sourceforge.net/docs/communicating.html">Communicating</a> 
+and
+<a href="http://irda.sourceforge.net/docs/advanced.html">Advanced</a>
+are now fully revamped. 
+
+<p>FTP area was synchronized with latest patches from Jean's IrDA page and new 
+development <a href="http://irda.sourceforge.net/ftp/irda-utils/">irda-utils</a> packages are available. Stick on
+<a href="http://irda.sourceforge.net/ftp/irda-utils/irda-utils-0.9.16-pre6.tar.gz">irda-utils 0.9.16-pre6</a>.
+:::end
+
+
+:::begin
 SMCINIT package launched
 2003-07-13
 At least users of Toshiba laptop with SMC-IrCC IrDA subsystem
