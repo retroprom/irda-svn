@@ -40,11 +40,19 @@
 #include "config.h"
 
 /* (*) */
-#include "tosh-superio.h"
+// #include "tosh-superio.h"
 
 #define PROGNAME "tosh-smcinit"
 #define AUTHOR "Thomas Pinz"
 #define AUTHOR_EMAIL "<tom_p (at) gmx.net>"
+
+
+/* default values */
+#define MACHINE "Satellite 5200"
+#define SIR_IO 0x3f8
+#define FIR_IO 0x130
+#define FIR_IRQ 3
+#define FIR_DMA 3
 
 /* lspci on 5100 says */
 /* 00:1f.0 ISA bridge: Intel Corp. 82801CAM ISA Bridge (LPC) (rev 02) */
@@ -89,20 +97,28 @@
 #define DMSB base+1
 
 struct option options[] = {
-    {"version", no_argument, NULL, 'V'},
-    {"help", no_argument, NULL, 'h'},
-    {"verbose", no_argument, NULL, 'v'},
-    {NULL, 0, NULL, 0}
-};
+	{"version", no_argument, NULL, 'V'},
+	{"help", no_argument, NULL, 'h'},
+	{"verbose", no_argument, NULL, 'v'},
+	{"sirio", required_argument, NULL, 's'},
+	{"firio", required_argument, NULL, 'f'},
+	{"firirq", required_argument, NULL, 'i'},
+	{"firdma", required_argument, NULL, 'd'},
+	{NULL, 0, NULL, 0}
+	};
 
 static char *options_explications[] = {
-    "\t\tshow program version",
-    "\t\tshow this help",
-    "\t\tbe verbose, show the compiled-in settings.",
+    "\t\t\tshow program version",
+    "\t\t\tshow this help",
+    "\t\t\tbe verbose, show the compiled-in settings.",
+    "\t\tset the sir-ioport",
+    "\t\tset the fir-ioport",
+    "\t\tset the fir-interrupt",
+    "\t\tset the fir-dma",
     NULL
 };
 
-static char *short_options = "Vhv";
+static char *short_options = "Vhvsfid";
 
 
 void print_usage(struct option *options_array, char **options_explications_array)
@@ -138,69 +154,52 @@ void print_version()
 void print_settings()
 {
     print_version();
-    printf("Compiled for: %s\n", MACHINE);
+    printf("\n");
+    printf("Default-Values for %s:\n", MACHINE);
     printf("SIR ioport: 0x%x\n", SIR_IO);
     printf("FIR ioport: 0x%x\n", FIR_IO);
     printf("FIR interupt: %d\n", FIR_IRQ);
     printf("FIR DMA: %d\n", FIR_DMA);
+    printf("\n");
 }
 
-int main(int argc, char **argv) 
-{
-    int i = 0, opt;
-    
+int set_smc(int sir_io, int fir_io, int fir_irq, int fir_dma, int verbose) {
     /* setpci.c */ 
     struct pci_access *acc;
     struct pci_dev *dev;
     word twobyte;
+    int i = 0;
+    int local_sir_io, local_fir_io, local_fir_irq, local_fir_dma;
 
-    while ((opt =
-             getopt_long(argc, argv, short_options, options,
-                         NULL)) != -1) {
-        switch (opt) {
-        case 'V':
-            {
-                print_version();
-                exit(0);
-                break;
-            }
-        case 'h':
-            {
-                print_usage(options, options_explications);
-                exit(0);
-                break;
-            }
-
-	      case 'v':
-	          {
-		            print_settings();
-		            break;
-	          }
-        default:
-            break;
-        }
-
-    }
-
+    local_sir_io = ( (sir_io & 0xFF8) >> 2); /* CR25, p158: shift 2 down */
+    local_fir_io = ( (fir_io & 0xFF8) >> 3); /* CR2B, p162: shift 3 down */
+    local_fir_irq = fir_irq; /* CR28, p160: equal */
+    local_fir_dma = fir_dma;  /* CR2C, p162: equal */  
+        
     if (getuid() != 0) {
-        fprintf(stderr, "%s can only be used by root\n", PROGNAME);
-        exit(1);
-    }
+	fprintf(stderr, "%s can only be used by root\n", PROGNAME);
+	exit(1);
+	}
     acc = pci_alloc();
     pci_init(acc);
     dev = pci_get_dev(acc, BUS_LPC, LPC_DEV, LPC_FUNC); /* 5100 also dev 1f */
     twobyte = pci_read_word(dev, VID);
     if (twobyte != 0x8086) {
-        fprintf(stderr, "%s IO hub vendor %x not intel (0x8086)\n",
-                 PROGNAME, twobyte);
-        return 1;
-    }
+	fprintf(stderr, "%s IO hub vendor %x not intel (0x8086)\n", PROGNAME, twobyte);
+	return 1;
+	}
+    if (verbose) {
+	printf("Detected IO hub vendor id: 0x%x\n",twobyte);
+	}
+	
     twobyte = pci_read_word(dev, DID);
     if ( (twobyte != 0x24cc) & (twobyte != 0x248c) )  {
-        fprintf(stderr, "%s IO hub device %x not 82801CAM (0x248c or 0x24cc)\n",
-                 PROGNAME, twobyte);
-        return 1;
-    }
+	fprintf(stderr, "%s IO hub device %x not 82801CAM (0x248c or 0x24cc)\n", PROGNAME, twobyte);
+	return 1;
+	}
+    if (verbose) {
+	printf("Detected IO hub device id: 0x%x\n",twobyte);
+	}
     
     pci_write_byte(dev, COM_DEC, 0x10); /* comb 2f8-2ff coma 3f8-3ff */
     twobyte = pci_read_word(dev, LPC_EN); /* LPC_EN register */
@@ -222,29 +221,65 @@ int main(int argc, char **argv)
     ioperm(SMC_BASE, 2, 1);
     outb(0x55, SMC_BASE);      // enter configuration state
     outb(0x0d, SMC_BASE);       // set for device id
-    if (((i = inb(SMC_BASE + 1)) == 0x5a) | ((i = inb(SMC_BASE + 1)) == 0x7a) )
+    if (((i = inb(SMC_BASE + 1)) == 0x5a) | ((i = inb(SMC_BASE + 1)) == 0x7a) ) {
 	// if SMC 47N227 or other
-    {
-	// ! sir-io !
+	if (verbose) {
+		printf("Detected Chip id: 0x%x \n \n",i);
+		}
+		
+	/* ! sir-io ! */
         outb(0x24, SMC_BASE);  // select CR24 - UART1 base addr
         outb(0x00, SMC_BASE + 1); // disable UART1
         outb(0x25, SMC_BASE);  // select CR25 - UART2 base addr
-        outb(SMC_SIR_IO, SMC_BASE + 1); // bits 2-9 of 0x3f8
+        outb(local_sir_io, SMC_BASE + 1); // bits 2-9 of 0x3f8
+	i = inb(SMC_BASE + 1);
+	if (verbose) {
+		printf("SIR ioport register \t write: 0x%x \t read: 0x%x \n",local_sir_io,i);
+		}
+	if (i != local_sir_io) {
+		fprintf(stderr, "Sorry, SIR ioport could not be written. \n");
+		return 1;
+		}
 
-	// ! fir-irq !
+	/* ! fir-irq ! */
         outb(0x28, SMC_BASE);  // select CR28 - UART1,2 IRQ select
         i = inb(SMC_BASE + 1);  // get current setting for both
-        outb((i & 0x00) | SMC_FIR_IRQ, SMC_BASE + 1); // low order bits 
-        // but want no irq for serial uart1 ?
-
-	// ! fir-io !
+        outb((i & 0x00) | local_fir_irq, SMC_BASE + 1); // low order bits 
+	i = inb(SMC_BASE + 1);
+	if (verbose) {
+		printf("FIR interrupt register\t write: 0x%d \t read: 0x%d \n",local_fir_irq,i);
+		}
+	if (i != local_fir_irq) {
+		fprintf(stderr, "Sorry, FIR interrupt could not be written. \n");
+		return 1;
+		}
+	
+	
+	/* ! fir-io ! */
         outb(0x2B, SMC_BASE);  // CR2B - SCE (FIR) base addr
-        outb(SMC_FIR_IO, SMC_BASE + 1); // io 
+        outb(local_fir_io, SMC_BASE + 1); // io 
+	i = inb(SMC_BASE + 1);
+	if (verbose) {
+		printf("FIR ioport register\t write: 0x%x \t read: 0x%x \n",local_fir_io,i);
+		}
+	if (i != local_fir_io) {
+		fprintf(stderr, "Sorry, FIR ioport could not be written. \n");
+		return 1;
+		}
 
-	// ! fir-dma !
-        outb(0x2C, SMC_BASE);  // CR2C - SCE (FIR) DMA select
-        outb(SMC_FIR_DMA, SMC_BASE + 1); // DMA 
+	/* ! fir-dma ! */
+	outb(0x2C, SMC_BASE);  // CR2C - SCE (FIR) DMA select
+	outb(local_fir_dma, SMC_BASE + 1); // DMA 
+	i = inb(SMC_BASE + 1);
+	if (verbose) {
+		printf("FIR dma register\t write: 0x%x \t read: 0x%x \n",local_fir_dma,i);
+		}
+	if (i != local_fir_dma) {
+		fprintf(stderr, "Sorry, FIR dma could not be written. \n");
+		return 1;
+		}
 
+	
         outb(0x0C, SMC_BASE);  // CR0C - UART mode
         i = inb(SMC_BASE + 1);  // whatever already there
         outb((i & 0xC7) | 0x88, SMC_BASE + 1); // enable IrDA (HPSIR) mode, high speed
@@ -262,9 +297,73 @@ int main(int argc, char **argv)
         outb(i | 0x80, SMC_BASE + 1); // valid config cycle done
         outb(0xaa, SMC_BASE);  // ?? twiggle config register ??
 
+	if (verbose) {
+		printf("\n");
+		printf("Initialisation of the SMC 47Nxxx succeded\n");
+		}
+	
     } else {
-        fprintf(stderr, "%s %x not SMC 47Nxxx (should be 0x5a or 0x7a)\n", PROGNAME, i);
+        fprintf(stderr, "%s %x not SMC 47Nxxx (should 0x5a or 0x7a)\n", PROGNAME, i);
         return 1;
     }
     return 0;
 }
+
+int main(int argc, char **argv) {
+	int opt, ret_val;
+	int verbose=0;
+	
+	/* set default values */
+	int sir_io = SIR_IO;
+	int fir_io = FIR_IO;
+	int fir_irq = FIR_IRQ;
+	int fir_dma = FIR_DMA;
+    
+     
+    while ((opt = getopt_long(argc, argv, short_options, options, NULL)) != -1) {
+        switch (opt) {
+	case 'V': {
+		print_version();
+		exit(0);
+		break;
+		}
+        
+	case 'h': {
+		print_usage(options, options_explications);
+		exit(0);
+		break;
+		}
+
+	case 'v': {
+		verbose=1;
+		break;
+		}
+	case 's': {
+		sir_io=strtoul(optarg, NULL, 0);
+		break;
+		}
+	case 'f': {
+		fir_io=strtoul(optarg, NULL, 0);
+		break;
+		}
+	case 'i': {
+		fir_irq=strtoul(optarg, NULL, 0);
+		break;
+		}
+	case 'd': {
+		fir_dma=strtoul(optarg, NULL, 0);
+		break;
+		}
+	default:  break;
+        } // end switch
+
+	} // end while
+
+	if (verbose) {
+		print_settings();
+		}
+	
+	ret_val=set_smc(sir_io, fir_io, fir_irq, fir_dma, verbose);
+
+	return ret_val;
+} //end main

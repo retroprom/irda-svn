@@ -4,49 +4,67 @@ tosh-smcinit
 I've modified the tosh5100-smcinit.c to make it more flexible and renamed
 it to tosh-smcinit.c because it works with several notebooks of Toshiba.
 
-Currently, the following notebooks will work:
-
-Toshiba Satellite 5100
-Toshiba Satellite 5200
-Toshiba Satellite P10
-Toshiba Satellite P20
-Toshiba Satellite (Pro) A30
-Toshiba Satellite Pro 2100
-Toshiba Satellite Pro M10
-
 Please note that the names of the notebooks differ from country to 
-country. I used the German names. 
+country. I used the German names, you can see them at http://www.toshiba.de
+or http://newsletter.toshiba-tro.de/main (detailed hardware description)
 
 In many newer notebooks, Toshiba changed the SuperIO chip. They use no
 longer the LPC47N227, instead other chips are used like LPC47N24x. But we
 are working on modify the smc-ircc driver and smcinit so this Chips will 
 also work in the near future.
 
-I tested also the following notebooks, they have newer chips and will *NOT*
-work at this moment. I hope this will possible in the near future.
-
-Toshiba Satellite (Pro) M30
-Toshiba Portegee M100
-Toshiba Portegee M200
-Toshiba Tecra S1
-Toshiba Tecra M1
-
-But if your notebook use a newer chipset from Intel and the LPC47N227 from
-SMSC, there are good chances to get IrDA working. If your notebook is not
-in the list and you have MS Windows installed, please send me your settings
-of the IrDA and I will include it. I need the IRQ, DMA and the 
-2 IO-Port settings. Please also attach a copy of your /proc/interrupts,
+If you own an other Notebook than a Toshiba, your model is not in my list below
+and it use a newer chipset from Intel and the LPC47N2xx from SMSC, there are 
+good chances to get IrDA working. If you have MS Windows installed, please 
+send me your settings of the IrDA and I will include it. I need the IRQ, DMA 
+and the 2 IO-Port settings. Please also attach a copy of your /proc/interrupts,
 /proc/ioports and /proc/dma
+
+Tosh-smcinit needs 4 parameters to initalize the smc-chip:
+SIR IOPort, FIR IOPort, FIR Interrupt and FIR DMA. 
+
+I tested the following models, use the parameter in the list:
+
+Model		SIR_IO	FIR_IO	FIR_IRQ	FIR_DMA		ID	PCI-ID
+Satellite 3000		no Irda
+Satellite 5100	0x3f8	0x130	3	3		0x5a	248c	*
+Satellite 5200	0x3f8	0x130	3	3		0x5a	248c	*
+SatPro 2100	0x3f8	0x130	4	3		0x5a	248c
+SatPro 6100	0x3f8	0x130	3	1		0x5a	248c
+SatPro M10	0x2f8	0x130	3	1		0x5a	248c
+Satellite A10		no Irda
+Satellite P10	0x3f8	0x6f8	3	3		0x5a	248c
+Satellite P20	0x3f8	0x6f8	3	3		0x5a	248c
+Satellite A30	0x3f8	0x6f8	3	3		0x5a	248c
+Satellite M30	0x3f8	0x130	3	3		0x7a	24cc	*
+Satellite A40		no Irda
+Portege A100		no Irda
+Portege M100	0x3f8	0x130	3	1		0x5a	24cc
+Portege M200	0x3f8	0x130	3	3		0x7a	24cc	*
+Portege R100		no Irda
+Tecra 9100	0x3f8	0x130	3	1		0x5a	248c
+Tecra M1	0x3f8	0x130	3	1		0x5a	24cc
+Tecra M2	0x3f8	0x130	3	1		0x7a	24cc
+Tecra S1		unknown IRDA-Chip
+TE 2300			unknown IRDA-Chip
+
+(* = Compiled-In values, in this case, you don't need parameters)
+
+Other values for the parameters are somtimes also possible, if you got
+confilcts.
+
 
 OK, to make it running, you have to do the following steps:
 
-- Edit the tosh-superio.h and uncomment only the define for your machine
 - Compile it.
 - Run tosh-smcinit *before* you insert the "smc-ircc" kernel module. 
   For example you can do this in the /etc/modules.conf
   Without parameters, "tosh-smcinit" give no output, but if you run 
-  it as "tosh-smcinit -v", you will see also the compiled-in settings.
-
+  it as "tosh-smcinit -v", you will see if all should work.
+  With --sirio=0x03f8, --firio=0x130, --firirq=3 and --firdma=3 you can
+  set the parameters.
+  
+    
 More detailed instructions are in README.Rob, just replace tosh5100-smcinit
 with tosh-smcinit in his text. :)
 
@@ -66,5 +84,5 @@ to incluence the routing with the "acpi_irq_balance" and "acpi_irq_pci=n"
 kernel-parameters.
 
 
-Thomas Pinz, Jan 2004, V0.2
+Thomas Pinz, Jan 2004, V0.3
 E-Mail: tom_p@gmx.de
