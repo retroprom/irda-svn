@@ -190,7 +190,7 @@ static void usage(char *argv[])
 	fprintf(stderr, "      -v verbose\n");
 	fprintf(stderr, "      -e use echo service for full duplex transfer\n");
 	fprintf(stderr, "      -h print this message\n");
-	fprintf(stderr, "      -b frame-size in bytes (default 1024)\n");
+	fprintf(stderr, "      -s frame-size in bytes (default 1024)\n");
 	fprintf(stderr, "      -n number of frames (default 100)\n");
 	fprintf(stderr, "      -f file to preload buffer (zero buffer by default)\n");
 	fprintf(stderr, "      -d inter-buffer transmission delay in usecs (default 0)\n");

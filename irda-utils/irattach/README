@@ -47,7 +47,7 @@ old_belkin  Belkin (old) SmartBeam dongle
 Modules:
 
 If you have compiled the IrDA stack as modules (recommended), then you will
-need to add these entries to your /etc/conf.modules file
+need to add these entries to your /etc/modules.conf file
 
 # IrDA over a normal serial port, or a serial port compatible IrDA port
 alias tty-ldisc-11 irtty
