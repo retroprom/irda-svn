@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 {
 	GString *line;
 	char *ifdev = NULL;
-	int c;
+	int fd, c;
 
 	while ((c = getopt(argc, argv, "i:dxs:l?")) != -1) {
 		switch (c) {
@@ -103,8 +103,11 @@ int main(int argc, char *argv[])
 	signal(SIGINT, cleanup);
 	signal(SIGHUP, cleanup);
 	
-	irdadump_init(ifdev);
-
+	fd = irdadump_init(ifdev);
+	if (fd < 0) {
+	    perror(argv[0]);
+	    return fd;
+	}
 	line = g_string_sized_new(1024);
 
 	while (1) {

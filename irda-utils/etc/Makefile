@@ -10,6 +10,6 @@ clean:
 	$(RM_CMD)
 
 install:
-	install irda.sysconfig $(ROOT)/etc/sysconfig/
-	install irda.rc $(ROOT)/etc/rc.d/init.d/irda
-	install ifcfg-irlan0 $(ROOT)/etc/sysconfig/network-scrips/
+	install -D irda.sysconfig $(ROOT)/etc/sysconfig/irda
+	install -D irda.rc $(ROOT)/etc/rc.d/init.d/irda
+	install -D ifcfg-irlan0 $(ROOT)/etc/sysconfig/network-scripts/ifcfg-irlan0

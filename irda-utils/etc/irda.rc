@@ -17,23 +17,28 @@
 
 [ -f /usr/sbin/irattach ] || exit 0
 
-PARMS=""
+ARGS=
+if $DONGLE ; then
+	ARGS="$ARGS -d $DONGLE"
+fi
 if [ "$DISCOVERY" = "yes" ];then
-	PARMS="-s"
+	ARGS="$ARGS -s"
 fi
 
 # See how we were called.
 case "$1" in
   start)
         # Attach irda device 
-        echo -n "Starting irattach: "
-        daemon /usr/sbin/irattach ${DEVICE} ${PARMS}
+        echo -n "Starting IrDA: "
+        daemon /usr/sbin/irattach ${DEVICE} ${ARGS}
+	touch /var/lock/subsys/irda
         echo
         ;;
   stop)
         # Stop service.
-        echo -n "Shutting down irattach: "
+        echo -n "Shutting down IrDA: "
 	killproc irattach
+	rm -f /var/lock/subsys/irda
         echo
         ;;
   status)

@@ -30,7 +30,7 @@ all:
 	echo "*** Making sure some directories exists ***"
 	mkdir -p $(RPM_BUILD_ROOT)/usr/sbin
 	mkdir -p $(RPM_BUILD_ROOT)/usr/bin $(RPM_BUILD_ROOT)/usr/X11R6/bin
-	mkdir -p $(RPM_BUILD_ROOT)/etc/irda $(RPM_BUILD_ROOT)/etc/rc.d/init.d
+	mkdir -p $(RPM_BUILD_ROOT)/etc/rc.d/init.d
 	cd irdadump;CFLAGS="$(RPM_OPT_FLAGS)" CXXFLAGS="$(RPM_OPT_FLAGS)" ./autogen.sh --prefix=$(RPM_BUILD_ROOT)/usr
 	for i in $(DIRS); do \
                 cd $$i;make all; cd ..; \

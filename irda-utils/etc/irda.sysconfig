@@ -1,3 +1,4 @@
-IRDA=no
-DEVICE=/dev/ttyS1
+IRDA=yes
+DEVICE=/dev/ttyS2
+#DONGLE=actisys+
 DISCOVERY=yes

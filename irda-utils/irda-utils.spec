@@ -1,16 +1,30 @@
 Name: irda-utils
-Summary: IrDA Utilities
+Summary: Utilities for infrared communication between devices
 Version: 0.9.13
-Release: 1
-Source: ftp://irda.sourceforge.net/pub/irda/irda-utils/
-Group: Applications/Networking
+Release: 1mdk
+Source0: ftp://irda.sourceforge.net/pub/irda/irda-utils/%{name}-%{version}.tar.bz2
+Group: System/Servers
 URL: http://irda.sourceforge.net/
-BuildRoot: /var/tmp/%{name}-buildroot
+BuildRoot: %{_tmppath}/%{name}-buildroot
 Copyright: GPL
-Prefix: /usr
+Prefix: %{_prefix}
 
 %description
-Tools required to use IrDA (infrared ports)
+IrDA(TM) (Infrared Data Association) is an industry standard for
+wireless, infrared communication between devices. IrDA speeds range
+from 9600 bps to 4 Mbps, and IrDA can be used by many modern devices
+including laptops, LAN adapters, PDAs, printers, and mobile phones.
+
+The Linux-IrDA project is a GPL'd implementation, written from
+scratch, of the IrDA protocols. Supported IrDA protocols include
+IrLAP, IrLMP, IrIAP, IrTTP, IrLPT, IrLAN, IrCOMM and IrOBEX.
+
+The irda-utils package contains a collection of programs that enable
+the use of IrDA protocols. Most IrDA features are implemented in the
+kernel, so IrDA support must be enabled in the kernel before any IrDA
+tools or programs can be used. Some configuration outside the kernel
+is required, however, and some IrDA features, like IrOBEX, are
+actually implemented outside the kernel.
 
 %prep
 rm -rf $RPM_BUILD_ROOT
@@ -23,20 +37,7 @@ make all RPM_BUILD_ROOT="$RPM_BUILD_ROOT" RPM_OPT_FLAGS="$RPM_OPT_FLAGS" ROOT="$
 %install
 make install RPM_OPT_FLAGS="$RPM_OPT_FLAGS" ROOT="$RPM_BUILD_ROOT"
 
-if [ -d $RPM_BUILD_ROOT/usr/man ]; then
-  find $RPM_BUILD_ROOT/usr/man -type f -exec bzip2 -9f {} \;
-fi
-if [ -d $RPM_BUILD_ROOT/usr/info ]; then
-  find $RPM_BUILD_ROOT/usr/info -type f -exec bzip2 -9f {} \;
-fi
-if [ -d $RPM_BUILD_ROOT/usr/X11R6/man ]; then
-  find $RPM_BUILD_ROOT/usr/X11R6/man -type f -exec bzip2 -9f {} \;
-fi
-if [ -d $RPM_BUILD_ROOT/usr/lib/perl5/man ]; then
-  find $RPM_BUILD_ROOT/usr/lib/perl5/man -type f -exec bzip2 -9f {} \;
-fi
-
-for dir in irattach irkbd tekram; do
+for dir in irattach tekram; do
     cp $dir/README $dir/README.$dir
 done
 
@@ -53,7 +54,6 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/file.list.%{name}
 %doc irattach/README.irattach
 %doc irdadump/README.irdadump
 %doc irdaping/README.irdaping
-%doc irkbd/README.irkbd
 %doc tekram/README.tekram
 /usr/sbin/irattach
 /usr/sbin/irdaping
@@ -62,12 +62,23 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/file.list.%{name}
 /usr/bin/irdadump
 /usr/bin/irpsion5
 /usr/bin/irkbd
-%config /etc/rc.d/init.d/irda
-%config /etc/sysconfig/irda
-%config /etc/sysconfig/network-scripts/ifcfg-irlan0
+%config(noreplace) /etc/rc.d/init.d/irda
+%config(noreplace) /etc/sysconfig/irda
+%config(noreplace) /etc/sysconfig/network-scripts/ifcfg-irlan0
+
+%post
+/sbin/chkconfig --add irda
+
+%preun
+
+if [ $1 = 0 ]; then
+    /sbin/chkconfig --del irda
+fi
+
+exit 0
 
 %changelog
-* Sun Nov 19 2000 Dag Brattli <dag@brattli.net>
+* Sun Nov 19 2000 Dag Brattli <dag@brattli.net> 0.9.13-1mdk
 - 0.9.13
 - Changed config scripts (now that irmanager is gone)
 - Removed irmanager (not needed anymore)
@@ -100,3 +111,4 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/file.list.%{name}
   - handle RPM_OPT_FLAGS and RPM_BUILD_ROOT
   - fix build
   - split in normal and X11 packages
+

@@ -62,7 +62,6 @@ dongle_attach: dongle_attach.o
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
 install: $(TARGETS)
-	install irmanager $(ROOT)/usr/sbin
 	install irattach $(ROOT)/usr/sbin
 	install dongle_attach $(ROOT)/usr/sbin
 
