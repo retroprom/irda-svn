@@ -1,0 +1,4 @@
+#
+# Which SMC configurator to start
+#
+SMCCONFIG="5100"

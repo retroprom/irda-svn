@@ -1,0 +1,18 @@
+
+Daniele Peri <peri@csai.unipa.it>
+
+ - tosh1800-smcinit.c (a.k.a toshsat1800-irdasetup.c)
+ 
+
+Rob Miller <rob@janerob.com>
+
+ - tosh5100-smcinit.c 
+ 
+Claudiu Costin <claudiuc@kde.org>
+
+ - manual pages, various cleanups, RPM package and 
+ Linux distros integration
+ 
+ 
+ 
+ 

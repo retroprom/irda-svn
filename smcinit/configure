@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+# get the current version & release
+version=`cat  VERSION | cut -d- -f 1`
+release=`cat  VERSION | cut -d- -f 2`
+
+# replace variables where these appear in *.in files
+
+for in_filename in `ls -1 *.in` ; do
+  out_filename=`echo "$in_filename"  | sed 's,\.in$,,'`
+  echo "Building $out_filename"
+  cat "$in_filename" | sed "s,@VERSION@,$version,g; s,@RELEASE@,$release,g;" > "$out_filename"
+done

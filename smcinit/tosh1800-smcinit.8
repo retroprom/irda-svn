@@ -1,0 +1,42 @@
+.TH TOSH1800-SMCINIT "8" "July 2003" "0.2" "Linux IrDA"
+.SH NAME
+tosh1800-smcinit \- initialize the IrDA controler on Toshiba laptops
+.SH SYNOPSIS
+.B tosh-smcinit
+.SH DESCRIPTION
+IrDA configurator for laptops with ALI1533 bridge (LPC47N227 SuperIO), smc-ircc
+and not initializing BIOS (tested on Toshiba Satellite 1800-514, 
+Toshiba Satellite 5100 and Toshiba Tecra 9100) to be
+used with Linux kernel.
+.PP
+Toshiba Satellite 1800 laptops are provided with a SMCS LPC47N227 SuperIO chip which is IrDA SIR/FIR capable. 
+The chip is connected through an ALI1533 PCI-ISA bridge. 
+The IrDA subsystem of the SuperIO chip is supported by the \fBsmc-ircc\fR Linux kernel module. 
+Unfortunately the BIOS neither configurates the SuperIO chip IrDA subsystem (SIR port, FIR port, 
+dma, irq, IrDA mode, power) nor sets the PCI-ISA bridge to decode any usable port.
+Linux kernel is thus prevented to detect the second UART making impossible to use it 
+in SIR mode. For the same reason, the FIR mode \fBsmc-ircc\fR is able to detect the SuperIO 
+chip but, once found the IrDA subsystem unconfigured, fails to install.
+.PP
+\fBtosh1800-smcinit\fR sets SIR and FIR ioport addresses, DMA and IRQ of the SuperIO chip IrDA subsystem 
+then powers on the second UART. It also configures the PCI-ISA bridge to decode SIR and FIR ports. 
+All this configuration work should be rather done into the kernel but it was more practical and safe to make a 
+small testing tool of it. It can be probably extended to include configuration kludges for other similar 
+SuperIO and ISA bridge combination.
+.PP
+Testing was carried on a Toshiba Satellite 1800-514 with Linux kernel 2.4.17.
+I hope this work could be helpful, it was quite funny to do it however.
+.SH AUTHOR
+This program was made by Daniele Peri <peri@csai.unipa.it>
+.SH CREDITS
+SMSC for the downloadable datasheets
+.PP
+Paul Hampson for its Linux IrDA mailing list messages.
+.PP 
+Manual page written by Claudiu Costin <claudiuc@kde.org>. Documentation
+based on original README by Daniele Peri.
+.SH "SEE ALSO"
+.BR irattach (1),
+.BR irdadump (1),
+.BR  http://lancelot.csai.unipa.it/~peri/
+ 

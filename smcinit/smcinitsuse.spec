@@ -1,0 +1,82 @@
+%define name	smcinit
+%define version 0.3
+%define release 1
+%define builddir $RPM_BUILD_DIR/%{name}-%{version}-%{release}
+
+Name:		%{name}
+Version:	%{version}
+Release:	%{release}
+Vendor:		Claudiu Costin <claudiuc@kde.org>
+Packager:	Claudiu Costin <claudiuc@kde.org>
+URL:		http://irda.sourceforge.net/smcinit/
+Source:         %{name}-%{version}-%{release}.tar.gz
+Group:		System/Utilities
+Copyright:      GPL
+Provides:	smcinit
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
+Summary:	Initialize IrDA for SMC chips 
+Distribution:   SuSE 8.x
+
+%description
+IrDA configurator for laptops with LPC47N227 SuperIO, smc-ircc
+and not initializing BIOS. Tested on Toshiba Satellite 1800-514, 
+Toshiba Satellite 5100 and Toshiba Tecra 9100 laptops.
+
+
+%prep
+%setup -n %{name}-%{version}-%{release}
+
+
+%build
+./configure
+PREFIX="%{_prefix}" make
+
+
+%install
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT"
+PREFIX="%{_prefix}" INSTALL_ROOT="$RPM_BUILD_ROOT" make install 
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d
+cp -f boot.smcinit $RPM_BUILD_ROOT%{_sysconfdir}/init.d
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+cp -f smcinit.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/smcinit
+
+
+%clean
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT"
+
+
+%post
+insserv /etc/init.d/boot.smcinit
+# %{add_start_if_needed}
+
+%postun
+
+%preun
+if test -x /etc/init.d/irda ; then /etc/init.d/irda stop ; fi
+if test -x /etc/init.d/boot.smcinit ; then /etc/init.d/boot.smcinit stop ; fi
+insserv -r /etc/init.d/boot.smcinit
+
+%files
+
+%defattr(0755, root, root)
+%{_sysconfdir}/init.d/*
+
+%defattr(0644, root, root)
+%{_sysconfdir}/sysconfig/*
+
+%defattr(0755, root, root)
+%{_sbindir}/*
+
+%defattr(0644, root, root)
+%{_mandir}/man8/*
+
+%defattr(-, root, root)
+%doc README COPYING ChangeLog INSTALL VERSION README.Peri CHANGELOG.Peri smcinit.lsm
+
+%defattr(0644, root, root)
+
+
+%changelog
+* Sat Jul 1 2003 Claudiu Costin <claudiuc@kde.org>
+- initial RPM
+

@@ -1,0 +1,14 @@
+Begin4
+Title:          tosh-smcinit
+Version:        0.3-1
+Entered-date:   Tue Jul 1 2003
+Description:    A neat desktop zooming tool
+Keywords:       IrDA, infrared, Toshiba, laptop, Satellite, Tecra
+Author:         Claudiu Costin <claudiuc@kde.org>
+Maintained-by:  Claudiu Costin <claudiuc@kde.org>
+Primary-site:   http://www.ro.kde.org/tosh-smcinit/
+Home-page:      http://www.ro.kde.org/tosh-smcinit/
+Original-site:  http://www.ro.kde.org/tosh-smcinit/
+Platforms:      Linux and other Unices
+Copying-policy: GNU Public License
+End

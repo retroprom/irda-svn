@@ -1,0 +1,60 @@
+#! /bin/sh
+#
+# Copyright (c) 2003 Claudiu Costin <claudiuc@kde.org>.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# /etc/init.d/boot.smcinit
+#
+### BEGIN INIT INFO
+# Provides:          boot.smcinit
+# Required-Start:    
+# Required-Stop:
+# Default-Start:     B
+# Default-Stop:
+# Description:       Initialize SMC-IRCC IrDA hardware
+### END INIT INFO
+
+. /etc/rc.status
+. /etc/sysconfig/smcinit
+
+rc_reset
+
+case "$1" in
+  start)
+	
+	if test -x /usr/sbin/tosh${SMCCONFIG}-smcinit ; then
+	    /usr/sbin/tosh${SMCCONFIG}-smcinit
+	    rc_status
+	    modprobe smc-ircc >/dev/null 2>/dev/null
+	    modprobe smc-ircc
+	    rc_status
+	else
+	    echo "'tosh${SMCCONFIG}-smcinit' is missing"
+	    rc_failed 1
+	fi
+	rc_status -v1 -r 
+	;;
+    stop)
+	echo -n "Unloading smc-ircc kernel module"
+	modprobe -r smc-ircc
+	rc_status -v
+	;;
+    status)
+	echo -n "Checking for smc-ircc kernel module"
+	line=`lsmod 2>/dev/null | grep smc-ircc | grep -v grep`
+	if test -z "$line" ; then
+	    rc_failed 3    
+	fi 
+	rc_status -v
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status}"
+	exit 1
+	;;
+esac
+
+rc_exit

@@ -1,0 +1,41 @@
+
+
+ Installing smcinit
+ ==================
+ 
+ Prerequisites
+ -------------
+ 
+ To successfully compile and install smcinit package you
+ need to:
+ 
+ * have a Linux 2.4.x based system. Prefferably Linux 2.4.18
+ kernel or better. 
+ 
+ * have gcc compiler and glibc devel package installed
+ 
+ * have libpci and libpci-devel packages installed
+ 
+ 
+ Compile & install
+ -----------------
+ 
+ Then run:
+ 
+   ./configure
+   make
+   make install (as root user)
+   
+   
+   
+ Notes
+ -----
+ 
+ I tested the package on SuSE 8.1 and RedHat 9.0. It should work for any
+ recent Linux distribution.
+ 
+  Here are relevant packages to compile on SuSE:
+    pciutils-devel-2.1.10-33
+    pciutils-2.1.10-33
+    libgcc-3.2-39
+    gcc-3.2-39

@@ -1,0 +1,13 @@
+2003-07-02 claudiuc 
+	* build: SuSE spec improved to generated compatible SuSE RPM
+	* compile: GNU'fied; now both utilities have --version and --help
+	options;
+	* doc: separated manual pages and some improvements
+2003-07-01  claudiuc
+	* cosmetic: renamed toshsat1800-irdasetup to tosh1800-smcinit
+	* build: improved original Makefile, spec file for SuSE, 
+	my configure script for build system
+	* compile: cleanup to remove warnings, broken compile; include
+	headers for used libc functions
+	* doc: first stage for my docs, manual page and renamed original
+	docs to avoid confusion
