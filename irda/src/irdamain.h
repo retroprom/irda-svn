@@ -41,6 +41,7 @@
 int arg_index;
 int m_argc;
 char ** m_argv;
+unsigned int count, delay;
 
 #endif
 

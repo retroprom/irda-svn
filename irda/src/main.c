@@ -27,7 +27,7 @@ void main_help() {
   fprintf(stdout,
     "Usage: %s [ OPTIONS ] OBJECT { COMMAND | help }\n"
     "where OBJECT := { lap | lmp | ias | ttp }\n"
-    "      OPTIONS := { -V[version] | -h[elp] | -c[count] <repeat> }\n",
+    "      OPTIONS := { -V[version] | -h[elp] | [ -c count ] [ -d delay ] }\n",
     PACKAGE_NAME    
   );
 }
@@ -42,6 +42,10 @@ void main_no_option(char *option) {
 
 void main_no_object(char *object) {
   fprintf(stderr,"Object \"%s\" is unknown, try \"%s help\".\n",object,PACKAGE_NAME);
+}
+
+void main_err_param(char *param) {
+  fprintf(stderr,"Invalid parameter value \"%s\".\n",param);
 }
 
 
@@ -67,7 +71,15 @@ int main(int argc, char**argv) {
           main_help();
           exit(255);
         break;
-        default:
+        case 'c':
+          arg_index++;
+          if (sscanf(m_argv[arg_index],"%u",&count) != 1) {
+            main_err_param(m_argv[arg_index]);
+            exit(255);
+          }
+          printf("count=%d\n",count);
+        break;
+         default:
           main_no_option(m_argv[arg_index]);
           exit(255);
       }

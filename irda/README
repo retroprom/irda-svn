@@ -1,0 +1,57 @@
+
+
+   irda
+  ======
+
+
+  Introduction
+  ------------
+
+  Inspired by wonderfull "ip" utility from iproute2 package by Alexey Kuznetsov,
+  I considered that a similar good utility for IrDA networking world will be 
+  great.
+
+  Back in 2002 I managed to make a little "irias" utility to manipulate and
+  display local IrIAS database. Was very fun and gave me incentive to explore
+  the IrDA to the kernel level.
+
+  Linux-IrDA suffer pains for lack of complete and stable tools, if we not 
+  count "irdadump" and "irattach".
+
+  The "irda" utility home page is located at:
+  
+    http://irda.sourceforge.net/irda/
+  
+
+  Installing
+  ----------
+
+  Because "irda" package use GNU autotools & friends the only thing you should
+  do to compile and install is to run:
+
+  ./configure
+  make
+  make install (as root)
+
+
+
+  Using
+  -----
+
+  "irda" utility have extensive help for syntax so whenever you stuck with 
+  options you don't remember use the "help" keyword. You may also try to
+  read the UNIX man page or the full manual.
+  
+  man 8 irda
+  
+
+  Contact
+  -------
+
+  You may contact the authors by mail. See the AUTHORS file. Better yet, 
+  subscribe to the irda-users@list.sourceforge.net mailing list.
+  
+
+  Claudiu Costin <claudiuc@kde.org>
+  August 12, 2003
+  

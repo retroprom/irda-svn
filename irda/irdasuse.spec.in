@@ -10,7 +10,7 @@ Vendor:       Claudiu Costin <claudiuc@kde.org>
 Packager:     Claudiu Costin <claudiuc@kde.org>
 URL:          http://irda.sourceforge.net/irda/
 Source:       %{name}-%{version}-%{release}.tar.gz
-Group:        System/Utilities
+Group:        Productivity/Networking/Irda
 Copyright:    GPL
 Provides:     irda
 BuildRoot:    %{_tmppath}/%{name}-%{version}-%{release}
@@ -18,8 +18,10 @@ Summary:      Manage Linux-IrDA stack
 Distribution: SuSE 8.x
 
 %description
-XXX XXX XXX
-XXX XXX XXX
+This utility try to control and display information from 
+Linux IrDA stack. It's use is very similar with "ip"
+made by Alexey Kuznetsov. Extensive assistance is given
+without the need to fully read man pages.
 
 %prep
 %setup -n %{name}-%{version}-%{release}
