@@ -36,6 +36,7 @@ $(RELDIR)html/news.html:       $(RELDIR)common/layout2.inc $(RELDIR)common/news.
 $(RELDIR)html/sitemap.html:    $(RELDIR)common/layout2.inc
 $(RELDIR)html/about.html:      $(RELDIR)common/layout2.inc
 $(RELDIR)html/download.html:   $(RELDIR)common/layout2.inc
+$(RELDIR)html/docs/status.html:     $(RELDIR)common/layout2.inc $(RELDIR)data/docs/status*.inc
 
 $(RELDIR)html/apps.html:              $(RELDIR)common/layout2.inc
 $(RELDIR)html/smcinit/index.html:     $(RELDIR)common/layout2.inc
@@ -57,5 +58,4 @@ $(RELDIR)html/docs/index2.html: $(RELDIR)data/docs/index2.inc
 $(RELDIR)html/docs/index3.html: $(RELDIR)data/docs/index3.inc
 $(RELDIR)html/docs/index4.html: $(RELDIR)data/docs/index4.inc
 $(RELDIR)html/docs/developer.html: $(RELDIR)data/docs/developer.inc
-$(RELDIR)html/docs/status.html: $(RELDIR)data/docs/status.inc
 

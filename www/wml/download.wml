@@ -1,6 +1,5 @@
 
 #include <tags.inc>
-#include <news.pl>
 
 <set-var title="Linux-IrDA Project - Download" />
 <set-var selected="download" />
