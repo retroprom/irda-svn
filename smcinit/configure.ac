@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(smcinit, 0.5-1, irda-users@lists.sf.net)
+AC_INIT(smcinit, 0.5, irda-users@lists.sf.net)
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADER([config.h])
 
@@ -28,5 +28,5 @@ AC_C_CONST
 AC_CHECK_FUNCS([strtoul])
 
 AM_INIT_AUTOMAKE
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile smcinit.lsm  smcinitredhat.spec  smcinitsuse.spec])
 AC_OUTPUT

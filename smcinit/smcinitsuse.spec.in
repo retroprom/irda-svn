@@ -1,6 +1,6 @@
 %define name	smcinit
 %define version @VERSION@
-%define release @RELEASE@
+%define release 1
 %define builddir $RPM_BUILD_DIR/%{name}-%{version}-%{release}
 
 Name:		%{name}
