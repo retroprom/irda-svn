@@ -1,61 +1,63 @@
 
 #include <tags.inc>
+#include <news.pl>
 
 <set-var title="Linux-IrDA Project - Download" />
 <set-var selected="download" />
 <set-var subselected="" />
 
-#include <pre-h.inc>
 
-<divert HEAD>
-<navbar:jsfuncs>
+<divert MENU>
+<img src="$(ROOT)img/rubber.gif" width="100" height="49">
 </divert>
 
-#include <inside-head.inc>
 
-<div align="center">
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
- <tr>
-   <td width="30"><img src="$(ROOT)img/i1.png" width="30" height="1"></td>
-   <td bgcolor="#000000" width="100"><px width="1" height="1"></td>
-   <td bgcolor="#000000" width="10"><px width="10" height="1"></td>
-   <td bgcolor="#000000" width="100%"><px width="1" height="1"></td>
-   <td width="16"><img src="$(ROOT)img/i4.png" width="16" height="1"></td>
- </tr>
- <tr>
-   <td width="30" background="$(ROOT)img/i3.png"><px width="30" height="1"></td>
-   <td valign="top" width="100" bgcolor="#ffe496">
-     <table cellspacing="0" cellpadding="0" border="0">
-       <tr>
-         <td><img src="$(ROOT)img/item-<get-var selected />.png" width="100" height="110"></td>
-       </tr>
-       <tr>
-         <td bgcolor="#ffe496"><px width="100" height="20"></td>
-       </tr>
-<navbar:render name="mainmenu2" select="<get-var selected />">
-       <tr>
-         <td bgcolor="#ffe496"><px width="100" height="20"></td>
-       </tr>
-     </table>
-   </td>   
-   <td bgcolor="#ffe496"><px width="10" height="1"></td>
-   <td bgcolor="#ffe496" valign="top" width="100%">
-#include <download.inc>   
-   </td>     
-   <td background="$(ROOT)img/i4.png" width="16"><px width="16" height="1"></td>
- </tr>
- <tr>
-   <td><img src="$(ROOT)img/i6.png" width="30" height="60"></td>
-   <td><img src="$(ROOT)img/i5.png" width="100" height="60"></td>
-   <td background="$(ROOT)img/i7.png"><px width="10" height="60"></td>
-   <td background="$(ROOT)img/i7.png"><px width="1" height="60"></td>
-   <td width="16"><img src="$(ROOT)img/i8.png" width="16" height="60"></td>
- </tr>
-</table>
-</div>
+<divert CONTENT>
 
-#include <inside-bottom.inc>
+<h1>Download</h1>
+
+<p>
+Linux-IrDA project members and contributors has released
+various files, packages and patches for kernel space IrDA
+stack and user spaces utilities. Please announce the <webmaster>
+if you contributed something and want to be put on project
+<a href="http://irda.sourceforge.net/ftp/">FTP</a> area. That way everyone will have quick access to software
+resources.
+
+<h3>SourceForge Download Area</h3>
+<p>
+This zone list all released packages for Linux-IrDA Project. Currently it include 
+<b>irda-utils</b> and <b>smcinit</b>. Binaries packages are available as RPM.<br>
+&nbsp;&nbsp;<a href="http://sourceforge.net/project/showfiles.php?group_id=5616">http://sourceforge.net/project/showfiles.php?group_id=5616</a>
 
 
-#include <post-h.inc>
+<h3>IrDA Utils</h3>
+<p>Package which consist from user space utilities which control
+IrDA stack and a bunch of little programs serving as examples
+and tools for IrDA applications.<br>
+&nbsp;&nbsp;<a href="http://sourceforge.net/project/showfiles.php?group_id=5616">http://sourceforge.net/project/showfiles.php?group_id=5616</a> <b>(current releases)</b>
 
+<p>Here are some old releases if you
+insist running old kernel versions.<br>
+&nbsp;&nbsp;<a href="http://irda.sourceforge.net/ftp/irda-utils/">http://irda.sourceforge.net/ftp/irda-utils/</a> <b>(old releases)</b>
+
+<h3>Drivers</h3>
+<p>
+Here are some drivers for various IrDA hardware found mostly on laptops. Note
+that some ones may not function 100% properly and may not have proper documentation.
+We hope soon this will change and may be you can contribute if you feel.<br>
+&nbsp;&nbsp;<a href="http://irda.sourceforge.net/ftp/drivers/">http://irda.sourceforge.net/ftp/drivers/</a> <b>(may be outdated)</b>
+
+<h3>Kernel Patches</h3>
+<p>Lot of kernel patches from ancient Linux-IrDA to present. You can build your own
+bleeding edge custom kernel, play with your toy, find bugs, fix them and make your
+own patches available here.<br>
+&nbsp;&nbsp;<a href="http://irda.sourceforge.net/ftp/patches/">http://irda.sourceforge.net/ftp/patches/</a> <b>(old patches)</b>
+
+<p>Note that above patches are manualy downloaded and organized from the
+list found on Jean Tourrilhes's IrDA page at:<br>
+&nbsp;&nbsp;<a href="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrDA.html">http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrDA.html</a> <b>(current patches)</b>
+
+</divert>
+
+#include <layout2.inc>

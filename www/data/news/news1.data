@@ -5,6 +5,17 @@
 # rest of lines: Content
 
 :::begin
+SMCINIT package launched
+2003-07-13
+At least users of Toshiba laptop which sport SMC-IrCC IrDA subsystem
+will be happy. This package bundle the hack utilities made by 
+Daniele Peri and Rob Miller and now the IrDA will work out of the box
+with this package. Please read more on the on the SMCINIT home page: 
+ <a href="http://irda.sourceforge.net/smcinit/">http://irda.sourceforge.net/smcinit/</a>
+:::end
+
+
+:::begin
 Site improved structure and design
 2003-07-12
 Lot of improvements on the site. I tried to recover for more

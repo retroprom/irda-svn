@@ -1,0 +1,42 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - IRDA-UTILS" />
+<set-var selected="apps" />
+<set-var subselected="irdautils" />
+
+
+<divert MENU>
+<navbar:render name="appsmenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<h1>IRDA-UTILS</h1>
+
+<p>
+
+<h2>Anonymous CVS access to source code</h2>
+
+<p>Development sources are available via anonymous CVS at 
+<a href="http://sourceforge.net">sourceforge.net</a>, 
+if you don't have developer account. To grab them you should have 
+<b>cvs</b> utility installed and at your prompt shell you must run:
+
+<pre>
+cvs -d:pserver:anonymous@cvs.irda.sourceforge.net:/cvsroot/irda co irda-utils
+</pre>
+
+<p>If you're interested to browse the CVS repository via its 
+CVSWeb interface, the follow the  address: 
+<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/irda/irda-utils/">http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/irda/irda-utils/</a>
+
+<p>For updating you CVS copy then use:
+<pre>cvs update -P -d</pre>
+Note that this command must be run from inside your <b>irda-utils</b> source directory.
+
+
+</divert>
+
+#include <layout2.inc>

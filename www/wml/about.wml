@@ -8,7 +8,7 @@
 
 
 <divert MENU>
-&nbsp;
+<img src="$(ROOT)img/rubber.gif" width="100" height="49">
 </divert>
 
 

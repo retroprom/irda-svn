@@ -138,8 +138,9 @@
   <navbar:prolog><tr><td></navbar:prolog>
   <navbar:epilog></td></tr></navbar:epilog>
 
-  <navbar:button id="home"        txt="Home"      img="$(ROOT)img/apps/menu0-*.gif"     url="$(ROOT)apps.html">
-  <navbar:button id="smcinit"     txt="Smcinit"   img="$(ROOT)img/apps/menu1-*.gif"     url="$(ROOT)smcinit/index.html">
+  <navbar:button id="home"        txt="Home"       img="$(ROOT)img/apps/menu0-*.gif"     url="$(ROOT)apps.html">
+  <navbar:button id="irdautils"   txt="Irda-utils" img="$(ROOT)img/apps/menu1-*.gif"     url="$(ROOT)irda-utils/index.html">
+  <navbar:button id="smcinit"     txt="Smcinit"    img="$(ROOT)img/apps/menu2-*.gif"     url="$(ROOT)smcinit/index.html">
 </navbar:define>
 
 
