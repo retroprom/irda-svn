@@ -21,13 +21,25 @@
  Compile & install
  -----------------
  
- Then run:
- 
+ If you got the dist tarball, such as smcinit-0.5.tar.gz, untar it:
+
+   tar xvfj smcinit-0.5.tar.gz
+   cd smcinit-0.5
+
+ then:
+
    ./configure
    make
    make install (as root user)
    
-   
+
+ If you brave just checked out from the irda CVS, one more step is needed first:
+
+   ./autogen.sh
+   ./configure
+   make
+   make install (as root user)
+
    
  Notes
  -----
