@@ -28,7 +28,7 @@ CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a irdaping
+RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a
 
 INCLUDES  = $(SYS_INCLUDES)
 LIBRARIES = $(SYS_LIBRARIES)
@@ -62,6 +62,10 @@ install: all
 
 clean::
 	$(RM_CMD)
+
+distclean::
+	$(RM_CMD)
+	$(RM) irdaping
 
 depend::
 	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)

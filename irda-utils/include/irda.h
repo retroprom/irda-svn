@@ -68,6 +68,9 @@ typedef enum {
 	IRDA_LITELINK_DONGLE     = 5,
 	IRDA_AIRPORT_DONGLE      = 6,
 	IRDA_OLD_BELKIN_DONGLE   = 7,
+	IRDA_EP7211_IR           = 8,
+	IRDA_MCP2120_DONGLE      = 9,
+	IRDA_ACT200L_DONGLE      = 10,
 } IRDA_DONGLE;
 
 /* Protocol types to be used for SOCK_DGRAM */
@@ -80,22 +83,30 @@ enum {
 #define SOL_IRLMP      266 /* Same as SOL_IRDA for now */
 #define SOL_IRTTP      266 /* Same as SOL_IRDA for now */
 
-#define IRLMP_ENUMDEVICES        1
-#define IRLMP_IAS_SET            2
-#define IRLMP_IAS_QUERY          3
-#define IRLMP_HINTS_SET          4
+#define IRLMP_ENUMDEVICES        1	/* Return discovery log */
+#define IRLMP_IAS_SET            2	/* Set an attribute in local IAS */
+#define IRLMP_IAS_QUERY          3	/* Query remote IAS for attribute */
+#define IRLMP_HINTS_SET          4	/* Set hint bits advertised */
 #define IRLMP_QOS_SET            5
 #define IRLMP_QOS_GET            6
 #define IRLMP_MAX_SDU_SIZE       7
-#define IRLMP_IAS_GET            8
+#define IRLMP_IAS_GET            8	/* Get an attribute from local IAS */
+#define IRLMP_IAS_DEL		 9	/* Remove attribute from local IAS */
+#define IRLMP_HINT_MASK_SET	10	/* Set discovery filter */
+#define IRLMP_WAITDEVICE	11	/* Wait for a new discovery */
 
 #define IRTTP_MAX_SDU_SIZE IRLMP_MAX_SDU_SIZE /* Compatibility */
 
 /* LM-IAS Limits */
-#define IAS_MAX_STRING        256
-#define IAS_MAX_OCTET_STRING 1024
-#define IAS_MAX_CLASSNAME      64
-#define IAS_MAX_ATTRIBNAME    256
+#define IAS_MAX_STRING         256	/* See IrLMP 1.1, 4.3.3.2 */
+#define IAS_MAX_OCTET_STRING  1024	/* See IrLMP 1.1, 4.3.3.2 */
+#define IAS_MAX_CLASSNAME       60	/* See IrLMP 1.1, 4.3.1 */
+#define IAS_MAX_ATTRIBNAME      60	/* See IrLMP 1.1, 4.3.3.1 */
+#define IAS_MAX_ATTRIBNUMBER   256	/* See IrLMP 1.1, 4.3.3.1 */
+/* For user space backward compatibility - may be fixed in kernel 2.5.X
+ * Note : need 60+1 ('\0'), make it 64 for alignement - Jean II */
+#define IAS_EXPORT_CLASSNAME       64
+#define IAS_EXPORT_ATTRIBNAME     256
 
 /* LM-IAS Attribute types */
 #define IAS_MISSING 0
@@ -126,8 +137,8 @@ struct irda_device_list {
 };
 
 struct irda_ias_set {
-	char irda_class_name[IAS_MAX_CLASSNAME];
-	char irda_attrib_name[IAS_MAX_ATTRIBNAME];
+	char irda_class_name[IAS_EXPORT_CLASSNAME];
+	char irda_attrib_name[IAS_EXPORT_ATTRIBNAME];
 	unsigned int irda_attrib_type;
 	union {
 		unsigned int irda_attrib_int;
@@ -141,6 +152,7 @@ struct irda_ias_set {
 			unsigned char string[IAS_MAX_STRING];
 		} irda_attrib_string;
 	} attribute;
+	u_int32_t daddr;    /* Address of device (for some queries only) */
 };
 
 /* Some private IOCTL's (max 16) */
@@ -200,7 +212,3 @@ struct if_irda_req {
 #define ifr_rts       ifr_ifru.ifru_line.rts
 
 #endif /* IRDA_H */
-
-
-
-

@@ -28,7 +28,7 @@ CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a 
+RM_CMD = $(RM) *.BAK *.bak *.o *.so ,* *~ *.a *.orig *.rej
 
 INCLUDES  = $(SYS_INCLUDES) -I../include
 LIBRARIES = $(SYS_LIBRARIES)
@@ -41,32 +41,38 @@ SYS_INCLUDES = -I/usr/include -I/usr/src/linux/include
 SYS_LIBRARIES = 
 SYS_LIBPATH = -L/usr/lib -L/usr/local/lib 
 
-CFLAGS= $(SYS_INCLUDES) $(RPM_OPT_FLAGS) -Wall -Wstrict-prototypes
+CFLAGS= $(SYS_INCLUDES) $(RPM_OPT_FLAGS) -O2 -Wall -Wstrict-prototypes
 
 # 
 # Files to make 
 # 
+PROG_SOCKET=irprintf irprintfx irscanf irscanfx irdaspray
+PROG_EXTRA=ias_query send_ultra recv_ultra
 
-all:: echo irdaspray ias_query
+all:: $(PROG_SOCKET) $(PROG_EXTRA)
 
-echo: echo.o
-	$(CC) $(CFLAGS) echo.o -o $@
-	ln -s echo discard
-
-irdaspray: irdaspray.o
-	$(CC) $(CFLAGS) irdaspray.o -o $@
-
-ias_query: ias_query.o
-	$(CC) $(CFLAGS) ias_query.o -o $@
-
-.c.o:
+%: %.o
+	$(CC) $(XCFLAGS) -o $@ $^ $(LIBS)
+%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-install: all
-	install irdaspray $(ROOT)/usr/bin
+irprintf: irprintf.o
+irprintfx: irprintfx.o
+irscanf: irscanf.o
+irscanfx: irscanfx.o
+irdaspray: irdaspray.o
+ias_query: ias_query.o
+send_ultra: send_ultra.o
+recv_ultra: recv_ultra.o
 
 clean::
-	$(RM_CMD) echo discard irdaspray
+	$(RM_CMD) 
+
+realclean::
+	$(RM_CMD) 
+	$(RM) $(PROG_SOCKET) $(PROG_EXTRA)
+
+distclean:: realclean
 
 depend::
 	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)

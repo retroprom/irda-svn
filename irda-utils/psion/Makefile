@@ -1,6 +1,9 @@
 all: irpsion5
 
 clean:
+	rm -f *.o *~ core
+
+distclean:
 	rm -f irpsion5 *.o *~ core
 
 install:

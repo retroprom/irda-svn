@@ -9,5 +9,8 @@ all:
 clean:
 	$(RM_CMD)
 
+distclean:
+	$(RM_CMD)
+
 install:
 	@./install-etc $(ROOT)

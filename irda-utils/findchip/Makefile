@@ -45,6 +45,9 @@ findchip: $(OBJS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
+	rm -f *.o *~ #*
+
+distclean:
 	rm -f findchip gfindchip *.o *~ #*
 
 install: findchip

@@ -28,7 +28,7 @@ CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a irattach dongle_attach
+RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a
 
 INCLUDES  = $(SYS_INCLUDES) -I../include/
 LIBRARIES = $(SYS_LIBRARIES)
@@ -41,7 +41,7 @@ SYS_INCLUDES = -I/usr/include -I/usr/src/linux/include
 SYS_LIBRARIES = 
 SYS_LIBPATH = -L/usr/lib -L/usr/local/lib 
 
-CFLAGS= $(RPM_OPT_FLAGS) $(SYS_INCLUDES) -Wall -Wstrict-prototypes
+CFLAGS= -O2 -W -Wall -Wstrict-prototypes -Wshadow $(SYS_INCLUDES)
 
 # 
 # Files to make 
@@ -67,6 +67,10 @@ install: $(TARGETS)
 
 clean:
 	$(RM_CMD)
+
+distclean:
+	$(RM_CMD)
+	$(RM) irattach dongle_attach
 
 tags:
 	etags *.[hc] */*.[hc] */*/*.[hc]

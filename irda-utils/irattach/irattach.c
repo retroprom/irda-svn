@@ -6,8 +6,8 @@
  * Status:        Experimental.
  * Author:        Dag Brattli <dagb@cs.uit.no>
  * Created at:    Sun Dec  7 23:21:05 1997
- * Modified at:   Tue Jan 25 11:33:48 2000
- * Modified by:   Dag Brattli <dagb@cs.uit.no>
+ * Modified at:   Mon Apr  8 11:30:28 2002
+ * Modified by:   Ronny Arild <ronny.arild@thalesgroup.no>
  * Sources:       
  *
  *     Copyright (c) 1997, 1999-2000 Dag Brattli <dagb@cs.uit.no>, 
@@ -25,7 +25,9 @@
  ********************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <syslog.h>
@@ -47,41 +49,22 @@
 #define AF_IRDA 23
 #endif
 
-/* Need to be compatible with the "old" 2.2 kernel */
-#ifndef IRDA_TEKRAM_DONGLE
-#define IRDA_TEKRAM_DONGLE       0
-#endif
-#ifndef IRDA_ESI_DONGLE
-#define IRDA_ESI_DONGLE          1
-#endif
-#ifndef IRDA_ACTISYS_DONGLE
-#define IRDA_ACTISYS_DONGLE      2
-#endif
-#ifndef IRDA_ACTISYS_PLUS_DONGLE
-#define IRDA_ACTISYS_PLUS_DONGLE 3
-#endif
-#ifndef IRDA_GIRBIL_DONGLE
-#define IRDA_GIRBIL_DONGLE       4
-#endif
-#ifndef IRDA_LITELINK_DONGLE
-#define IRDA_LITELINK_DONGLE     5
-#endif
-#ifndef IRDA_AIRPORT_DONGLE
-#define IRDA_AIRPORT_DONGLE      6
-#endif
-#ifndef IRDA_OLD_BELKIN_DONGLE
-#define IRDA_OLD_BELKIN_DONGLE   7
-#endif
-
+/* External prototypes */
 extern void fork_now(void);
 extern int set_sysctl_param(char *name, char *value);
 extern int execute(char *msg, char *cmd);
+/* Internal prototypes */
 
 #define VERSION "1.1 Tue Nov  9 15:30:55 1999 Dag Brattli"
 
+extern char *optarg;
+extern int optind;
+
 static int initfdflags = -1;	/* Initial file descriptor flags */
 static int initdisc = -1;
-static int fd = -1;
+static int devfd = -1;
+static struct termios termsave;
+static int initfdsave = -1;
 
 /* Default path for pid file */
 char *pidfile = "/var/run/irattach.pid";
@@ -97,7 +80,170 @@ struct irtty_info {
 #define IRTTY_IOC_MAXNR  2  
 
 struct irtty_info info;
+/* IrDA Device Name of the device we manage */
 char device[20];
+
+struct dongle_list_s {
+	int   id;
+	char *dongle;
+};
+struct dongle_list_s dongle_list[] = {
+	{ IRDA_ESI_DONGLE,		"esi" },
+	{ IRDA_TEKRAM_DONGLE,		"tekram" },
+	{ IRDA_ACTISYS_DONGLE,		"actisys" },
+	{ IRDA_ACTISYS_PLUS_DONGLE,	"actisys+" },
+	{ IRDA_GIRBIL_DONGLE,		"girbil" },
+	{ IRDA_LITELINK_DONGLE,		"litelink" },
+	{ IRDA_AIRPORT_DONGLE,		"airport" },
+	{ IRDA_OLD_BELKIN_DONGLE,	"old_belkin" },
+	{ IRDA_EP7211_IR,		"ep7211" },
+	{ IRDA_MCP2120_DONGLE,		"mcp2120" },
+	{ IRDA_ACT200L_DONGLE,		"act200l" },
+	{ -1,				NULL }
+};
+
+/* Where to read device names */
+#define PROC_NET_DEV	"/proc/net/dev"
+
+/************************ COMMON SUBROUTINES ************************/
+
+/*
+ * Function modify_flags (set, clear)
+ *
+ *    Modify the flags of an interface
+ *
+ */
+static int modify_flags(char *dev, int set, int clear)
+{
+	struct ifreq ifr;
+	int sockfd;
+
+	/* Create socket */
+        sockfd = socket(AF_IRDA, SOCK_STREAM, 0);
+        if (sockfd < 0) {
+                perror("socket");
+		return(-1);
+		/* Can't clean_exit(), will recurse - Jean II */
+        }
+
+	/* Try to read flags. Will fail if device doesn't exist */
+        strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+	if (ioctl(sockfd, SIOCGIFFLAGS, &ifr) < 0) {
+		syslog (LOG_WARNING, "ioctl(SIOCGIFFLAGS): %m");
+		close (sockfd);
+		return -1;
+	}
+
+	/* Modify flags according to arguments */
+        ifr.ifr_flags |= set;
+	ifr.ifr_flags &= ~clear;
+
+	/* Not, set the modified flags */
+	strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+        if (ioctl(sockfd, SIOCSIFFLAGS, &ifr) < 0) {
+		syslog (LOG_WARNING, "ioctl(SIOCSIFFLAGS): %m");
+		close (sockfd);
+                return -1;
+        }
+	close(sockfd);
+        return 0;	
+}
+
+/*
+ * Function ifup (name)
+ *
+ *    Start device
+ *
+ */
+static inline int ifup(char *dev)
+{
+	syslog(LOG_INFO, "Starting device %s", dev);
+	return(modify_flags(dev, IFF_UP|IFF_RUNNING, 0));
+}
+
+/*
+ * Function ifdown (name)
+ *
+ *    Stop device
+ *
+ */
+static inline int ifdown(char *dev)
+{
+	syslog(LOG_INFO, "Stopping device %s", dev);
+	return(modify_flags(dev, 0, IFF_UP));
+}
+
+/********************* SIGNAL & ERROR HANDLING *********************/
+
+/*
+ * Put everything back in the state we found it
+ */
+void cleanup(int signo)
+{
+	switch (signo) {
+	case SIGTERM:
+	case SIGINT:
+	        syslog(LOG_INFO, "got SIGTERM or SIGINT\n");
+		break;
+	case SIGHUP:
+	        syslog(LOG_INFO, "got SIGHUP\n");
+		break;
+	default:
+		break;
+	}
+	ifdown(device);
+
+	/* Reset the fd termios struct ++ */
+	if (devfd != -1) {
+		initfdflags &= ~O_NONBLOCK;
+		if (fcntl (devfd, F_SETFL, initfdflags) != 0) {
+			syslog (LOG_ERR, "fcntl: initfdflags: %m");
+		}
+		if (ioctl(devfd, TIOCSETD, &initdisc) < 0){
+			fprintf(stderr, "Oups ! Can't set back original link discipline...\n");
+			syslog(LOG_ERR, "ioctl: set_inidisc: %m");
+		}
+		if (tcsetattr(devfd, TCSANOW, &termsave) != 0) {
+			syslog (LOG_ERR, "tcsetattr: %m");
+		}
+		if (fcntl (devfd, F_SETFL, initfdsave) != 0) {
+			syslog (LOG_ERR, "fcntl: initfdsave: %m");
+		}
+		close(devfd);
+		devfd = -1;
+	}
+
+	/* Delete pid file */
+	unlink(pidfile);
+
+	syslog(LOG_INFO, "exiting ...\n");
+
+	if (signo == -1)
+		exit(1);
+	else
+		exit(0);
+}
+
+/* To avoid recursion, clean_exit() should no be used above this
+ * point - Jean II */
+static inline void clean_exit(int status)
+{
+	cleanup(status);
+	//exit(-1); /* should not get here */
+}
+
+static void print_usage(void)
+{
+	int i;
+	fprintf(stderr, "Usage: irattach <dev> [-d dongle] [-s] [-v] [-h]\n");
+	fprintf(stderr, "       <dev> is tty name, device name or module name\n");
+	fprintf(stderr, "Dongles supported :\n");
+	for (i = 0; dongle_list[i].dongle != NULL; i++)
+		fprintf(stderr, "\t%s\n", dongle_list[i].dongle);
+	fprintf(stderr, "\n");
+}
+
+/************************ MODULES MANAGEMENT ************************/
 
 /*
  * Function load_module (name)
@@ -105,7 +251,7 @@ char device[20];
  *    Tries to load (modprobe) the module with the given name
  *
  */
-int load_module(char *name)
+static int load_module(char *name)
 {
 	char msg[128], cmd[512];
 	int ret;
@@ -119,29 +265,182 @@ int load_module(char *name)
 }
 
 /*
- * Function establish_irda (fd)
+ * Extract an interface name out of /proc/net/irda
+ * Important note : this procedure suppose that you don't alias irda devices
+ */
+static char *
+get_irdevname(char *	name,	/* Where to store the name */
+	      int	nsize,	/* Size of name buffer */
+	      char *	buf)	/* Current position in buffer */
+{
+	char *	end;
+
+	/* Skip leading spaces */
+	while(isspace(*buf))
+		buf++;
+
+	/* Check if it's irda */
+	if(strncmp(buf, "irda", 4))
+		return(NULL);
+	/* End of name (no alias) */
+	end = strchr(buf, ':');
+
+	/* Not found ??? To big ??? */
+	if((end == NULL) || (((end - buf) + 1) > nsize))
+		return(NULL);
+
+	/* Copy */
+	memcpy(name, buf, (end - buf));
+	name[end - buf] = '\0';
+
+	return(end + 2);
+}
+
+/*
+ * Function get_devlist ()
+ *
+ *    Get list of irda device on the system
+ *
+ */
+static int get_devlist(char ifnames[][IFNAMSIZ + 1],
+		       int maxchars, int maxnames)
+{
+	char		buff[1024];
+	FILE *		fh;
+	int		ifnum;
+	
+	/* Check if /proc/net/dev is available */
+	fh = fopen(PROC_NET_DEV, "r");
+
+	if(fh == NULL)
+		return(-1);
+
+	/* Success : use data from /proc/net/wireless */
+	ifnum = 0;
+
+	/* Eat 2 lines of header */
+	fgets(buff, sizeof(buff), fh);
+	fgets(buff, sizeof(buff), fh);
+
+	/* Read each device line */
+	while(fgets(buff, sizeof(buff), fh)) {
+		/* Get an irda name */
+		if(get_irdevname(ifnames[ifnum], maxchars, buff)) {
+			ifnum++;
+		}
+		if(ifnum > maxnames) {
+			fclose(fh);
+			return(-1);
+		}
+	}
+	fclose(fh);
+	return(ifnum);
+}
+
+/*
+ * Function get_module_devices(char *	modname)
+ *
+ *    Load a module and figure out which IrDA interfaces were created.
+ *
+ */
+static inline int get_module_devices(char *	modname)
+{
+	char	before_names[10][IFNAMSIZ + 1];
+	int	before_num;
+	char	after_names[15][IFNAMSIZ + 1];
+	int	after_num;
+	int	firstone = -1;
+	int	pid;
+	int	i, j;
+	int	ret;
+
+	/* Get list of devices before */
+	before_num = get_devlist(before_names, IFNAMSIZ + 1, 10);
+	if(before_num < 0) {
+		fprintf(stderr, "Could not get device name list.\n");
+		exit(-1);
+	}
+
+	/* Load the module */
+	ret = load_module(modname);
+	if(ret) {
+		fprintf(stderr, "Invalid module name [%s] !\n", device);
+		print_usage();
+		exit(-1);
+	}
+
+	/* Get list of devices after */
+	after_num = get_devlist(after_names, IFNAMSIZ + 1, 15);
+	if(after_num <= 0) {
+		fprintf(stderr, "Could not get device name list.\n");
+		exit(-1);
+	}
+
+	/* Loop on all found names */
+	for(i = 0; i < after_num; i++) {
+		/* Check if it was here before */
+		for(j = 0; j < before_num; j++) {
+			if(!strcmp(before_names[j], after_names[i]))
+				break;
+		}
+		/* If not found, it's a new interface */
+		if(j == before_num) {
+			/* Already got one ??? */
+			if(firstone >= 0) {
+				fprintf(stderr,
+					"Found additional interface [%s]\n",
+					after_names[i]);
+				/* Create a new instance for this other
+				 * interface */
+				pid = fork();
+				/* If in the child */
+				if(!pid) {
+					/* Get the interface name */
+					strcpy(device, after_names[i]);
+					/* Exit so we manage this guy */
+					return(0);
+				}
+				/* In parent : continue looking at interface
+				 * list, spawn childs, and eventually
+				 * go back to manage the first one found */
+			} else {
+				/* Get the interface name */
+				firstone = i;
+				strcpy(device, after_names[i]);
+				fprintf(stderr, "Found interface [%s]\n",
+					device);
+			}
+		}
+	}
+	return(0);
+}
+
+/************************** TTY MANAGEMENT **************************/
+
+/*
+ * Function establish_irda (ttyfd)
  * 
  *    Turn the serial port into a irda interface.
  */
-void establish_irda (int fd) 
+static void establish_irda (int ttyfd) 
 {
 	int irdadisc = N_IRDA;
 	
-	if (ioctl(fd, TIOCEXCL, 0) < 0) {
+	if (ioctl(ttyfd, TIOCEXCL, 0) < 0) {
 		syslog (LOG_WARNING, "ioctl(TIOCEXCL): %m");
 	}
 	
-	if (ioctl(fd, TIOCGETD, &initdisc) < 0) {
+	if (ioctl(ttyfd, TIOCGETD, &initdisc) < 0) {
 		syslog(LOG_ERR, "ioctl(TIOCGETD): %m");
-		exit (1);
+		clean_exit(-1);
 	}
 	
-	if (ioctl(fd, TIOCSETD, &irdadisc) < 0){
+	if (ioctl(ttyfd, TIOCSETD, &irdadisc) < 0){
 		fprintf(stderr,  
 			 "Maybe you don't have IrDA support in your kernel?\n");
 		syslog(LOG_ERR, "irattach: tty: set_disc(%d): %s\n", 
 			irdadisc, strerror(errno));
-		exit (1);
+		clean_exit(-1);
 	}
 }
 
@@ -166,133 +465,128 @@ static int tty_configure(struct termios *tios)
 }
 
 /*
- * Function init_irda (fd)
+ * Function init_irda (ttyfd)
  *
  *    Initialize IrDA line discipline
  *
  */
-void init_irda_ldisc(int fd) 
+static void init_irda_ldisc(int ttyfd) 
 {
 	struct termios tios;
 	
+	/* Get TTY configuration */
+	if (tcgetattr(ttyfd, &tios) != 0) {
+		syslog (LOG_ERR, "tcgetattr: %m");
+		clean_exit(-1);
+	}
+	/* Save the original values */
+	memcpy(&termsave, &tios, sizeof(struct termios));
+
 	tty_configure(&tios);
 	
-	/* tcflush(fd, TCIFLUSH); */
-	if (tcsetattr(fd, TCSAFLUSH, &tios) < 0) {
+	/* tcflush(ttyfd, TCIFLUSH); */
+	if (tcsetattr(ttyfd, TCSAFLUSH, &tios) < 0) {
 		syslog(LOG_ERR, "tcsetattr: %m");
-		exit(1);
+		clean_exit(-1);
 	}
 }
 
-/*
- * Function modify_flags (set, clear)
- *
- *    Modify the flags
- *
- */
-int modify_flags(char *dev, int set, int clear)
-{
-	struct ifreq ifr;
-	int fd;
-
-	/* Create socket */
-        fd = socket(AF_IRDA, SOCK_STREAM, 0);
-        if (fd < 0) {
-                perror("socket");
-                exit(-1);
-        }
-
-        strncpy(ifr.ifr_name, dev, IFNAMSIZ);
-
-	if (ioctl(fd, SIOCGIFFLAGS, &ifr) < 0)
-		return -1;
-
-        ifr.ifr_flags |= set;
-	ifr.ifr_flags &= ~clear;
-	strncpy(ifr.ifr_name, dev, IFNAMSIZ);
-
-        if (ioctl(fd, SIOCSIFFLAGS, &ifr) < 0) {
-                return -1;
-        }
-        return 0;	
-}
-
-/*
- * Function ifup (name)
- *
- *    Start device
- *
- */
-void ifup(char *dev)
-{
-	syslog(LOG_INFO, "Starting device %s", dev);
-	modify_flags(dev, IFF_UP|IFF_RUNNING, 0);
-}
-
-/*
- * Function ifdown (name)
- *
- *    Stop device
- *
- */
-void ifdown(char *dev)
-{
-	modify_flags(dev, 0, IFF_UP);
-}
-
-void cleanup(int signo)
-{
-	switch (signo) {
-	case SIGTERM:
-	case SIGINT:
-	        syslog(LOG_INFO, "got SIGTERM or SIGINT\n");
-		break;
-	case SIGHUP:
-	        syslog(LOG_INFO, "got SIGHUP\n");
-		break;
-	default:
-		break;
-	}
-	ifdown(device);
-
-	unlink(pidfile);
-
-	syslog(LOG_INFO, "exiting ...\n");
-	exit(0);
-}
-
-void start_tty(char *dev) 
+static void start_tty(char *dev) 
 {
 	/*
 	 * Open the serial device and set it up to be the irda interface.
 	 */
-	if ((fd = open(dev, O_NONBLOCK | O_RDWR, 0)) < 0) {
+	if ((devfd = open(dev, O_NONBLOCK | O_RDWR, 0)) < 0) {
 		syslog(LOG_ERR, "Failed to open %s: %m", dev);
-		exit(1);
+		clean_exit(-1);
 	}
-	if ((initfdflags = fcntl(fd, F_GETFL)) == -1) {
+	if ((initfdflags = fcntl(devfd, F_GETFL)) == -1) {
 		syslog(LOG_ERR, "Couldn't get device fd flags: %m");
-		exit(1);
+		clean_exit(-1);
 	}
 	
+	/* Save old flags */
+	initfdsave = initfdflags;
+
 	initfdflags &= ~O_NONBLOCK;
-	fcntl(fd, F_SETFL, initfdflags);
+	if (fcntl(devfd, F_SETFL, initfdflags) == -1) {
+		syslog(LOG_WARNING, "Couldn't set device fd flags: %m");
+	}
 		
 	/* Set up the serial device as a irda interface */	
-	init_irda_ldisc(fd);
-	establish_irda(fd);
+	init_irda_ldisc(devfd);
+	establish_irda(devfd);
 
 	sleep(1);  /* give it time to set up its terminal */
 	
 	/*
 	 *  Set device for non-blocking reads.
 	 */
-	if (fcntl(fd, F_SETFL, initfdflags | O_NONBLOCK) == -1) {
+	if (fcntl(devfd, F_SETFL, initfdflags | O_NONBLOCK) == -1) {
 		syslog(LOG_ERR, 
 		       "Couldn't set device to non-blocking mode: %m");
-		exit(1);
+		clean_exit(-1);
 	}
 }
+
+/************************ DONGLE MANAGEMENT ************************/
+
+/*
+ * Function attach_dongle (name)
+ *
+ *    Tries to load the dongle and attach it to the specified device
+ *
+ */
+static inline void attach_dongle(int ttyfd, char *dev, int dongle)
+{
+
+	/* If we have a tty channel, use it */
+	if(ttyfd != -1) {
+		/* Attach dongle */
+		ioctl(ttyfd, IRTTY_IOCTDONGLE, dongle);
+	} else {
+		/* irport case (or maybe FIR drivers) */
+		int	sockfd;
+		struct ifreq ifr;
+
+		/* Create socket */
+		sockfd = socket(AF_IRDA, SOCK_STREAM, 0);
+		if (sockfd < 0) {
+			perror("socket");
+			clean_exit(-1);
+		}
+
+		/* Attach dongle */
+		ifr.ifr_data = (void *) dongle;
+		strncpy(ifr.ifr_name, dev, IFNAMSIZ);
+		if (ioctl(sockfd, SIOCSDONGLE, &ifr) < 0) {
+			perror("ioctl");
+			close(sockfd);
+			clean_exit(-1);
+		}
+
+		/* Cleanup */
+		close(sockfd);
+	}
+}
+
+/*
+ * Function get_dongle (dongle)
+ *
+ *    Find the dongle id corresponding to the name
+ *
+ */
+static inline int get_dongle(char *dongle)
+{
+	int i;
+	for (i = 0; dongle_list[i].dongle != NULL; i++) {
+		if (strcmp(dongle_list[i].dongle, dongle) == 0)
+		       	return dongle_list[i].id;
+	}
+	return -1;
+}
+
+/******************************* MAIN *******************************/
 
 /*
  * Function main (argc, )
@@ -303,16 +597,81 @@ void start_tty(char *dev)
 int main(int argc, char *argv[]) 
 {
 	struct utsname buf;
-	int dongle = -1;
-	int c, fir;
+	int	tty = 0;	/* True if first arg is a tty */
+	int	modname = 0;	/* True is first arg is a module name */
+	int	dongle = -1;	/* Dongle type requested */
+	int	discovery = -1;	/* True if discovery requested */
+	int	c;
+	int	ret;
 
-	printf("%s\n", VERSION);
-	if (argc < 2) {
-		fputs("Usage: irattach <dev> [-d dongle] [-s]\n\n", stderr);
+	//printf("%s\n", VERSION);
+	if ((argc < 2) || (argc > 5)) {
+		print_usage();
+		exit(-1);
 	}
-	
+
+	/* First arg is device name */
+	strncpy(device, argv[1], 20);
+	device[20] = '\0';
+
+	/* Check if it's a tty */
+	if(strncmp("/dev", device, 4) == 0) {
+		tty = 1;
+	} else {
+		/* Check for a irda device name */
+		if((strncmp("irda", device, 4) == 0) &&
+		   (isdigit(device[4]))) {
+			/* May fail if no alias in /etc/modules.conf.
+			 * Ignore, because the user may load module by hand.
+			 * Jean II */
+			load_module(device);
+		} else {
+			/* This is a module name - currently experimental */
+			modname = 1;
+
+			/* Get list of devices associated with module */
+			/* This may fork as needed - Jean II */
+			get_module_devices(device);
+		}
+	}
+
+	/* Look for options */
+	while ((c = getopt(argc, argv, "d:hsv")) != -1) {
+		switch (c) {
+		case 's':
+		       	/* User wants to start discovery */
+			discovery = 1;
+			break;
+		case 'd':
+			dongle = get_dongle(optarg);
+			if (dongle == -1) {
+				fprintf(stderr,
+				       "Sorry, dongle not supported yet!\n");
+				print_usage();
+				exit(-1);
+			}	
+			break;
+		case 'v':
+			printf("Version: %s\n", VERSION);
+			exit(0);
+		case 'h':
+			print_usage();
+			exit(0);
+		default:
+			print_usage();
+			exit(-1);
+		}
+	}
+
+	/* Go as a background daemon */
 	fork_now();
 
+	/* --- Deamon mode --- */
+	/* We can no longer print out directly to the terminal, we
+	 * now must use the syslog facility.
+	 * Jean II */
+
+	/* Trap signals */
 	if (signal(SIGHUP, cleanup) == SIG_ERR)
 		syslog(LOG_INFO, "signal(SIGHUP): %m");
 	if (signal(SIGTERM, cleanup) == SIG_ERR)
@@ -320,66 +679,43 @@ int main(int argc, char *argv[])
 	if (signal(SIGINT, cleanup) == SIG_ERR)
 		syslog(LOG_INFO, "signal(SIGINT): %m");
 
-	strncpy(device, argv[1], 20);
-	if (strncmp("/dev", device, 4) == 0) {
+	/* If device is a tty */
+	/* We may want to move that before the fork() */
+	if (tty) {
+		/* Create tty channel */
 		start_tty(device);
-		fir = 0;
-	} else {
-		load_module(device);
-		fir = 1;
-	}
 
-	while ((c = getopt(argc, argv, "sd:v")) != -1) {
-		switch (c) {
-		case 's':
-		       	/* User wants to start discovery */
-			set_sysctl_param("discovery", "1");
-			break;
-		case 'd':
-			if (strcmp(optarg, "esi") == 0)
-				dongle = IRDA_ESI_DONGLE;
-			else if (strcmp(optarg, "tekram") == 0)
-				dongle = IRDA_TEKRAM_DONGLE;
-			else if (strcmp(optarg, "actisys") == 0)
-				dongle = IRDA_ACTISYS_DONGLE;
-			else if (strcmp(optarg, "actisys+") == 0)
-				dongle = IRDA_ACTISYS_PLUS_DONGLE;
-			else if (strcmp(optarg, "girbil") == 0)
-				dongle = IRDA_GIRBIL_DONGLE;
-			else if (strcmp(optarg, "litelink") == 0)
-				dongle = IRDA_LITELINK_DONGLE;
-			else if (strcmp(optarg, "airport") == 0)
-				dongle = IRDA_AIRPORT_DONGLE;
-			else if (strcmp(optarg, "old_belkin") == 0)
-				dongle = IRDA_OLD_BELKIN_DONGLE;
-			if (dongle == -1) {
-				syslog(LOG_ERR, 
-				       "Sorry, dongle not supported yet!");
-				exit(-1);
-			}	
-			ioctl(fd, IRTTY_IOCTDONGLE, dongle);
-			break;
-		case 'v':
-			printf("Version: %s\n", VERSION);
-			exit(-1);
-		}
-	}
-
-	/* Start the network interface */
-	if (fir) {
-		ifup(device);
-	} else {
-		if (ioctl(fd, IRTTY_IOCGNAME, &info) < 0)
+		/* Get device name corresponding to the tty */
+		if (ioctl(devfd, IRTTY_IOCGNAME, &info) < 0) {
 			syslog(LOG_ERR, "Are you using an old kernel?");
-		else {
-			strncpy(device, info.name, 20);
-			ifup(device);
+			clean_exit(-1);
 		}
+		strncpy(device, info.name, 20);
 	}
+
+	/* --- IrDA stack and IrDA port loaded loaded --- */
+	/* We can not assume that the IrDA stack is present before
+	 * this point, so all sysctl/ioctl must be done after here.
+	 * The real name of the device is also only known at this point.
+	 * Jean II */
+
+	/* If dongle is chosen -> bind dongle driver to the irda port */
+	if (dongle != -1) {
+		attach_dongle(devfd, device, dongle);
+  	}
 
 	/* Use hostname as device name */
 	if (uname(&buf) == 0)
 		set_sysctl_param("devname", strtok(buf.nodename, "."));
+
+	/* User may want to start discovery */
+	if(discovery > 0)
+		set_sysctl_param("discovery", "1");
+
+	/* Start the network interface */
+	ret = ifup(device);
+	if(ret < 0)
+		clean_exit(-1);
 
 	/*
 	 *  Loop forever and wait for kill or ctrl-C since closing this 
@@ -388,7 +724,7 @@ int main(int argc, char *argv[])
 	 *  really what we want :-)
 	 */
 	while (1)
-		sleep(2);
+		pause();
 
 	return 0;
 }

@@ -42,23 +42,11 @@
 
 #include <net/if.h>
 #include <linux/types.h>
+#include <irda.h>
 
 #ifndef AF_IRDA
 #define AF_IRDA 23
 #endif /* AF_IRDA */
-
-#define SIOCSDONGLE     SIOCDEVPRIVATE
-
-/* These are the currently known dongles */
-typedef enum {
-	TEKRAM_DONGLE,
-	ESI_DONGLE,
-	ACTISYS_DONGLE,
-	ACTISYS_PLUS_DONGLE,
-	GIRBIL_DONGLE,
-	LITELINK_DONGLE,
-	AIRPORT_DONGLE,
-} DONGLE_T;
 
 /*
  * Function main (argc, )
@@ -86,19 +74,27 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'd':
 			if (strcmp(optarg, "esi") == 0)
-				dongle = ESI_DONGLE;
+				dongle = IRDA_ESI_DONGLE;
 			else if (strcmp(optarg, "tekram") == 0)
-				dongle = TEKRAM_DONGLE;
+				dongle = IRDA_TEKRAM_DONGLE;
 			else if (strcmp(optarg, "actisys") == 0)
-				dongle = ACTISYS_DONGLE;
+				dongle = IRDA_ACTISYS_DONGLE;
 			else if (strcmp(optarg, "actisys+") == 0)
-				dongle = ACTISYS_PLUS_DONGLE;
+				dongle = IRDA_ACTISYS_PLUS_DONGLE;
 			else if (strcmp(optarg, "girbil") == 0)
-				dongle = GIRBIL_DONGLE;
+				dongle = IRDA_GIRBIL_DONGLE;
 			else if (strcmp(optarg, "litelink") == 0)
-				dongle = LITELINK_DONGLE;
+				dongle = IRDA_LITELINK_DONGLE;
 			else if (strcmp(optarg, "airport") == 0)
-				dongle = AIRPORT_DONGLE;
+				dongle = IRDA_AIRPORT_DONGLE;
+			else if (strcmp(optarg, "old_belkin") == 0)
+				dongle = IRDA_OLD_BELKIN_DONGLE;
+			else if (strcmp(optarg, "ep7211") == 0)
+				dongle = IRDA_EP7211_IR;
+			else if (strcmp(optarg, "mcp2120") == 0)
+				dongle = IRDA_MCP2120_DONGLE;
+			else if (strcmp(optarg, "act200l") == 0)
+				dongle = IRDA_ACT200L_DONGLE;
 			
 			if (dongle == -1) {
 				printf("Sorry, dongle not supported yet!\n");
