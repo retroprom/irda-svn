@@ -42,13 +42,13 @@ INSTALL_HEADER  = $(INSTALL_DATA)
 
 
 SOURCES1 = tosh1800-smcinit.c 
-SOURCES2 = tosh-smcinit.c 
+SOURCES2 = smcinit.c 
 SOURCES  = $(SOURCES1) $(SOURCES2) 
 OBJECTS1 = $(SOURCES1:%.c=%.o)
 OBJECTS2 = $(SOURCES2:%.c=%.o)
 OBJECTS  = $(OBJECTS1) $(OBJECTS2)
 TARGETS1 = tosh1800-smcinit
-TARGETS2 = tosh-smcinit
+TARGETS2 = smcinit
 TARGETS = $(TARGETS1) $(TARGETS2)
 
 
@@ -61,9 +61,9 @@ uninstall: uninstall-man uninstall-bin
 
 
 install-man:
+	$(INSTALL_DATA) smcinit.7 $(INSTALL_ROOT)$(PREFIX)/share/man/man7/smcinit.7
 	$(INSTALL_DATA) smcinit.8 $(INSTALL_ROOT)$(PREFIX)/share/man/man8/smcinit.8
 	$(INSTALL_DATA) tosh1800-smcinit.8 $(INSTALL_ROOT)$(PREFIX)/share/man/man8/tosh1800-smcinit.8
-	$(INSTALL_DATA) tosh5100-smcinit.8 $(INSTALL_ROOT)$(PREFIX)/share/man/man8/tosh5100-smcinit.8
     
 install-bin: all
 	$(INSTALL_PROGRAM) $(TARGETS1) $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS1)
@@ -71,9 +71,9 @@ install-bin: all
 
 
 uninstall-man:
+	rm -f $(INSTALL_ROOT)$(PREFIX)/share/man/man7/smcinit.7
 	rm -f $(INSTALL_ROOT)$(PREFIX)/share/man/man8/smcinit.8
 	rm -f $(INSTALL_ROOT)$(PREFIX)/share/man/man8/tosh1800-smcinit.8
-	rm -f $(INSTALL_ROOT)$(PREFIX)/share/man/man8/tosh5100-smcinit.8
 
 uninstall-bin:
 	rm -f $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS1)

@@ -1,9 +1,10 @@
-.TH SMCINIT "8" "April 2004" "0.4" "Linux IrDA"
+.TH SMCINIT "7" "April 2004" "0.4" "Linux IrDA"
 .SH NAME
-smcinit \- initialize the SMSC IrDA controler on various laptops
+smcinit \- initialize the IrDA controler on Toshiba laptops
 .SH SYNOPSIS
-smcinit
-.B [OPTIONS]
+.B tosh1800-smcinit
+or
+.B tosh-smcinit
 .SH DESCRIPTION
 .PP
 Toshiba Satellite 1800, Satellite 5100, Tecra 9100 laptops 
@@ -22,33 +23,6 @@ that initialize the LPC47N227 SuperIO allowing smc-ircc IrDA kernel driver
 to detect and use the SMSC chip.
 .PP
 My sole work was to put these utilities as one package, easy to install and use.
-.SH OPTIONS
-.TP 4
-.B -V, --version
-Show program version and exit
-.TP
-.B -h, --help
-Show a little help on options and exit
-.TP
-.B -v, --verbose
-Increase the details about actions performed
-.TP
-.B -s, --sirio IO
-Set the SIR (serial infrared) I/O port address to \fBIO\fR. Default
-value is \fI0x3f8\fR.
-.TP
-.B -f, --firio IO
-Set the FIR (fast infrared) I/O port address to \fBIO\fR. Default
-value is \fI0x130\fR.
-.TP
-.B -i, --firirq IRQ
-Set the FIR (fast infrared) IRQ line to \fBIRQ\fR. Default
-value is \fI3\fR.
-.TP
-.B -d, --firdma DMA
-Set the FIR (fast infrared) DMA channel to \fBDMA\fR. Default
-value is \fI3\fR.
-
 .SH CONFIGURATION
 .PP
 When system startup a script is run from \fI/etc/init.d\fR and which run appropriate
@@ -112,7 +86,7 @@ Thomas Pinz made improvements to \fBtosh-smcinit\fR (the former
 \fBtosh5100-smcinit\fR) to expand the number of Toshiba Satellite models
 supported.
 .SH "SEE ALSO"
-.BR smcinit (7),
+.BR tosh-smcinit (8),
 .br
 .BR tosh1800-smcinit (8),
 .br

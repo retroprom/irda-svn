@@ -42,7 +42,7 @@
 /* (*) */
 // #include "tosh-superio.h"
 
-#define PROGNAME "tosh-smcinit"
+#define PROGNAME "smcinit"
 #define AUTHOR "Thomas Pinz"
 #define AUTHOR_EMAIL "<tom_p (at) gmx.net>"
 

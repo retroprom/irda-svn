@@ -5,5 +5,7 @@ smcinitsuse.spec
 smcinitredhat.spec
 tosh1800-smcinit
 tosh5100-smcinit
+tosh-smcinit
 smcinit.lsm
 config.h
+smcinit

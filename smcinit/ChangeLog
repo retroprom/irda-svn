@@ -1,8 +1,19 @@
+2004-04-13 claudiuc 
+	* doc: Written man page for Thomas new smcinit, but still I need
+	to clean up old info.
+	* update: Thomas added more tweaks so we have more supported
+	laptops.
+	* fixes: getopt() fixes be me prevent crash when parsing command
+	line.
+	* rename: renamed tosh-smcinit.c to smcinit.c because it can be
+	used not only with Toshiba laptops, but at least with any 
+	LPC 47Nxxx SMSC-based chipset
+	
 2003-07-10 claudiuc 
 	* doc: added README.Tom from Thomas Pinz
 	* improvement: added tosh-smcinit.c and tosh-superio.h from Thomas
 	Pinz which will replace the tosh5100-smcinit.c
-	
+
 2003-07-10 claudiuc 0.3-1 release
 
 2003-07-10 claudiuc 
