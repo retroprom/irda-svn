@@ -154,7 +154,7 @@ fixes</A>&nbsp;: Use SET_MODULE_OWNER() in various IrDA drivers.
 wrapper</A>&nbsp;: optimise the SIR wrapper (stuff/unstuff bytes) for
 better performance. Will only decrease the CPU overhead, not the
 network overhead. <I>Improved version</I>. Also add the optional
-ZeroCopy-Rx mechanism for drivers that support it (like this <li><a href="http://irda.sourceforge.net/ftp/patches/2.5.x/ir256_sir-dev_wrapper-3.diff">experimental patch for
+ZeroCopy-Rx mechanism for drivers that support it (like this <a href="http://irda.sourceforge.net/ftp/patches/2.5.x/ir256_sir-dev_wrapper-3.diff">experimental patch for
 sir-dev</A>).
 
 <LI><li><a href="http://irda.sourceforge.net/ftp/patches/2.5.x/ir254_secondary_rr.diff">Fix secondary nack
