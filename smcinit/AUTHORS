@@ -22,3 +22,6 @@ Claudiu Costin <claudiuc@kde.org>
  - manual pages, various cleanups, RPM package and 
  Linux distros integration
 
+Jérôme Fenal <jfenal@free.fr>
+
+ - autoconf/automake, code cleanup, auto-discovery of entry point 
