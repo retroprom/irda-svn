@@ -99,7 +99,7 @@ fix bugs:
   <td>none</td>
 </tr>
 <tr bgcolor="#ffffe7" valign="top">
-  <td>Toshiba Satellite 2410-303</td>
+  <td>Toshiba Satellite 5100</td>
   <td>Gentoo Linux</td>
   <td>Paul Kirk &lt;paolokirk&nbsp;<nobr>@</nobr>&nbsp;yahoo.com&gt;</td>
   <td>none</td>
@@ -145,7 +145,7 @@ for any recent Linux distribution.
   glibc-2.3.2-11.9
   glibc-kernheaders-2.4-8.10</pre>
 
-<p>Here are relevant packages to compile on <b>Gentoo Linux</b>:
+<p>Here are relevant packages to compile on <b>Gentoo Linux</b> &gt 1.4:
 <pre>  sys-apps/pciutils-2.1.10-r1
   sys-devel/gcc-3.2.3-r1
   sys-libs/glibc-2.3.2-r1</pre>

@@ -2,14 +2,14 @@
 # status: yes, no, unk, work
 
 :::begin
-unk
+yes
 Crystal CS8130
-http://www.cirrus.com/products/overviews/cs8130.html
+http://www.cirrus.com/en/products/pro/detail/P61.html
 The CS8130 is an infrared transceiver integrated circuit.
 Product features: adds IR port to standard UART;
 IrDA, HPSIR, ASK (CW) and TV remote compatible;
 1200bps to 115kbps data rate. External PIN diode and 
-transmit LED are required.
+transmit LED are required. [<a href="#note1">note1</a>]
 :::end
 
 :::begin

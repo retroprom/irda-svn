@@ -1,61 +1,19 @@
 
 #include <tags.inc>
-#include <chipsets.pl>
 
 <set-var title="Linux-IrDA Project - Resources - Chipsets" />
 <set-var selected="resources" />
 <set-var subselected="chipsets" />
 
-#include <pre-h.inc>
 
-<divert HEAD>
-<navbar:jsfuncs>
+<divert MENU>
+<navbar:render name="resourcesmenu" select="<get-var subselected />">
 </divert>
 
-#include <inside-head.inc>
 
-<div align="center">
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
- <tr>
-   <td width="30"><img src="$(ROOT)img/i1.png" width="30" height="1"></td>
-   <td bgcolor="#000000" width="100"><px width="1" height="1"></td>
-   <td bgcolor="#000000" width="10"><px width="10" height="1"></td>
-   <td bgcolor="#000000" width="100%"><px width="1" height="1"></td>
-   <td width="16"><img src="$(ROOT)img/i4.png" width="16" height="1"></td>
- </tr>
- <tr>
-   <td width="30" background="$(ROOT)img/i3.png"><px width="30" height="1"></td>
-   <td valign="top" width="100" bgcolor="#ffe496">
-     <table cellspacing="0" cellpadding="0" border="0">
-       <tr>
-         <td><img src="$(ROOT)img/item-<get-var selected />.png" width="100" height="110"></td>
-       </tr>
-       <tr>
-         <td bgcolor="#ffe496"><px width="100" height="20"></td>
-       </tr>
-<navbar:render name="mainmenu2" select="<get-var selected />">
-       <tr>
-         <td bgcolor="#ffe496"><px width="100" height="20"></td>
-       </tr>
-       <tr>
-         <td bgcolor="#000000"><px width="100" height="1"></td>
-       </tr>
-       <tr>
-         <td><navbar:render name="resourcesmenu" select="<get-var subselected />"></td>
-       </tr>
-       <tr>
-         <td bgcolor="#000000"><px width="100" height="1"></td>
-       </tr>
-       <tr>
-         <td bgcolor="#ffe496"><px width="100" height="20"></td>
-       </tr>
-     </table>
-   </td>   
-   <td bgcolor="#ffe496"><px width="10" height="1"></td>
-   <td bgcolor="#ffe496" valign="top" width="100%">
+<divert CONTENT>
 
-
-<h2>Chipsets</h2>
+<h1>Chipsets</h1>
 
 <p>
 Here is list of IrDA chipsets and their functional status relative to
@@ -64,6 +22,7 @@ chipsets to have acurate listing. Also if you're a Linux-IrDA developer
 or contributor, inform me when the information presented here is
 outdated.
 
+<p>
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#777777" width="90%" align="center"><tr><td>
 <table border="0" cellpadding="2" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
@@ -78,36 +37,44 @@ outdated.
 
 <p>
 <b>Legend:</b><br>
-&nbsp;&nbsp;<img src="$(ROOT)img/yes.gif" width="16" height="16"> - 
-good or satisfactory support exist for that chipset
-<br>
-&nbsp;&nbsp;<img src="$(ROOT)img/no.gif" width="16" height="16"> - 
-currently nobody work to make a driver for that chipset
-<br>
-&nbsp;&nbsp;<img src="$(ROOT)img/work.gif" width="16" height="16"> - 
-there's work in progress for supporting the chipset in Linux-IrDA
-<br>
-&nbsp;&nbsp;<img src="$(ROOT)img/unk.gif" width="16" height="16"> - 
-nothing clear or known about chipset support in Linux kernel
-
-
-
-   </td>     
-   <td background="$(ROOT)img/i4.png" width="16"><px width="16" height="1"></td>
- </tr>
- <tr>
-   <td><img src="$(ROOT)img/i6.png" width="30" height="60"></td>
-   <td><img src="$(ROOT)img/i5.png" width="100" height="60"></td>
-   <td background="$(ROOT)img/i7.png"><px width="10" height="60"></td>
-   <td background="$(ROOT)img/i7.png"><px width="1" height="60"></td>
-   <td width="16"><img src="$(ROOT)img/i8.png" width="16" height="60"></td>
- </tr>
+<table border="0" cellspacing="3" cellpadding="1">
+<tr>
+  <td>&nbsp;&nbsp;</td>
+  <td><img src="$(ROOT)img/yes.gif" width="16" height="16"></td>
+  <td>- good or satisfactory support exist for that chipset</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;</td>
+  <td><img src="$(ROOT)img/no.gif" width="16" height="16"></td>
+  <td>- currently nobody work to make a driver for that chipset</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;</td>
+  <td><img src="$(ROOT)img/work.gif" width="16" height="16"></td>
+  <td>- there's work in progress for supporting the chipset in Linux-IrDA</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;</td>
+  <td><img src="$(ROOT)img/unk.gif" width="16" height="16"></td>
+  <td>- nothing clear or known about chipset support in Linux kernel</td>
+</tr>
 </table>
-</div>
 
+<p>
+<b>Notes:</b><br>
+<table border="0" cellspacing="3" cellpadding="1">
+<tr valign="top">
+  <td>&nbsp;&nbsp;</td>
+  <td><a name="note1"></a><font color="#1c5be5">note1</font></td>
+  <td>Kevin Turner &lt;kevin<nobr> @ </nobr>redcellx.com&gt; says: <i>"If you crack one of those Actisys ACT-IR200L
+	dongles open, you'll find there's a CS8130 inside.  Since the CS8130
+	interfaces with a UART, if you can claim support for the dongles, you
+	can most likely claim support for the chipset too"</i></td>
+</tr>
+</table>
 
-#include <inside-bottom.inc>
+</divert>
 
+#include <layout2.inc>
 
-#include <post-h.inc>
 
