@@ -20,16 +20,18 @@ DIE=0
 }
 
 # Check for libtool
-(libtool --version | egrep "1.2") > /dev/null || {
-	(libtool --version | egrep "1.3") > /dev/null || {
-		echo
-		echo "You must have at minimum libtool version 1.2 installed"
-		echo "to compile irdadump. Download the appropriate package for"
-		echo "your distribution, or get the source tarball at"
-		echo "ftp://alpha.gnu.org/gnu/libtool-1.2d.tar.gz"
-		DIE=1
-	}
-}
+case `libtool --version` in
+*" "1.[23456]*)
+	;;
+*)
+	echo
+	echo "You must have at minimum libtool version 1.2 installed"
+	echo "to compile irdadump. Download the appropriate package for"
+	echo "your distribution, or get the source tarball at"
+	echo "ftp://alpha.gnu.org/gnu/libtool-1.2d.tar.gz"
+	DIE=1
+	;;
+esac
 
 # Check for automake, the required version is set in Makefile.am
 (automake --version) < /dev/null > /dev/null 2>&1 ||{

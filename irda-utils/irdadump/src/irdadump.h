@@ -115,6 +115,31 @@
 #define IAS_OCT_SEQ 2
 #define IAS_STRING  3
 
+/* LAP parameters definitions (high bit masked) */
+#define PI_BAUD_RATE     0x01
+#define PI_MAX_TURN_TIME 0x02
+#define PI_DATA_SIZE     0x03
+#define PI_WINDOW_SIZE   0x04
+#define PI_ADD_BOFS      0x05
+#define PI_MIN_TURN_TIME 0x06
+#define PI_LINK_DISC     0x08
+
+#define IR_115200_MAX 0x3f
+
+/* Baud rates (first byte) */
+#define IR_2400     0x01
+#define IR_9600     0x02
+#define IR_19200    0x04
+#define IR_38400    0x08
+#define IR_57600    0x10
+#define IR_115200   0x20
+#define IR_576000   0x40
+#define IR_1152000  0x80
+
+/* Baud rates (second byte) */
+#define IR_4000000  0x01
+#define IR_16000000 0x02
+
 struct xid_frame {
 	guint8  caddr; /* Connection address */
 	guint8  control;
@@ -171,35 +196,45 @@ struct snrm_frame {
 	guint8  params[0];
 } __attribute__((packed));
 
-#define MAX_CONNECTIONS 10
+#define MAX_CONNECTIONS 15
 
 struct ias_query {
 	guint8 lsap_sel;
 	int ttp;
 	int obex;
 	int ircomm;
+	int irnet;
 };
 
 struct lsap_state {
 	gboolean valid;      /* Is this a valid connection */
 	gboolean ttp;        /* True if TTP connection */
 	gboolean obex;       /* True if OBEX connection */	
-	gboolean obex_rsp;   /* Is this an OBEX response */
-	gboolean ircomm;
+	gboolean ircomm;     /* True if IrCOMM/IrLTP connection */
+	gboolean irnet;      /* True if IrNET connection */
 	guint32  saddr;      /* Source device address */
 	guint32  daddr;      /* Destination device address */
 	guint8   slsap_sel;  /* Source logical service access point */
 	guint8   dlsap_sel;  /* Destination logical service access point */
+	guint8   caddr;      /* LAP connection address (for garbage collect) */
 };
 
-inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
-		       int cmd);
-inline void parse_irlmp(GNetBuf *buf, GString *str, int type, int cmd);
+inline void parse_obex(GNetBuf *buf, GString *str, int cmd);
+inline void parse_irlmp(GNetBuf *buf, GString *str,
+			guint8 caddr, int type, int cmd);
 inline void parse_ui_irlmp(GNetBuf *buf, GString *str, int type);
+void parse_ircomm_params(guint8 clen, GNetBuf *buf, GString *str);
+void parse_ircomm_connect(GNetBuf *buf, GString *str);
+void parse_ircomm_lmp(GNetBuf *buf, GString *str);
+void parse_ircomm_ttp(GNetBuf *buf, GString *str);
+int find_connection(guint8 slsap_sel, guint8 dlsap_sel);
+int find_free_connection(void);
+
+extern int config_print_diff;
+extern int config_dump_frame;
+extern int config_snaplen;
+extern int config_dump_bytes;
+extern int config_snapcols;
+extern int config_force_ttp;
 
 #endif /* IRDADUMP_H */
-
-
-
-
-

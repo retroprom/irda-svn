@@ -32,6 +32,7 @@
 #include "obex.h"
 
 #include <stdio.h>
+#include <netinet/in.h>		/* ntohs */
 
 void unicode_to_char(guint8 *buf)
 {
@@ -93,7 +94,7 @@ int parse_obex_header(GNetBuf *buf, GString *str, int istext)
 		memcpy(&tmp_int, buf->data+1, 4); /* Align value */
 		len += 5;
 		/* printf("%ld ", ntohl(tmp_int));fflush(stdout); */
-		g_string_sprintfa(str, "%ld ", GINT32_FROM_BE(tmp_int));
+		g_string_sprintfa(str, "%d ", GINT32_FROM_BE(tmp_int));
 		break;
 	default:
 		g_print("******");fflush(stdout);
@@ -245,11 +246,8 @@ inline void parse_obex_success(GNetBuf *buf, GString *str)
  *
  *    Parse OBEX commands and responses
  *
- * Note : in the case of Ultra frames, this function will be called
- * with (conn == NULL). We should handle that gracefully.
  */
-inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
-		       int cmd)
+inline void parse_obex(GNetBuf *buf, GString *str, int cmd)
 {
 	guint8	opcode;
 	int	len;

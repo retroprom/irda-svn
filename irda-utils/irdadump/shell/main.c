@@ -32,6 +32,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>	/* strdup */
 
 #include <glib.h>
 
@@ -40,7 +41,11 @@ extern int irdadump_loop(GString *);
 
 extern int config_print_diff;
 extern int config_dump_frame;
-extern int snaplen;
+extern int config_snaplen;
+extern int config_dump_bytes;
+extern int config_snapcols;
+extern int config_force_ttp;
+extern int config_force_obex;
 
 int packets = 0;
 
@@ -60,8 +65,19 @@ int main(int argc, char *argv[])
 	char *ifdev = NULL;
 	int fd, c;
 
-	while ((c = getopt(argc, argv, "i:dxs:l?")) != -1) {
+	while ((c = getopt(argc, argv, "i:bc:dxs:tol?")) != -1) {
 		switch (c) {
+		case 'b': /* Dumb bytes */
+			config_dump_bytes = 1;
+			break;
+		case 'c': /* set snapcols for byte printing */
+ 			c = atoi(optarg);
+ 			if (c <= 0) {
+				config_snapcols = 16;
+			} else {
+ 				config_snapcols = c ;
+ 			}
+			break;
 		case 'd': /* Print diffs */
 			config_print_diff = 1;
 			break;
@@ -71,12 +87,13 @@ int main(int argc, char *argv[])
 		case 's': /* set snaplen for printing */
  			c = atoi(optarg);
  			if (c <= 0) {
-				fprintf(stderr,
-					"Not a valid value for -s: %s\n",
-					optarg);
+				config_snaplen = 2050;
 			} else {
- 				snaplen = c ;
+ 				config_snaplen = c ;
  			}
+		case 't': /* Force TTP decoding of unknown connections */
+			config_force_ttp = 1;
+			break;
  		case 'l': /* Set linebuffering */
  			setlinebuf(stdout);
  			break;
@@ -88,12 +105,14 @@ int main(int argc, char *argv[])
 			printf("Using interface: %s\n", ifdev);
 			break;
  		case '?': /* usage */
-			fprintf(stderr,"Usage: %s [-d] [-x] [-i device]\n", 
+			fprintf(stderr,"Usage: %s [-d] [-x] [-b] [-s <n>] [-c <n>] [-i device]\n", 
 				argv[0]);
  			fprintf(stderr,"\t-d\tPrint diffs\n");
  			fprintf(stderr,"\t-l\tSet line buffering on output file.\n");
-			fprintf(stderr,"\t-s <n>\tSet snaplen for -x\n");
- 			fprintf(stderr,"\t-x\tDump frame\n");
+			fprintf(stderr,"\t-s <n>\tSet snaplen for -x & -b\n");
+ 			fprintf(stderr,"\t-x\tDump frame (bytes + ascii)\n");
+ 			fprintf(stderr,"\t-b\tDump bytes in columns\n");
+			fprintf(stderr,"\t-c <n>\tSet number of colums for -b\n");
  			exit(1);
 		default:
 			break;

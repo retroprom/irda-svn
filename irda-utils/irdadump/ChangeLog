@@ -1,0 +1,14 @@
+2002-04-04  JeanII
+	* Fix and enable IrCOMM decoding (including IrLPT)
+	* Add Extra IrCOMM parameters
+	* IrNET decoding (minimal)
+	* Decode IrLAP QoS parameters (on snrm:cmd & ua:rsp)
+
+2002-04-03  JeanII
+	* Add dump_bytes format (idea from Timothy Kilbourn)
+	* Negative snaplen set to max (2050 bytes)
+	* Add forcing TTP decoding
+	* Garbage collect TTP connections on LAP closure
+		This doesn't fix all problems, but is an improvement
+	* Move TTP decoding in irlmp.c
+	* Properly remove LMP control header (-> decode TTP connect properly)

@@ -31,10 +31,13 @@
 #include <net/if_packet.h>
 #include <net/if.h>
 #include <netinet/if_ether.h>
+#include <netinet/in.h>		/* htons */
 
 #include <netpacket/packet.h>
 
 #include <stdint.h>
+#include <string.h>		/* strncpy */
+#include <stdio.h>		/* perror */
 #include <irda.h>
 
 #include "irdadump.h"
@@ -43,6 +46,10 @@ int config_print_diff = 0;
 int config_dump_frame = 0;
 int config_print_irlmp = 1;
 int config_print_lost_frames = 0;
+int config_snaplen = 32;
+int config_dump_bytes = 0;
+int config_snapcols = 16;
+int config_force_ttp = 0;
 
 int self_nr = 0;
 int self_ns = 0;
@@ -50,10 +57,9 @@ int peer_nr = 0;
 int peer_ns = 0;
 
 int verbose = 0;
-int snaplen = 32;
 int ifindex = 0;
 
-GNetBuf *buf;
+GNetBuf *frame_buf;
 struct sockaddr_ll from;
 struct timeval time1, time2;
 struct timeval *curr_time, *prev_time, *tmp_time;
@@ -70,14 +76,14 @@ int conn_cache = -1;
  *    Print current time
  *
  */
-inline void print_time(const struct timeval *time, GString *str)
+inline void print_time(const struct timeval *timev, GString *str)
 {
         int s;
 	
-	s = (time->tv_sec) % 86400;
+	s = (timev->tv_sec) % 86400;
 	g_string_sprintfa(str, "%02d:%02d:%02d.%06u ", 
 			  s / 3600, (s % 3600) / 60, 
-			  s % 60, (u_int32_t) time->tv_usec);
+			  s % 60, (u_int32_t) timev->tv_usec);
 }
 
 /*
@@ -86,19 +92,19 @@ inline void print_time(const struct timeval *time, GString *str)
  *    Print the difference in time between this frame and the previous one
  *
  */
-inline void print_diff_time(struct timeval *time, struct timeval *prev_time, 
+inline void print_diff_time(struct timeval *timev, struct timeval *prev_timev, 
 			    GString *str)
 {
 	float diff;
 	
-	if (prev_time->tv_usec > time->tv_usec) {
-		time->tv_usec += 1000000;
-		time->tv_sec--;
+	if (prev_timev->tv_usec > timev->tv_usec) {
+		timev->tv_usec += 1000000;
+		timev->tv_sec--;
 	}
-	prev_time->tv_usec = time->tv_usec - prev_time->tv_usec;
-	prev_time->tv_sec  = time->tv_sec - prev_time->tv_sec;
+	prev_timev->tv_usec = timev->tv_usec - prev_timev->tv_usec;
+	prev_timev->tv_sec  = timev->tv_sec - prev_timev->tv_sec;
 	
-	diff = ((float) prev_time->tv_sec * 1000000 + prev_time->tv_usec)
+	diff = ((float) prev_timev->tv_sec * 1000000 + prev_timev->tv_usec)
 		/ 1000.0;
 	
 	g_string_sprintfa(str, "(%07.2f ms) ", diff);
@@ -110,7 +116,7 @@ inline void print_diff_time(struct timeval *time, struct timeval *prev_time,
  *    
  *
  */
-inline int find_connection(guint8 slsap_sel, guint8 dlsap_sel)
+int find_connection(guint8 slsap_sel, guint8 dlsap_sel)
 {
 	int i;
 
@@ -136,7 +142,7 @@ inline int find_connection(guint8 slsap_sel, guint8 dlsap_sel)
  *    Find free slot for a new connection
  *
  */
-inline int find_free_connection(void)
+int find_free_connection(void)
 {
 	gint i;
 	
@@ -148,48 +154,135 @@ inline int find_free_connection(void)
 }
 
 /*
- * Function parse_irttp (buf, str)
+ * Function garbage_connection ()
  *
- *    Parse IrTTP data frame
+ *    Garbage collect destroyes LAP connections
  *
  */
-inline void parse_irttp(GNetBuf *buf, GString *str) 
+inline void garbage_connection(guint8 caddr)
 {
-	g_string_sprintfa(str, "TTP credits=%d ", buf->data[0] & 0x7f);
+	gint i;
+	
+	for (i=0;i<MAX_CONNECTIONS;i++) {
+		if (conn[i].caddr == caddr)
+			conn[i].valid = 0;
+	}
+}
 
-	if (buf->data[0] & 0x80)
-		g_string_append(str, "More ");
+static inline guint bytes_to_uint(unsigned char *buf)
+{
+	guint	ret;
+	ret = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
+	return(ret);
+}
 
-	/* Remove TTP header */
-	g_netbuf_pull(buf, 1);
+guint32 min_turn_times[]  = { 10000, 5000, 1000, 500, 100, 50, 10, 0 }; /* us */
+guint32 baud_rates[]      = { 2400, 9600, 19200, 38400, 57600, 115200, 576000, 
+			      1152000, 4000000, 16000000 };        /* bps */
+guint32 data_sizes[]      = { 64, 128, 256, 512, 1024, 2048 };     /* bytes */
+guint32 add_bofs[]        = { 48, 24, 12, 5, 3, 2, 1, 0 };         /* bytes */
+guint32 max_turn_times[]  = { 500, 250, 100, 50 };                 /* ms */
+guint32 link_disc_times[] = { 3, 8, 12, 16, 20, 25, 30, 40 };      /* secs */
+guint32 window_sizes[]    = { 1, 2, 3, 4, 5, 6, 7, 0 };            /* frames */
+
+/*
+ * Function index_value (index, array)
+ *
+ *    Returns value to index in array, easy!
+ *
+ */
+static inline guint32 index_value(int bit_index, guint32 *array) 
+{
+	return array[bit_index];
 }
 
 /*
- * Function parse_irttp_connect (buf, str)
+ * Function msb_index (word)
  *
- *    Parse IrTTP connect frame
+ *    Returns index to most significant bit (MSB) in word
  *
  */
-inline void parse_irttp_connect(GNetBuf *buf, GString *str)
+int msb_index (guint16 word) 
 {
-	guint8 plen, pi, pl;
-	guint16 tmp_cpu;
-
-	g_string_sprintfa(str, "TTP credits=%d", buf->data[0] & 0x7f);
-
-	if (buf->data[0] & 0x80) {
-		plen = buf->data[1];
-		pi   = buf->data[2];
-		pl   = buf->data[3];
-
-		memcpy(&tmp_cpu, buf->data+4, 2); /* Align value */
-		tmp_cpu = GUINT16_FROM_BE(tmp_cpu); /* Convert to host order */
-
-		g_netbuf_pull(buf, plen);
-
-		g_string_sprintfa(str, "MaxSduSize=%d ", tmp_cpu);
+	guint16 msb = 0x8000;
+	int bit_index = 15;   /* Current MSB */
+	
+	while (msb) {
+		if (word & msb)
+			break;   /* Found it! */
+		msb >>=1;
+		bit_index--;
 	}
+	return bit_index;
 }
+
+static inline guint32 byte_value(guint16 byte, guint32 *array) 
+{
+	int bit_index;
+
+	bit_index = msb_index(byte);
+
+	return index_value(bit_index, array);
+}
+
+void parse_irlap_params(guint8 clen, GNetBuf *buf, GString *str)
+{
+	guint pi, pl;
+	guint pv_byte;
+	guint n = 0;
+
+	g_string_append(str, "\n\tLAP QoS: ");
+
+	while (n < clen) {
+		pi = buf->data[n] & 0x7f; /* Remove critical bit */
+		pl = buf->data[n+1];
+		
+		switch (pi) {
+		case PI_BAUD_RATE:
+			pv_byte = buf->data[n+2];
+			if(pl >= 2)
+				pv_byte |= buf->data[n+3] << 8;
+			g_string_sprintfa(str, "Baud Rate=%dbps ",
+					  byte_value(pv_byte, baud_rates));
+			break;
+		case PI_MAX_TURN_TIME:
+			pv_byte = buf->data[n+2];
+			g_string_sprintfa(str, "Max Turn Time=%dms ",
+					  byte_value(pv_byte, max_turn_times));
+			break;
+		case PI_DATA_SIZE:
+			pv_byte = buf->data[n+2];
+			g_string_sprintfa(str, "Data Size=%dB ",
+					  byte_value(pv_byte, data_sizes));
+			break;
+		case PI_WINDOW_SIZE:
+			pv_byte = buf->data[n+2];
+			g_string_sprintfa(str, "Window Size=%d ",
+					  byte_value(pv_byte, window_sizes));
+			break;
+		case PI_ADD_BOFS:
+			pv_byte = buf->data[n+2];
+			g_string_sprintfa(str, "Add BOFS=%d ",
+					  byte_value(pv_byte, add_bofs));
+			break;
+		case PI_MIN_TURN_TIME:
+			pv_byte = buf->data[n+2];
+			g_string_sprintfa(str, "Min Turn Time=%dus ",
+					  byte_value(pv_byte, min_turn_times));
+			break;
+		case PI_LINK_DISC:
+			pv_byte = buf->data[n+2];
+			g_string_sprintfa(str, "Link Disc=%ds ",
+					  byte_value(pv_byte, link_disc_times));
+			break;
+		default:
+			break;
+		}
+		n += pl+2;
+	}
+	g_netbuf_pull(buf, clen);
+}
+
 /*
  * Function parse_hints (hint)
  *
@@ -323,7 +416,7 @@ inline void parse_i_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	
 	/* Check if we should print IrLMP information */
 	if (config_print_irlmp)
-		parse_irlmp(buf, str, type, cmd);
+		parse_irlmp(buf, str, caddr, type, cmd);
 
 
 	if (config_print_lost_frames) {
@@ -505,6 +598,7 @@ inline void parse_ua_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 {
 	struct ua_frame *frame = (struct ua_frame *) buf->data;
 	gint32 saddr, daddr;
+	int	len;
 	
 	saddr = GINT32_FROM_LE(frame->saddr);
 	daddr = GINT32_FROM_LE(frame->daddr);
@@ -515,6 +609,13 @@ inline void parse_ua_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	else
 		g_string_sprintfa(str, "ua:%s ca=%02x pf=%d %08x < %08x ", 
 				  cmd?"cmd":"rsp", caddr, pf, daddr, saddr);
+	/* Remove IrLAP header */
+	g_netbuf_pull(buf, sizeof(struct ua_frame));
+	/* Check for I field */
+	len = g_netbuf_get_len(buf);
+	if(len != 0) {
+		parse_irlap_params(len, buf, str);
+	}
 }
 
 /*
@@ -528,6 +629,8 @@ inline void parse_disc_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 {
 	g_string_sprintfa(str, "disc:%s %s ca=%#02x pf=%d ", 
 			  cmd ? "cmd" : "rsp", type ? ">" : "<", caddr, pf);
+	/* LAP is closing, remove all zombies connections on this LAP */
+	garbage_connection(caddr);
 }
 
 /*
@@ -552,7 +655,7 @@ inline void parse_dm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 inline void parse_rd_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
 			   GNetBuf *buf, GString *str)
 {
-	g_string_sprintf(str, "rd:%s %s ca=%#02x pf=%d ", cmd?"cmd":"rsp", 
+	g_string_sprintfa(str, "rd:%s %s ca=%#02x pf=%d ", cmd?"cmd":"rsp", 
 			 type ? ">" : "<", caddr, pf);	
 }
 
@@ -588,6 +691,7 @@ inline void parse_snrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	struct snrm_frame *frame = (struct snrm_frame *) buf->data;
 	gint32 saddr, daddr;
 	guint8 new_caddr;
+	int	len;
 
 	saddr = GINT32_FROM_LE(frame->saddr);
 	daddr = GINT32_FROM_LE(frame->daddr);
@@ -603,6 +707,13 @@ inline void parse_snrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	       g_string_sprintfa(str, "snrm:%s ca=%02x pf=%d %08x < "
 				 "%08x new-ca=%02x ", cmd ? "cmd" : "rsp", 
 				 caddr, pf, daddr, saddr, new_caddr);
+	/* Remove IrLAP header */
+	g_netbuf_pull(buf, sizeof(struct snrm_frame));
+	/* Check for I field */
+	len = g_netbuf_get_len(buf);
+	if(len != 0) {
+		parse_irlap_params(len, buf, str);
+	}
 }
 
 /*
@@ -765,7 +876,7 @@ int irdadump_init(char *ifdev)
 		ifindex = ifr.ifr_ifindex;
 	}
 
-	buf = g_netbuf_new(MAX_FRAME_SIZE);
+	frame_buf = g_netbuf_new(MAX_FRAME_SIZE);
 
 	return fd;
 }
@@ -782,9 +893,9 @@ int irdadump_loop(GString *str)
 
 	fromlen = sizeof(struct sockaddr_ll);
 	
-	g_netbuf_recycle(buf);
+	g_netbuf_recycle(frame_buf);
 	
-	len = recvfrom(fd, buf->data, MAX_FRAME_SIZE, 0, 
+	len = recvfrom(fd, frame_buf->data, MAX_FRAME_SIZE, 0, 
 		       (struct sockaddr *) &from, &fromlen);
 	if (len < 0) {
 		g_message("recvfrom");
@@ -804,7 +915,7 @@ int irdadump_loop(GString *str)
 		return -1;
 
 	/* Data should be fine now */
-	g_netbuf_put(buf, len);
+	g_netbuf_put(frame_buf, len);
 
 	/* Get time from packet */
 	if (ioctl(fd, SIOCGSTAMP, curr_time) < 0) {
@@ -821,7 +932,7 @@ int irdadump_loop(GString *str)
 		prev_time = curr_time;
 		curr_time = tmp_time;
 	}
-	parse_irda_frame(from.sll_pkttype, buf, str);
+	parse_irda_frame(from.sll_pkttype, frame_buf, str);
 	
         g_string_sprintfa(str, "(%d) ", len);
 
@@ -830,22 +941,29 @@ int irdadump_loop(GString *str)
 		char c;
 
 		g_string_append(str, "\n\t");
-		maxlen = (len < snaplen) ? len : snaplen;
+		maxlen = (len < config_snaplen) ? len : config_snaplen;
 		
 		for (i=0;i<maxlen;i++)
-			g_string_sprintfa(str, "%02x", buf->head[i]);
+			g_string_sprintfa(str, "%02x", frame_buf->head[i]);
 		g_string_append(str, "\n\t");
 		
 		for (i=0;i<maxlen;i++) {
-			c = buf->head[i];
+			c = frame_buf->head[i];
 			if (c < 32 || c > 126) 
 				c='.';
 			g_string_sprintfa(str, " %c", c);
 		}
 	}
+	if (config_dump_bytes) {
+		int i, maxlen;
+
+		maxlen = (len < config_snaplen) ? len : config_snaplen;
+		
+		for (i=0;i<maxlen;i++) {
+			if((i % config_snapcols) == 0)
+				g_string_append(str, "\n\t");
+			g_string_sprintfa(str, "%02x ", frame_buf->head[i]);
+		}
+	}
 	return 0;
 }
-
-
-
-

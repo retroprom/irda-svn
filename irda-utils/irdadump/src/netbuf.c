@@ -284,7 +284,7 @@ void g_netbuf_trim(GNetBuf *msg, guint len)
 
 void g_netbuf_print(GNetBuf *msg)
 {
-	gint i;
+	guint i;
 
 	for (i=0; i<msg->len; i++)
 		g_print("%02x", msg->data[i]);
