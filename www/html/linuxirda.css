@@ -1,0 +1,17 @@
+body, p, td, th, ul, ol, li, dd, dl, dt, h1, h2, h3, h4, h5, h6,
+address
+{ 
+  font-family: arial, helvetica, sans-serif; 
+}
+
+pre, code, tt
+{ 
+  font-family: courier, serif;  
+}
+
+
+a:link     { text-decoration: none; }
+a:visited  { text-decoration: none; }
+a:active   { text-decoration: none; }
+a:hover    { text-decoration: none; }
+

@@ -1,0 +1,87 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project" />
+<set-var selected="" />
+
+#include <pre-h.inc>
+
+<divert HEAD>
+<navbar:jsfuncs>
+</divert>
+
+<div align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="640">
+ <tr>
+   <td><img src="$(ROOT)img/part11.png" width="640" height="1"></td>
+ </tr>
+ <tr>
+   <td>
+     <table cellspacing="0" cellpadding="0" border="0" width="640">
+       <tr>
+         <td background="$(ROOT)img/part9.png" width="30"><px width="30" height="1"></td>
+         <td bgcolor="#ffe496" width="508"><f1>
+           Welcome to the Linux-IrDA project. The overall goal of this project is to 
+           make an implementation of the 
+           <a href="http://www.irda.org/">IrDA</a><sup><font size="-2">TM</font></sup> 
+           standards specifications for the Linux kernel. The code is licensed under 
+           the GNU Public licence (GPL) and is now included in Linux 2.2.x and 
+           2.4.x kernel series.<br>
+         </f1></td>
+         <td background="$(ROOT)img/part12.jpg" width="304"><px width="304" height="110"></td>
+       </tr>
+     </table> 
+   
+   </td>
+ </tr>
+ <tr>
+   <td><img src="$(ROOT)img/part2.jpg" width="640" height="59"></td>
+ </tr>
+ <tr>
+   <td>
+     <table cellspacing="0" cellpadding="0" border="0" width="640">
+       <tr>
+         <td background="$(ROOT)img/part9.png" width="30"><px width="30" height="1"></td>
+         <td bgcolor="#ffe496" width="508"><f1>
+           IrDA<sup><font size="-2">TM</font></sup> (Infrared Data Association) 
+           is an industry standard for infrared wireless communication. 
+           Most laptops sold today are equipped with an IrDA compliant infrared 
+           transceiver, which enables you to communicate with devices such as 
+           printers, modems, fax, LAN, and other laptops. 
+           Speeds range from 2400bps-4Mbps.
+         </f1></td>
+         <td background="$(ROOT)img/part10.png" width="102"><px width="102" height="1"></td>
+       </tr>
+     </table> 
+   </td>
+ </tr>
+ <tr>
+   <td><img src="$(ROOT)img/part3.jpg" width="640" height="29"></td>
+ </tr>
+ <tr>
+   <td>
+     <table cellspacing="0" cellpadding="0" border="0" width="640">
+       <tr>
+         <td width="30"><img src="$(ROOT)img/part4.png" width="30" height="30"></td>
+         <td width="508"><navbar:render name="mainmenu" select=""></td>
+         <td width="102"><img src="$(ROOT)img/part7.png" width="102" height="30"></td>
+       </tr>
+     </table>  
+   </td>
+ </tr>
+ <tr>
+   <td><img src="$(ROOT)img/part8.jpg" width="640" height="150"></td>
+ </tr>
+</table>
+
+<f2>
+<navbar:render name="tmainmenu" select="" txtonly nohints>   
+</f2>
+<div align="center"><br>
+<a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=56168&type=1" width="88" height="31" border="0"></a>
+</div>
+</div>
+
+
+#include <post-h.inc>
+
