@@ -1,3 +1,10 @@
+2003-07-10 claudiuc 0.4-1 release
+
+2004-04-20 claudiuc 
+	* add: added tosh2450-smcinit.c from José Manuel Mariño Mariño
+	It make Toshiba Satellite 2450-101 to work on IrDA. Probably
+	will be integrated in the general smcinit utility.
+
 2004-04-13 claudiuc 
 	* doc: Written man page for Thomas new smcinit, but still I need
 	to clean up old info.
@@ -8,7 +15,7 @@
 	* rename: renamed tosh-smcinit.c to smcinit.c because it can be
 	used not only with Toshiba laptops, but at least with any 
 	LPC 47Nxxx SMSC-based chipset
-	
+
 2003-07-10 claudiuc 
 	* doc: added README.Tom from Thomas Pinz
 	* improvement: added tosh-smcinit.c and tosh-superio.h from Thomas
@@ -28,12 +35,13 @@
 	spec file
 	* prog: added GPL notice in tosh5100-smcinit.c as Rob Miller pointed
 	* redhat: RH 9.0 support (init script + spec file)
-	
+
 2003-07-02 claudiuc 
 	* build: SuSE spec improved to generated compatible SuSE RPM
 	* compile: GNU'fied; now both utilities have --version and --help
 	options;
 	* doc: separated manual pages and some improvements
+
 2003-07-01  claudiuc
 	* cosmetic: renamed toshsat1800-irdasetup to tosh1800-smcinit
 	* build: improved original Makefile, spec file for SuSE, 

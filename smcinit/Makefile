@@ -31,6 +31,7 @@ INCPATH  =
 LIBS     = -lpci
 LIBS1    = 
 LIBS2    = 
+LIBS3    = 
 LINK     = gcc
 LFLAGS   = 
 INSTALL         = /usr/bin/install -c -p
@@ -43,13 +44,16 @@ INSTALL_HEADER  = $(INSTALL_DATA)
 
 SOURCES1 = tosh1800-smcinit.c 
 SOURCES2 = smcinit.c 
-SOURCES  = $(SOURCES1) $(SOURCES2) 
+SOURCES3 = tosh2450-smcinit.c 
+SOURCES  = $(SOURCES1) $(SOURCES2) $(SOURCES3)
 OBJECTS1 = $(SOURCES1:%.c=%.o)
 OBJECTS2 = $(SOURCES2:%.c=%.o)
-OBJECTS  = $(OBJECTS1) $(OBJECTS2)
+OBJECTS3 = $(SOURCES3:%.c=%.o)
+OBJECTS  = $(OBJECTS1) $(OBJECTS2) $(OBJECTS3)
 TARGETS1 = tosh1800-smcinit
 TARGETS2 = smcinit
-TARGETS = $(TARGETS1) $(TARGETS2)
+TARGETS3 = tosh2450-smcinit
+TARGETS = $(TARGETS1) $(TARGETS2) $(TARGETS3)
 
 
 
@@ -68,6 +72,7 @@ install-man:
 install-bin: all
 	$(INSTALL_PROGRAM) $(TARGETS1) $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS1)
 	$(INSTALL_PROGRAM) $(TARGETS2) $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS2)
+	$(INSTALL_PROGRAM) $(TARGETS3) $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS3)
 
 
 uninstall-man:
@@ -78,6 +83,7 @@ uninstall-man:
 uninstall-bin:
 	rm -f $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS1)
 	rm -f $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS2)
+	rm -f $(INSTALL_ROOT)$(PREFIX)/sbin/$(TARGETS3)
 
 clean:
 	rm -f $(OBJECTS) $(TARGETS)
@@ -88,11 +94,14 @@ clean:
 config.h: config.h.in
 	./configure
 
-$(SOURCES1) $(SOURCES2): config.h
+$(SOURCES1) $(SOURCES2) $(SOURCES3): config.h
 
 $(TARGETS1): $(OBJECTS1)
 	$(LINK) $(LFLAGS) -o $(TARGETS1) $(OBJECTS1) $(LIBS1) $(LIBS)
 
 $(TARGETS2): $(OBJECTS2)
 	$(LINK) $(LFLAGS) -o $(TARGETS2) $(OBJECTS2) $(LIBS2) $(LIBS)
+
+$(TARGETS3): $(OBJECTS3)
+	$(LINK) $(LFLAGS) -o $(TARGETS3) $(OBJECTS3) $(LIBS3) $(LIBS)
 
