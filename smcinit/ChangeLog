@@ -1,3 +1,8 @@
+2003-07-08 claudiuc 
+	* doc: written INSTALL, updated AUTHORS, documentation from
+	Rob Miller
+	* prog: added GPL notice in tosh5100-smcinit.c as Rob Miller pointed
+	
 2003-07-02 claudiuc 
 	* build: SuSE spec improved to generated compatible SuSE RPM
 	* compile: GNU'fied; now both utilities have --version and --help

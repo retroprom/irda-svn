@@ -1,15 +1,14 @@
 /*
  * tosh5100-smcinit.c
  *
- *
  * 
  *
- * IrDA configurator for laptops with  47n227 SuperIO,
- * smc-ircc and not initializing BIOS (tested on Toshiba Satellite 5100-514
- * to be used with Linux kernel.
- * Copyright (C) 2002, Daniele Peri <peri@csai.unipa.it>
+ * IrDA configurator for laptops with  SMSC 47N227 SuperIO,
+ * smc-ircc and not initializing BIOS (tested on Toshiba Satellite 5100
+ * and Toshiba Tecra 9100).
+ * Copyright (C) 2003, Rob Miller <rob@janerob.com>
  *
- * http://lancelot.csai.unipa.it/~peri/toshsat1800-irdasetup.tgz 
+ * http://www.janerob.com/rob/ts5100/
  *
  *
  * Cleanups, small fixes by Claudiu Costin <claudiuc@kde.org>
@@ -41,9 +40,9 @@
 #include <pci/pci.h>
 #include "config.h"
 #define PROGNAME "tosh5100-smcinit"
-#define AUTHOR ""
-#define AUTHOR_EMAIL ""
-    
+#define AUTHOR "Rob Miller"
+#define AUTHOR_EMAIL "<rob@janerob.com>"
+
 /* lspci on 5100-501 says
  */
 /* 00:1f.0 ISA bridge: Intel Corp. 82801CAM ISA Bridge (LPC) (rev 02)
@@ -317,6 +316,3 @@ return 1;
 return 0;
 
 }
-
-
-

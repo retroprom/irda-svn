@@ -1,7 +1,6 @@
 #
 # $Id$
 #
-# toshsat1800-irdasetup
 #
 # Copyright (C) 2003, Claudiu Costin <claudiuc@kde.org>
 #
