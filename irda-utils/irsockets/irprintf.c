@@ -1,13 +1,14 @@
 /*********************************************************************
  *                
- * Filename:      echo.c
- * Version:       0.9
- * Description:   IrDA echo/discard service
+ * Filename:      irprintf.c
+ * Version:       
+ * Description:   
  * Status:        Experimental.
- * Author:        Dag Brattli <dagb@cs.uit.no>
- * Created at:    Mon May 10 10:08:04 1999
- * Modified at:   Mon May 10 12:08:44 1999
- * Modified by:   Dag Brattli <dagb@cs.uit.no>
+ * Authors:       Dag Brattli <dagb@cs.uit.no>
+ *		  Jean Tourrilhes <jt@hpl.hp.com>
+ * Created at:    7/12/99
+ * Modified at:   
+ * Modified by:   
  * 
  *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.
  *     
@@ -28,6 +29,11 @@
  *     
  ********************************************************************/
 
+/*
+ * Read an Ir socket and display it on stdout
+ * Use stream
+ */
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/time.h>
@@ -42,13 +48,13 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include <irda.h>
+#include <linux/types.h>
+#include <linux/irda.h>
 
 #ifndef AF_IRDA
 #define AF_IRDA 23
 #endif /* AF_IRDA */
 
-int discard = 0;         /* Default is the echo service */
 unsigned char buf[4098];
 
 /*
@@ -61,15 +67,10 @@ int main(int argc, char *argv[])
 {
 	struct sockaddr_irda peer, self;
 	int addrlen;
-	int actual;
 	int fd, conn_fd;
+	FILE *stream;
 
-	/* Check personality */
-	if (strcmp(argv[0], "discard") == 0) {
-		printf("IrDA Discard server starting ...\n");
-		discard = 1;
-	} else
-		printf("IrDA Echo server starting ...\n");
+	printf("IrDA printf server starting ...\n");
 
 	/* Create socket */
 	fd = socket(AF_IRDA, SOCK_STREAM, 0);
@@ -80,10 +81,7 @@ int main(int argc, char *argv[])
 
 	/* Init self */
 	self.sir_family = AF_IRDA;
-	if (discard)
-		strncpy(self.sir_name, "IrDISCARD", 25);
-	else
-		strncpy(self.sir_name, "IrECHO", 25);
+	strncpy(self.sir_name, "MyServer", 25);
 
 	self.sir_lsap_sel = LSAP_ANY;
 	
@@ -106,38 +104,25 @@ int main(int argc, char *argv[])
 			perror("accept");
 			return -1;
 		}
+		stream = fdopen(conn_fd, "r");
+		if(stream == NULL) {
+			perror("fdopen");
+			return -1;
+		}
 		printf("Connected!\n");
 		
 		do {
-			actual = recv(conn_fd, &buf, sizeof(buf), 0);
-			if (actual <= 0) 
-				break;
+			if((fgets(buf, sizeof(buf), stream) == NULL) ||
+			   (buf[0] == 0x3))
+				buf[0] = '\0';
 
-			printf("Got %d bytes\n", actual);
-			
-			if (!discard) {
-				actual = send(conn_fd, &buf, actual, 0);
-				printf("Sent %d bytes\n", actual);
-			}
-		} while (actual > 0);
+			fwrite(buf, 1, strlen(buf), stdout);
 
+		} while (buf[0] != '\0');
+		fflush(stdout);
+		fclose(stream);
 		close(conn_fd);
 		printf("Disconnected!\n");
 	}
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
