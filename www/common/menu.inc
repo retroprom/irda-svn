@@ -112,9 +112,9 @@
   <navbar:epilog pos=4>&nbsp;</navbar:epilog>
 
   <navbar:button id="intro"     txt="Intro"          url="$(ROOT)docs/index.html">
-  <navbar:button id="starting"  txt="Starting IrDA"  url="$(ROOT)docs/index2.html">
-  <navbar:button id="comm"      txt="Communicating"  url="$(ROOT)docs/index3.html">
-  <navbar:button id="advanced"  txt="Advanced"       url="$(ROOT)docs/index4.html">
+  <navbar:button id="starting"  txt="Starting IrDA"  url="$(ROOT)docs/startirda.html">
+  <navbar:button id="comm"      txt="Communicating"  url="$(ROOT)docs/communicating.html">
+  <navbar:button id="advanced"  txt="Advanced"       url="$(ROOT)docs/advanced.html">
 </navbar:define>
 
 
