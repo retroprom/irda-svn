@@ -1,6 +1,6 @@
 Name: irda-utils
 Summary: Utilities for infrared communication between devices
-Version: 0.9.13
+Version: 0.9.14
 Release: 1mdk
 Source0: ftp://irda.sourceforge.net/pub/irda/irda-utils/%{name}-%{version}.tar.bz2
 Group: System/Servers
