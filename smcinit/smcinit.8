@@ -1,95 +1,93 @@
-.TH TOSH-SMCINIT "1" "July 2003" "0.2" "Linux IrDA"
+.TH SMCINIT "8" "July 2003" "0.3" "Linux IrDA"
 .SH NAME
-tosh-smcinit \- initialize the IrDA controler on Toshiba laptops
-autoscan \- Generate a preliminary configure.in
+smcinit \- initialize the IrDA controler on Toshiba laptops
 .SH SYNOPSIS
-.B tosh-smcinit
+.B tosh1800-smcinit
+or
+.B tosh5100-smcinit
 .SH DESCRIPTION
-IrDA configurator for laptops with ALI1533 bridge (LPC47N227 SuperIO), smc-ircc
-and not initializing BIOS (tested on Toshiba Satellite 1800-514, 
-Toshiba Satellite 5100 and Toshiba Tecra 9100) to be
-used with Linux kernel.
 .PP
-Toshiba Satellite 1800 laptops are provided with a SMCS LPC47N227 SuperIO chip which is IrDA SIR/FIR capable. 
-The chip is connected through an ALI1533 PCI-ISA bridge. 
+Toshiba Satellite 1800, Satellite 5100, Tecra 9100 laptops 
+and may be many other models
+are provided with a SMCS LPC47N227 SuperIO chip which is IrDA SIR/FIR capable. 
 The IrDA subsystem of the SuperIO chip is supported by the \fBsmc-ircc\fR Linux kernel module. 
 Unfortunately the BIOS neither configurates the SuperIO chip IrDA subsystem (SIR port, FIR port, 
 dma, irq, IrDA mode, power) nor sets the PCI-ISA bridge to decode any usable port.
 Linux kernel is thus prevented to detect the second UART making impossible to use it 
 in SIR mode. For the same reason, the FIR mode \fBsmc-ircc\fR is able to detect the SuperIO 
 chip but, once found the IrDA subsystem unconfigured, fails to install.
-
-Solution:
-
-toshsat1800-irdasetup sets SIR and FIR ioport addresses, DMA and IRQ of the SuperIO chip IrDA subsystem then powers on the second UART. It also configures the PCI-ISA bridge to decode SIR and FIR ports. All this configuration work should be rather done into the kernel but it was more practical and safe to make a small testing tool of it. It can be probably extended to include configuration kludges for other similar SuperIO and ISA bridge combination.
-Testing was carried on a Toshiba Satellite 1800-514 with Linux kernel 2.4.17.
-I hope this work could be helpful, it was quite funny to do it however.
-
-Compilation (Requires pci-utils):
-
-	$ cd toshsat1800-irdasetup/
-	$ make
-
-Usage:
-
-Run it as root:
-	$ ./toshsat1800-irdasetup 
-
-then you can install the smc-ircc module:
-	$ modprobe smc-ircc
-
-I've noticed that the smc-ircc needs parameters ircc_sir and ircc_fir to be specified. So you'd probably add:
-
-	options smc-ircc ircc_dma=3 ircc_irq=7 ircc_cfg=0x2e ircc_sir=0x2e8 ircc_fir=0x2f8
-
-to /etc/modules.conf
-
-You may also want to add a line like:
-
-	pre-install smc-ircc /usr/local/sbin/toshsat1800-smcinit
-
-to /etc/modules.conf in order to obtain full automatic IrDA setup.
-You'll need to execute:
-
-	$ depmod -a
-	
-after modifying /etc/modules.conf to make changes effective.
-
-Default values works for Toshiba Satellite 1800 though any configuration value can be changed through options. So far I've discovered how to enable decoding of the following usable ports: 0x2e8, 0x2f8, 0x130, 0x178.
-The list of all options is obtaineable through:
-
-	$ toshsat1800-irdasetup --help
-
-
-Appendix:
-
-Ericsson T39m. Setting up an Ircomm link with this phone requires to explicitly reduce the maximum speed to 115200:
-
-	$ echo 115200 > /proc/sys/net/irda/max_baud_rate
-
-Disclaimer:
-This software is experimental. Use it at your own risk.
-
-Credits:
-
-* SMSC for the downloadable datasheets
-* Paul Hampson for its Linux IrDA mailing list messages.
-
-To do:
-
-* Add more ALI1533 usable ports
-
-.SH AUTHOR
-This program is made by Daniele Peri <peri@csai.unipa.it>
-.SH CREDITS
-SMSC for the downloadable datasheets
 .PP
-Paul Hampson for its Linux IrDA mailing list messages.
-.PP 
-Manual page written by Claudiu Costin <claudiuc@kde.org>. Documentation
-based on original README by Daniele Peri.
+While this problem will be fixed in Linux 2.6.x kernel series, the 2.4.x users are frustrated.
+Daniele Peri, Rob Miller and Paul Hampson mananged to build little utilities
+that initialize the LPC47N227 SuperIO allowing smc-ircc IrDA kernel driver 
+to detect and use the SMSC chip.
+.PP
+My sole work was to put these utilities as one package, easy to install and use.
+.SH CONFIGURATION
+.PP
+When system startup a script is run from \fI/etc/init.d\fR and which run appropriate
+SMC intialization utility. This is done before PCMCIA startup because on Tecra 9100
+the \fBorinoco_cs\fR wireless driver will block the I/O region used 47N227 SuperIO.
+.PP
+The only configuration file is \fI/etc/sysconfig/smcinit\fR and the variable SMCINIT
+can be set to "1800" or "5100". By default "5100" value is used. 
+.TP 4
+.B 1800
+for Toshiba Satellite 1800
+.TP
+.B 5100
+for Toshiba Satellite 5100 and Toshiba Tecra 9100
+.PP
+The next step is to configure the kernel IrDA stack package to attach the smc-ircc driver.
+This is Linux distribution specific. The main thing is that the device should be set to
+"irda0". Run the following command:
+.PP
+.nf
+irattach irda0 -s
+.fi
+.PP
+Distribution specific configuration:
+.TP 4
+\fBSuSE\fR
+Edit the \fI/etc/sysconfig/irda\fR and set IRDA_PORT=irda0 
+.TP 4
+\fBRedHat\fR
+Edit the \fI/etc/sysconfig/irda\fR and set DEVICE=irda0 
+.SH NOTES
+.PP
+The \fBsmc-ircc\fR driver is preloaded in kernel. I tested the package only on Tecra 9100
+without any additional step, but for Toshiba Satellite 1800 Daniele Peri 
+sugest to put the following line in your \fI/etc/modules.conf\fR (on one line):
+.PP
+.nf
+options smc-ircc ircc_dma=3 ircc_irq=7 ircc_cfg=0x2e \\
+        ircc_sir=0x2e8 ircc_fir=0x2f8
+.fi
+.PP
+After that run the command:
+.PP
+.nf
+prompt# depmod -a
+.fi
+.PP
+If the laptop enter suspend mode, then resume operation the \fBsmc-ircc\fR driver will 
+stop working. You need to stop IrDA service, then SMCINIT, start SMCINIT, and finally
+start IrDA service. Simply put, the kernel driver must be unloaded, then  reloaded.
+.SH FILES
+.TP 4
+.I /etc/sysconfig/smcinit
+Configuration file for SMCINIT startup script. It's shell script. 
+.SH AUTHOR
+This document is made by Claudiu Costin <claudiuc@kde.org>
+The utilities authors are
+Daniele Peri, Rob Miller and Paul Hampson
 .SH "SEE ALSO"
+.BR tosh1800-smcinit (8),
+.br
+.BR tosh5100-smcinit (8),
+.br
 .BR irattach (1),
+.br
 .BR irdadump (1),
-.BR  http://lancelot.csai.unipa.it/~peri/
- 
+.br
+.BR http://irda.sourceforge.net/smcinit/ " the SMCINIT package home page." 

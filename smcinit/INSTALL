@@ -7,13 +7,13 @@
  Prerequisites
  -------------
  
- To successfully compile and install smcinit package you
+ To successfully compile and install SMCINIT package you
  need to:
  
  * have a Linux 2.4.x based system. Prefferably Linux 2.4.18
  kernel or better. 
  
- * have gcc compiler and glibc devel package installed
+ * have GCC compiler and glibc devel package installed
  
  * have pciutils and pciutils-devel packages installed
  
@@ -43,3 +43,21 @@
     glibc-2.2.5-153
     glibc-locale-2.2.5-154
     glibc-devel-2.2.5-154
+
+  Here are relevant packages to compile on RedHat 9.0:
+    pciutils-2.1.10-7
+    pciutils-devel-2.1.10-7
+    gcc-3.2.2-5
+    libgcc-3.2.2-5
+    gcc-c++-3.2.2-5
+    glibc-devel-2.3.2-11.9
+    glibc-common-2.3.2-11.9
+    glibc-2.3.2-11.9
+    glibc-kernheaders-2.4-8.10
+
+  Send me your story and packages when you compile these package on a system
+  other than above ones. Thank you very much!
+  
+  
+  Claudiu Costin <claudiuc@kde.org>
+  July 10, 2003

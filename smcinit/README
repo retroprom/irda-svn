@@ -6,7 +6,7 @@
  Introduction
  ------------
  
- This package is good for you if you own a system that have SMC-IRCC based
+ This package is good for you if you own a Linux machine that have SMC-IRCC based
  IrDA subsystem and the BIOS doesn't initialize it. Otherwise you don't
  need it at all.
  
@@ -51,13 +51,16 @@
  Contact
  -------
  
+ The SMCINIT package home page is:
+   http://irda.sourceforge.net/smcinit/
+ 
  See the AUTHORS file
  Please send the bugs and your wishes to the authors.
 
- The very nice and important thing you can do is to send me (Claudiu Costin) 
+ The nice and important thing you can do is to send me (Claudiu Costin) 
  your success story for a laptop or computer which is not listed here.
 
- 
+
  
  Claudiu Costin <claudiuc@kde.org>
  July 8, 2003

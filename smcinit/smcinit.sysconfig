@@ -1,4 +1,5 @@
 #
 # Which SMC configurator to start
+# See the smcinit(8) man page for more info
 #
 SMCCONFIG="5100"

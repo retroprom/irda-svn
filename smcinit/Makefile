@@ -85,11 +85,14 @@ clean:
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(INCPATH) -o $@ $<
 
+config.h: config.h.in
+	./configure
+
+$(SOURCES1) $(SOURCES2): config.h
+
 $(TARGETS1): $(OBJECTS1)
 	$(LINK) $(LFLAGS) -o $(TARGETS1) $(OBJECTS1) $(LIBS1) $(LIBS)
 
 $(TARGETS2): $(OBJECTS2)
 	$(LINK) $(LFLAGS) -o $(TARGETS2) $(OBJECTS2) $(LIBS2) $(LIBS)
-
-
 

@@ -1,3 +1,11 @@
+2003-07-10 claudiuc 0.3-1 release
+
+2003-07-10 claudiuc 
+	* doc:  written smcinit.8, improved the other 2 man pages,
+	improved README and INSTALL.
+	* compile: generate config.h because it's needed by *.c files
+	(fixed in Makefile)
+
 2003-07-08 claudiuc 
 	* doc: written INSTALL, updated AUTHORS, documentation from
 	Rob Miller; fixed LSM file, written README, improved SuSE

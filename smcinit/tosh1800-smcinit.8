@@ -1,8 +1,9 @@
-.TH TOSH1800-SMCINIT "8" "July 2003" "0.2" "Linux IrDA"
+.TH TOSH1800-SMCINIT "8" "July 2003" "0.3" "Linux IrDA"
 .SH NAME
 tosh1800-smcinit \- initialize the IrDA controler on Toshiba laptops
 .SH SYNOPSIS
-.B tosh-smcinit
+.B tosh1800-smcinit 
+[\fIOPTION\fR]
 .SH DESCRIPTION
 IrDA configurator for laptops with ALI1533 bridge (LPC47N227 SuperIO), smc-ircc
 and not initializing BIOS (tested on Toshiba Satellite 1800-514, 
@@ -26,6 +27,43 @@ SuperIO and ISA bridge combination.
 .PP
 Testing was carried on a Toshiba Satellite 1800-514 with Linux kernel 2.4.17.
 I hope this work could be helpful, it was quite funny to do it however.
+.SH OPTIONS
+.TP
+\fB-a\fR, \fB--skip-decoding-cfg\fR
+Skip ISA bridge decoding configuration.
+.TP 
+\fB-b\fR, \fB--skip-smc-ircc-cfg\fR
+Skip SMC-IRCC configuration.
+.TP
+\fB-v\fR, \fB--vendor\fR=\fIVALUE\fR
+Look for the specified ISA bridge PCI vendor ID
+.TP
+\fB-x\fR, \fB--device\fR=\fIVALUE\fR
+Look for the specified ISA bridge PCI device ID
+.TP
+\fB-c\fR, \fB--cfgbase\fR=\fIVALUE\fR
+Set SMC-IRCC IO cfgbase address. Usual value can be 0x2e. 
+.TP
+\fB-s\fR, \fB--sirbase\fR=\fIVALUE\fR
+Set SMC-IRCC IO sirbase address. Usual value can be 0x2e8.
+.TP
+\fB-f\fR, \fB--firbase\fR=\fIVALUE\fR
+Set SMC-IRCC IO firbase address. Usual value can be 0x2f8.
+.TP
+\fB-m\fR, \fB--dma\fR=\fIVALUE\fR
+Set SMC-IRCC DMA channel. Usual value can be 3.
+.TP
+\fB-i\fR, \fB--irq\fR=\fIVALUE\fR
+Set SMC-IRCC IRQ. Usual value can be 7.
+.TP
+\fB-p\fR, \fB--print\fR
+Print ISA bridge configuration.
+.TP
+\fB-V\fR, \fB--version\fR
+Show program version.
+.TP
+\fB-h\fR, \fB--help\fR
+Show program options.
 .SH AUTHOR
 This program was made by Daniele Peri <peri@csai.unipa.it>
 .SH CREDITS
@@ -37,6 +75,10 @@ Manual page written by Claudiu Costin <claudiuc@kde.org>. Documentation
 based on original README by Daniele Peri.
 .SH "SEE ALSO"
 .BR irattach (1),
+.br
 .BR irdadump (1),
-.BR  http://lancelot.csai.unipa.it/~peri/
- 
+.br
+.BR http://lancelot.csai.unipa.it/~peri/ " Daniele Peri's home page,"
+.br
+.BR http://irda.sourceforge.net/smcinit/ " the SMCINIT package home page." 
+

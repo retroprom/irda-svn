@@ -1,8 +1,9 @@
-.TH TOSH5100-SMCINIT "8" "July 2003" "0.2" "Linux IrDA"
+.TH TOSH5100-SMCINIT "8" "July 2003" "0.3" "Linux IrDA"
 .SH NAME
 tosh5100-smcinit \- initialize the IrDA controler on Toshiba laptops
 .SH SYNOPSIS
 .B tosh5100-smcinit
+[\fIOPTION\fR]
 .SH DESCRIPTION
 The Toshiba Satellite 5100 and Tecra 9100 has an Intel 82801CAM PCI bridge 
 which includes an LPC interface; on
@@ -28,6 +29,13 @@ small testing tool of it. It can be probably extended to include configuration k
 SuperIO and ISA bridge combination.
 .PP
 Testing was carried on a Toshiba Satellite 5100 and Toshiba Tecra 9100.
+.SH OPTIONS
+.TP
+\fB-V\fR, \fB--version\fR
+Show program version.
+.TP
+\fB-h\fR, \fB--help\fR
+Show program options.
 .SH AUTHOR
 This program was made by Rob Miller <rob@janerob.com>
 .SH CREDITS
@@ -36,6 +44,9 @@ Cleanups and manual page written by Claudiu Costin <claudiuc@kde.org>. Documenta
 based on original irda.html by Rob Miller.
 .SH "SEE ALSO"
 .BR irattach (1),
+.br
 .BR irdadump (1),
-.BR http://www.janerob.com/rob/ts5100/
-
+.br
+.BR http://www.janerob.com/rob/ts5100/ " Rob Miller's home page,"
+.br
+.BR http://irda.sourceforge.net/smcinit/ " the SMCINIT package home page." 

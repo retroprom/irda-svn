@@ -6,9 +6,9 @@ Description:    Initialize IrDA SMC chip for Toshiba laptops
 Keywords:       IrDA, infrared, Toshiba, laptop, Satellite, Tecra
 Author:         Claudiu Costin <claudiuc@kde.org>
 Maintained-by:  Claudiu Costin <claudiuc@kde.org>
-Primary-site:   http://irda.sourceforge.net/tosh-smcinit/
-Home-page:      http://irda.sourceforge.net/tosh-smcinit/
-Original-site:  http://irda.sourceforge.net/tosh-smcinit/
+Primary-site:   http://irda.sourceforge.net/smcinit/
+Home-page:      http://irda.sourceforge.net/smcinit/
+Original-site:  http://irda.sourceforge.net/smcinit/
 Platforms:      Linux only
 Copying-policy: GNU Public License
 End
