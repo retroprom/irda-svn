@@ -1,0 +1,95 @@
+#!/bin/sh
+#
+# smcinit       Initialize SMC IrDA controler and load smc-ircc module
+#
+#
+# chkconfig: 2345 10 99
+# description: IrDA configurator for laptops with  \
+# LPC47N227 SuperIO, smc-ircc and not initializing \
+# BIOS (tested on Toshiba Satellite 1800-514, \ 
+# Toshiba Satellite 5100 and Toshiba Tecra 9100) to be \
+# used with Linux kernel.
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source SMCINIT configuration.
+. /etc/sysconfig/smcinit
+
+prog="smcinit"
+
+start() {
+        # insert smc-ircc module 
+        echo -n $"Starting $prog: "
+	if test -x /usr/sbin/tosh${SMCCONFIG}-smcinit ; then
+	    output=`/usr/sbin/tosh${SMCCONFIG}-smcinit 2>&1`
+	    if [ $? -ne 0 ] ; then
+		failure $"$prog startup"
+	    else 
+		modprobe smc-ircc >/dev/null 2>/dev/null
+		output=`modprobe smc-ircc 2>&1`
+		if [ $? -ne 0 ] ; then
+		    failure $"$prog startup"
+		else 
+		    success $"$prog startup"
+		fi
+	    fi
+	else
+	    failure $"'tosh${SMCCONFIG}-smcinit' is missing"
+	fi
+        echo
+	if [ ! -z "$output" ] ; then
+	    echo $output
+	fi
+}
+
+stop() {
+        # remove the smc-ircc kernel module.
+        echo -n $"Shutting down $prog: "
+	output=`modprobe -r smc-ircc 2>&1`
+	if [ $? -ne 0 ] ; then
+	    failure $"$prog shutdown"
+	else 
+	    success $"$prog shutdown"
+	fi
+        echo
+	if [ ! -z "$output" ] ; then
+	    echo $output
+	fi
+}
+
+status() {
+        # checking if smc-ircc kernel module is loaded.
+        echo -n $"Checking status for $prog: "
+	line=`lsmod 2>/dev/null | grep smc-ircc | grep -v grep`
+	if test -z "$line" ; then
+	    failure $"$prog status"
+	else 
+	    success $"$prog running"
+	fi
+        echo
+}
+
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+        ;;
+  stop)
+	stop
+        ;;
+  status)
+	status
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+
+exit 0

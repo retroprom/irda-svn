@@ -1,14 +1,14 @@
 Begin4
-Title:          tosh-smcinit
+Title:          smcinit
 Version:        @VERSION@-@RELEASE@
 Entered-date:   Tue Jul 1 2003
-Description:    A neat desktop zooming tool
+Description:    Initialize IrDA SMC chip for Toshiba laptops
 Keywords:       IrDA, infrared, Toshiba, laptop, Satellite, Tecra
 Author:         Claudiu Costin <claudiuc@kde.org>
 Maintained-by:  Claudiu Costin <claudiuc@kde.org>
-Primary-site:   http://www.ro.kde.org/tosh-smcinit/
-Home-page:      http://www.ro.kde.org/tosh-smcinit/
-Original-site:  http://www.ro.kde.org/tosh-smcinit/
-Platforms:      Linux and other Unices
+Primary-site:   http://irda.sourceforge.net/tosh-smcinit/
+Home-page:      http://irda.sourceforge.net/tosh-smcinit/
+Original-site:  http://irda.sourceforge.net/tosh-smcinit/
+Platforms:      Linux only
 Copying-policy: GNU Public License
 End

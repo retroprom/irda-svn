@@ -15,7 +15,7 @@ Copyright:      GPL
 Provides:	smcinit
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
 Summary:	Initialize IrDA SMC chip for Toshiba laptops
-Distribution:   SuSE 8.x
+Distribution:   RedHat 9.0
 
 %description
 IrDA configurator for laptops with LPC47N227 SuperIO, smc-ircc
@@ -35,8 +35,8 @@ PREFIX="%{_prefix}" make
 %install
 [ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT"
 PREFIX="%{_prefix}" INSTALL_ROOT="$RPM_BUILD_ROOT" make install 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init.d
-cp -f boot.smcinit $RPM_BUILD_ROOT%{_sysconfdir}/init.d
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d
+cp -f smcinit $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
 cp -f smcinit.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/smcinit
 
@@ -46,25 +46,18 @@ cp -f smcinit.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/smcinit
 
 
 %post
-insserv /etc/init.d/boot.smcinit
-# %{add_start_if_needed}
+chkconfig --add smcinit
 
 %postun
 
 %preun
-if test -x /etc/init.d/irda ; then /etc/init.d/irda stop ; fi
-if test -x /etc/init.d/boot.smcinit ; then /etc/init.d/boot.smcinit stop ; fi
-insserv -r /etc/init.d/boot.smcinit
+if test -x /etc/rc.d/init.d/irda ; then /etc/rc.d/init.d/irda stop ; fi
+if test -x /etc/rc.d/init.d/smcinit ; then /etc/rc.d/init.d/smcinit stop ; fi
+chkconfig --del smcinit
 
 %files
 
-#%defattr(0755, root, root)
-#%{_sysconfdir}/init.d/*
-
-#%defattr(0644, root, root)
-#%{_sysconfdir}/sysconfig/*
-
-%config(noreplace) %{_sysconfdir}/init.d/boot.smcinit
+%config(noreplace) %{_sysconfdir}/rc.d/init.d/smcinit
 %config(noreplace) %{_sysconfdir}/sysconfig/smcinit
 
 
@@ -83,6 +76,6 @@ insserv -r /etc/init.d/boot.smcinit
 
 
 %changelog
-* Sat Jul 1 2003 Claudiu Costin <claudiuc@kde.org>
+* Sat Jul 8 2003 Claudiu Costin <claudiuc@kde.org>
 - initial RPM
 

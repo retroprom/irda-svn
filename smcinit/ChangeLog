@@ -1,7 +1,9 @@
 2003-07-08 claudiuc 
 	* doc: written INSTALL, updated AUTHORS, documentation from
-	Rob Miller
+	Rob Miller; fixed LSM file, written README, improved SuSE
+	spec file
 	* prog: added GPL notice in tosh5100-smcinit.c as Rob Miller pointed
+	* redhat: RH 9.0 support (init script + spec file)
 	
 2003-07-02 claudiuc 
 	* build: SuSE spec improved to generated compatible SuSE RPM

@@ -2,6 +2,7 @@
 
  Installing smcinit
  ==================
+
  
  Prerequisites
  -------------
@@ -34,9 +35,11 @@
  I tested the package on SuSE 8.1 and RedHat 9.0. It should work for any
  recent Linux distribution.
  
-  Here are relevant packages to compile on SuSE:
+  Here are relevant packages to compile on SuSE 8.1:
     pciutils-devel-2.1.10-33
     pciutils-2.1.10-33
     libgcc-3.2-39
     gcc-3.2-39
-
+    glibc-2.2.5-153
+    glibc-locale-2.2.5-154
+    glibc-devel-2.2.5-154
