@@ -41,6 +41,8 @@ $(RELDIR)html/docs/status.html:        $(RELDIR)common/layout2.inc $(RELDIR)data
 $(RELDIR)html/docs/startirda.html:     $(RELDIR)common/layout2.inc 
 $(RELDIR)html/docs/communicating.html: $(RELDIR)common/layout2.inc 
 $(RELDIR)html/docs/advanced.html:      $(RELDIR)common/layout2.inc 
+$(RELDIR)html/resources.html:          $(RELDIR)common/layout2.inc
+
 
 $(RELDIR)html/apps.html:              $(RELDIR)common/layout2.inc
 $(RELDIR)html/smcinit/index.html:     $(RELDIR)common/layout2.inc
@@ -50,7 +52,6 @@ $(RELDIR)html/credits.html:    $(RELDIR)data/credits.inc
 
 $(RELDIR)html/contact.html:    $(RELDIR)data/contact.inc
 
-$(RELDIR)html/resources.html:  $(RELDIR)data/resources.inc $(RELDIR)common/layout2.inc
 $(RELDIR)html/companies.html:  $(RELDIR)data/companies.inc
 $(RELDIR)html/chipsets.html:   $(RELDIR)data/chipsets/*.data $(RELDIR)/common/chipsets.pl
 $(RELDIR)html/dongles.html:    $(RELDIR)data/dongles.inc
