@@ -192,8 +192,9 @@ struct lsap_state {
 	guint8   dlsap_sel;  /* Destination logical service access point */
 };
 
-inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str);
-inline void parse_irlmp(GNetBuf *buf, GString *str, int type);
+inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
+		       int cmd);
+inline void parse_irlmp(GNetBuf *buf, GString *str, int type, int cmd);
 inline void parse_ui_irlmp(GNetBuf *buf, GString *str, int type);
 
 #endif /* IRDADUMP_H */

@@ -323,7 +323,7 @@ inline void parse_i_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	
 	/* Check if we should print IrLMP information */
 	if (config_print_irlmp)
-		parse_irlmp(buf, str, type);
+		parse_irlmp(buf, str, type, cmd);
 
 
 	if (config_print_lost_frames) {

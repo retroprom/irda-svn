@@ -75,6 +75,8 @@ inline void parse_iriap_command(GNetBuf *buf, GString *str, guint8 slsap_sel)
 			last_ias.ttp = 1;
 		else
 			last_ias.ttp = 0;
+		/* Reset to undefined (handle IAS failures properly) */
+		last_ias.lsap_sel = LSAP_ANY;
 
 		/* Check if this is a OBEX lookup */
 		if (strstr(name, "OBEX"))
@@ -227,7 +229,7 @@ inline void parse_iriap_response(GNetBuf *buf, GString *str, guint8 dlsap_sel)
  *    Parse IrLMP frame
  *
  */
-inline void parse_irlmp(GNetBuf *buf, GString *str, int type)
+inline void parse_irlmp(GNetBuf *buf, GString *str, int type, int cmd)
 {
 	guint8 slsap_sel, dlsap_sel;
 	int ctrl;
@@ -325,7 +327,7 @@ inline void parse_irlmp(GNetBuf *buf, GString *str, int type)
 			if (conn[i].valid && conn[i].ttp)
 				parse_irttp(buf, str);
 			if (conn[i].valid && conn[i].obex)
-				parse_obex(&conn[0], buf, str);
+				parse_obex(&conn[0], buf, str, cmd);
 #if 0
 			if (conn[i].valid && conn[i].ircomm)
 				parse_ircomm(&conn[0], buf, str);
@@ -356,4 +358,13 @@ inline void parse_ui_irlmp(GNetBuf *buf, GString *str, int type)
 
 	g_string_sprintfa(str, "LM slsap=%02x dlsap=%02x ", slsap_sel, 
 			  dlsap_sel);
+
+	/* Let's see if it's Ultra, and decode it - Jean II */
+	if((slsap_sel == 0x70) && (dlsap_sel == 0x70))
+	  {
+	    int	upid = buf->data[0] & 0x7F;
+	    g_netbuf_pull(buf, 1);
+
+	    g_string_sprintfa(str, " Ultra-PID=%02x ", upid);
+	  }
 }

@@ -48,7 +48,7 @@ void unicode_to_char(guint8 *buf)
  *    
  *
  */
-int parse_obex_header(GNetBuf *buf, GString *str)
+int parse_obex_header(GNetBuf *buf, GString *str, int istext)
 {
 	char string[255];
 	guint32 tmp_int;
@@ -69,14 +69,19 @@ int parse_obex_header(GNetBuf *buf, GString *str)
 		len += tmp_short;
 
 		/* g_print("%s ", string);fflush(stdout); */
-		g_string_sprintfa(str, "%s ", string);
+		g_string_sprintfa(str, "\"%s\" ", string);
 		break;
 	case OBEX_BYTE_STREAM:
                 /* g_print("OBEX_BYTE_STREAM");fflush(stdout); */
 		memcpy(&tmp_short, buf->data+1, 2); /* Align value */
 		tmp_short = GINT16_FROM_BE(tmp_short) - 3;
 		len += tmp_short + 3;
-		g_string_append(str, "[byte stream]");
+		if(istext) {
+			memcpy(string, buf->data+3, tmp_short);
+			string[tmp_short] = '\0';
+			g_string_sprintfa(str, "\"%s\" ", string);
+		} else
+			g_string_sprintfa(str, "[%d bytes] ", tmp_short);
 		break;
 	case OBEX_BYTE:
 		/* g_print("OBEX_BYTE");fflush(stdout); */
@@ -106,16 +111,18 @@ int parse_obex_header(GNetBuf *buf, GString *str)
  */
 inline void parse_obex_headers(GNetBuf *buf, GString *str)
 {
+	struct obex_minimal_frame *frame;
 	int final;
 	guint16 size;
 	int len;
 
+	frame = (struct obex_minimal_frame *) buf->data;
+
 	/* We know it's a put frame, but we have to check if it's the final */
-	final = buf->data[0] & OBEX_FINAL;
+	final = frame->opcode & OBEX_FINAL;
 
 	/* Length of this frame */
-	memcpy(&size, buf+1, 2);
-	size = ntohs(size);
+	size = ntohs(frame->len);
 	
 	/* Remove the OBEX common header */
 	g_netbuf_pull(buf, 3);
@@ -129,27 +136,35 @@ inline void parse_obex_headers(GNetBuf *buf, GString *str)
 		switch (buf->data[0]) {
 		case HEADER_NAME:
 			g_string_append(str, "Name=");
-			len = parse_obex_header(buf, str);
+			len = parse_obex_header(buf, str, 0);
 			break;
 		case HEADER_DESCRIPTION:
 			g_string_append(str, "Description=");
-			len = parse_obex_header(buf, str);
+			len = parse_obex_header(buf, str, 0);
 			break;
 		case HEADER_LENGTH:
 			g_string_append(str, "Lenght=");
-			len = parse_obex_header(buf, str);
+			len = parse_obex_header(buf, str, 0);
+			break;
+		case HEADER_TYPE:
+			g_string_append(str, "Type=");
+			len = parse_obex_header(buf, str, 1);
+			break;
+		case HEADER_TARGET:
+			g_string_append(str, "Target=");
+			len = parse_obex_header(buf, str, 1);
 			break;
 		case HEADER_BODY:
 			g_string_append(str, "body=");
-			len = parse_obex_header(buf, str);
+			len = parse_obex_header(buf, str, 0);
 			break;
 		case HEADER_BODY_END:
-			g_string_append(str, "body end=");
-			len = parse_obex_header(buf, str);
+			g_string_append(str, "body-end=");
+			len = parse_obex_header(buf, str, 0);
 			break;
 		default:
 			g_string_append(str, "custom=");
-			len = parse_obex_header(buf, str);
+			len = parse_obex_header(buf, str, 0);
 			break;
 		}
                 /* g_print("len=%d\n", len);fflush(stdout); */
@@ -168,13 +183,49 @@ inline void parse_obex_connect(GNetBuf *buf, GString *str)
 	frame = (struct obex_connect_frame *) buf->data;
 
 	length  = ntohs(frame->len);
-	version = frame->version;
-	flags   = frame->flags;
-	mtu     = ntohs(frame->mtu);
 
-	g_string_sprintfa(str, "CONNECT len=%d ver=%d.%d flags=%d mtu=%d ", 
-			  length, ((version & 0xf0) >> 4), version & 0x0f, 
-			  flags, mtu);
+	/* Check if it contains connection setup parameters - Jean II */
+	if(length == 7) {
+		version = frame->version;
+		flags   = frame->flags;
+		mtu     = ntohs(frame->mtu);
+
+		g_string_sprintfa(str,
+				  "CONNECT len=%d ver=%d.%d flags=%d mtu=%d ", 
+				  length, ((version & 0xf0) >> 4),
+				  version & 0x0f, flags, mtu);
+	} else
+		g_string_sprintfa(str, "CONNECT len=%d ", length);
+}
+
+/*
+ * The first success frame contains the negociated Obex parameters
+ * Jean II
+ */
+inline void parse_obex_success(GNetBuf *buf, GString *str)
+{
+	struct obex_connect_frame *frame;
+	guint16 length;
+	guint8 version;
+	int flags;
+	guint16 mtu;
+	
+	frame = (struct obex_connect_frame *) buf->data;
+
+	length  = ntohs(frame->len);
+
+	/* Check if it contains connection setup parameters */
+	if(length == 7) {
+		version = frame->version;
+		flags   = frame->flags;
+		mtu     = ntohs(frame->mtu);
+
+		g_string_sprintfa(str,
+				  "SUCCESS len=%d ver=%d.%d flags=%d mtu=%d ", 
+				  length, ((version & 0xf0) >> 4),
+				  version & 0x0f, flags, mtu);
+	} else
+		g_string_sprintfa(str, "SUCCESS len=%d ", length);
 }
 
 /*
@@ -183,9 +234,16 @@ inline void parse_obex_connect(GNetBuf *buf, GString *str)
  *    Parse OBEX commands and responses
  *
  */
-inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str)
+inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str,
+		       int cmd)
 {
-	guint8 opcode;
+	guint8	opcode;
+	int	len;
+
+	/* Check for empty frames - Jean II */
+	len = g_netbuf_get_len(buf);
+	if(len == 0)
+	  return;
 
 	/* g_print(__FUNCTION__);fflush(stdout); */
 
@@ -193,7 +251,8 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str)
 
 	opcode = buf->data[0] & ~OBEX_FINAL; /* Remove final bit */
 
-	if (conn->obex_rsp) {
+	/* Check if it's a command or response frame - Jean II */
+	if (!cmd) {
 		switch (opcode) {
 		case OBEX_CONTINUE:
 			g_string_append(str, "CONTINUE ");
@@ -202,7 +261,7 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str)
 			g_string_append(str, "SWITCH_PRO ");
 			break;
 		case OBEX_SUCCESS:
-			g_string_append(str, "SUCCESS ");
+			parse_obex_success(buf, str);
 			break;
 		case OBEX_CREATED:
 			g_string_append(str, "CREATED ");
@@ -221,7 +280,7 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str)
 					  opcode);
 			break;
 		}
-		/* Next frame is a command */
+		/* Next frame is a command (maybe) */
 		conn->obex_rsp = 0;
 	} else {
 		switch (opcode) {
@@ -255,7 +314,7 @@ inline void parse_obex(struct lsap_state *conn, GNetBuf *buf, GString *str)
 						 opcode);
 			break;
 		}
-		/* Next frame should be a response */
+		/* Next frame should be a response (maybe) */
 		conn->obex_rsp = 1;
 	}
 }

@@ -28,7 +28,7 @@ CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a irattach irmanager dongle_attach
+RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a irattach dongle_attach
 
 INCLUDES  = $(SYS_INCLUDES) -I../include/
 LIBRARIES = $(SYS_LIBRARIES)
@@ -46,14 +46,11 @@ CFLAGS= $(RPM_OPT_FLAGS) $(SYS_INCLUDES) -Wall -Wstrict-prototypes
 # 
 # Files to make 
 # 
-SRCS = irmanager.c util.c
+SRCS = util.c
 OBJS = $(SRCS:.c=.o)
-TARGETS = irmanager irattach dongle_attach
+TARGETS = irattach dongle_attach
 
 all: $(TARGETS)
-
-irmanager: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o $@
 
 irattach: irattach.o util.o
 	$(CC) $(CFLAGS) irattach.o util.o -o $@

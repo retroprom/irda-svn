@@ -55,10 +55,11 @@
 
 #define HEADER_COUNT       0xc0
 #define HEADER_NAME        0x01 /* - */
-#define HEADER_TYPE        0x42
+#define HEADER_TYPE        0x42 /* - */
 #define HEADER_TIME        0x44
 #define HEADER_LENGTH      0xc3 /* - */
 #define HEADER_DESCRIPTION 0x05 /* - */
+#define HEADER_TARGET	   0x46 /* - */
 #define HEADER_BODY        0x48 /* - */
 #define HEADER_BODY_END    0x49 /* - */
 
@@ -77,6 +78,12 @@ struct obex_connect_frame {
 	guint8  version;
 	guint8  flags;
 	guint16 mtu;
+} __attribute__((packed));
+
+/* Minimal Obex header */
+struct obex_minimal_frame {
+	guint8  opcode;
+	guint16 len;
 } __attribute__((packed));
 
 #endif
