@@ -19,6 +19,7 @@ TOSH_SPM10 - Satellite Pro M10
 TOSH_SATP10 - Satellite P10
 TOSH_SATP20 - Satellite P20
 TOSH_SATA30 - Satellite A30
+TOSH_PM200 - Portege M200
 */
 
 /* uncomment only one of the following lines */
@@ -30,6 +31,7 @@ TOSH_SATA30 - Satellite A30
 // #define TOSH_SATP10
 // #define TOSH_SATP20
 // #define TOSH_SATA30
+// #define TOSH_PM200
 
 /* ---------------------------------------------------------------------*/
 
@@ -92,6 +94,15 @@ TOSH_SATA30 - Satellite A30
 #define MACHINE "Satellite A30"
 #define SIR_IO 0x3f8
 #define FIR_IO 0x6f8
+#define FIR_IRQ 3
+#define FIR_DMA 3
+#endif
+
+/* Settings for Portege M200 */
+#ifdef TOSH_PM200
+#define MACHINE "Portege M200"
+#define SIR_IO 0x3f8
+#define FIR_IO 0x130
 #define FIR_IRQ 3
 #define FIR_DMA 3
 #endif
