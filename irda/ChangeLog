@@ -1,3 +1,7 @@
+2003-08-25    claudiuc
+	* irias: "get" work OK; stub for "list"
+	* main: new flags and working <count> and <delay>
+
 2003-08-12    claudiuc
 	* doc: written spec file, and README.
 

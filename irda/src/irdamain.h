@@ -27,10 +27,16 @@
 
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/time.h>
 #include <errno.h>
+#include <signal.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <regex.h>
 #include <asm/types.h>
 #include <linux/irda.h>
 
@@ -38,10 +44,16 @@
 #include <config.h>
 #endif
 
-int arg_index;
-int m_argc;
-char ** m_argv;
-unsigned int count, delay;
+#define PROC_IRIAS "/proc/net/irda/irias"
+
+
+int m_argc, arg_index;
+char **m_argv;
+unsigned int count, delay, fmt_column, fmt_no_header, debug;
+char fmt_sep;
+void (*m_func)();
+
+void register_timeout(sighandler_t func);
 
 #endif
 
