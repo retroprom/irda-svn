@@ -18,12 +18,12 @@
 <p>This package is good for you if you own a Linux machine that have SMC-IRCC based
 IrDA subsystem and the BIOS doesn't initialize it. Otherwise you don't
 need it at all.
- 
 
-<p>If you reading here, then you may be the unhappy owner of Toshiba Satellite
-1800, Toshiba Satellite 5100 or Toshiba Tecra 9100 laptop. Well, there's 
-a chance that a bunch of other Toshiba laptops may share the same buggy BIOS
-and IrDA problems.
+
+<p>If you reading here, then you may be the unhappy owner of laptop which
+have SMSC IrCC IrDA controler. There are many modern latops which have the
+LPC47N227 or LPC47N24x super I/O chipsets. Fortunatelly here are workarround
+tools which later should be ported in Linux kernel.
 
 <p>
 <b>Contents</b><br>
@@ -41,41 +41,119 @@ and IrDA problems.
 
 <a name="description"></a><h2>Description</h2>
 
-<p>Toshiba Satellite 1800, Satellite 5100, Tecra 9100 laptops 
+<p>Toshiba Satellite 1800, Satellite 5100, Tecra 9100 laptops
 and may be many other models
-are provided with a SMCS LPC47N227 SuperIO chip which is IrDA SIR/FIR capable. 
-The IrDA subsystem of the SuperIO chip is supported by the 
-<b>smc-ircc</b> Linux kernel module. 
-Unfortunately the BIOS neither configurates the SuperIO chip IrDA subsystem (SIR port, FIR port, 
+are provided with a SMCS LPC47N227 SuperIO chip which is IrDA SIR/FIR capable.
+The IrDA subsystem of the SuperIO chip is supported by the
+<b>smc-ircc</b> Linux kernel module.
+Unfortunately the BIOS neither configurates the SuperIO chip IrDA subsystem (SIR port, FIR port,
 dma, irq, IrDA mode, power) nor sets the PCI-ISA bridge to decode any usable port.
-Linux kernel is thus prevented to detect the second UART making impossible to use it 
-in SIR mode. For the same reason, the FIR mode <b>smc-ircc</b> is able to detect the SuperIO 
+Linux kernel is thus prevented to detect the second UART making impossible to use it
+in SIR mode. For the same reason, the FIR mode <b>smc-ircc</b> is able to detect the SuperIO
 chip but, once found the IrDA subsystem unconfigured, fails to install.
 
 <p>While this problem will be fixed in Linux 2.6.x kernel series, the 2.4.x users are frustrated.
 Daniele Peri, Rob Miller and Paul Hampson mananged to build little utilities
-that initialize the LPC47N227 SuperIO allowing <b>smc-ircc</b> IrDA kernel driver 
+that initialize the LPC47N227 SuperIO allowing <b>smc-ircc</b> IrDA kernel driver
 to detect and use the SMSC chip.
 
-<p>My sole work was to put these utilities as one package, 
-easy to install and use.
+<p><b>Thomas Pinz</b> contributed a lot of hardware testing work and compiled the
+following compatibility and parameters table for working Toshiba laptops:
 
+<p>
+<table border="0" cellspacing="0" cellpadding="0" width="95%" bgcolor="#777777"><tr><td>
+<table border="0" cellspacing="1" cellpadding="3" width="100%">
+<tr bgcolor="#ffffe7">
+  <td><b>Model</b></td>
+  <td><b>SIR I/O</b></td>
+  <td><b>FIR I/O</b></td>
+  <td><b>FIR IRQ</b></td>
+  <td><b>FIR DMA</b></td>
+  <td><b>ID</b></td>
+  <td><b>PCI ID</b></td>
+  <td><b>Notes</b></td>
+</tr>
+
+<perl>
+# Uhhh, too large table to just copy&paste lot of HTML
+# A little Perl snapshot will make life easy
+my $text=qq(
+Satellite 3000    no Irda
+Satellite 5100    0x3f8              0x130          3        3        0x5a    248c    *
+Satellite 5200    0x3f8              0x130          3        3        0x5a    248c    *
+SatPro 2100       0x3f8              0x130          4        3        0x5a    248c
+SatPro 6100       0x3f8              0x130          3        1        0x5a    248c
+SatPro M10        0x2f8              0x130          3        1        0x5a    248c
+Satellite A10     no Irda
+Satellite P10     0x3f8              0x6f8          3        3        0x5a    248c
+Satellite P20     0x3f8              0x6f8          3        3        0x5a    248c
+Satellite A30     0x3f8              0x6f8          3        3        0x5a    248c
+Satellite M30     0x3f8              0x130          3        3        0x7a    24cc    *
+Satellite A40     no Irda
+Portege A100      no Irda
+Portege M100      0x3f8              0x130          3        1        0x5a    24cc
+Portege M200      0x3f8              0x130          3        3        0x7a    24cc    *
+Portege R100      no Irda
+Tecra 9100        0x3f8              0x130          3        1        0x5a    248c
+Tecra M1          0x3f8              0x130          3        1        0x5a    24cc
+Tecra M2          0x3f8              0x130          3        1        0x7a    24cc
+Tecra S1          unknown IRDA-Chip
+TE 2300           unknown IRDA-Chip
+);
+
+my @lines=split /\n/, $text;
+foreach my $line(@lines) {
+  next if ($line =~ /^\s*$/);
+  $model=substr($line,0,18);
+  $sirio=substr($line,18,19);
+  $firio=substr($line,37,15);
+  $firirq=substr($line,52,9);
+  $firdma=substr($line,61,9);
+  $id=substr($line,70,8);
+  $pciid=substr($line,78,8);
+  $notes=substr($line,86);
+  print "<tr bgcolor=\"#ffffe7\" valign=\"top\">\n" .
+        "  <td>$model</td>\n" .
+        "  <td>$sirio</td>\n" .
+        "  <td>$firio</td>\n" .
+        "  <td>$firirq</td>\n" .
+        "  <td>$firdma</td>\n" .
+        "  <td>$id</td>\n" .
+        "  <td>$pciid</td>\n" .
+        "  <td>$notes</td>\n" .
+        "</tr>\n";
+}
+</perl>
+
+</table>
+</td></tr></table>
+
+<p><b>Jose Manuel Marino Marino</b> hacked the old tosh5100-smcinit.c by Rob Miller and
+made the <b>tosh2450-smcinit.c</b>. This enable Toshiba Satellite 2450 too
+for Linux IrDA. The utility is included in SMCINIT 0.4-1, but no integration
+yet to run it automatically at boot. You may do that by manually add it
+on original <tt>smcinit</tt> init script in your favorite Linux distribution.
+
+<p><b>Victor Meghesan</b> hacked a bit the <b>tosh5100-smcinit.c</b>, changed
+PCI and bus ID for Intel PCI-ISA bridge on HP ???? laptop, device ID as seen on
+<b>dmesg</b> command output and <i>voila</i>, the
+Linux-IrDA work even on Hewlett Packard portables!
 
 <a name="download"></a><h2>Download</h2>
 
-<p>The current stable version of SMCINIT package is <b>0.3-1</b>.
+<p>The current stable version of SMCINIT package is <b>0.4-1</b>.
 
 <p>You can download it here:<br>
-&nbsp;&nbsp;<a href="http://sourceforge.net/project/showfiles.php?group_id=5616&release_id=170754"
->http://sourceforge.net/project/showfiles.php?group_id=5616&release_id=170754</a>
+&nbsp;&nbsp;<a href="http://sourceforge.net/project/showfiles.php?group_id=5616&package_id=88282&release_id=232636"
+>http://sourceforge.net/project/showfiles.php?group_id=5616&package_id=88282&release_id=232636</a>
 
-<p>To grab the bleeding edge <b>smcinit</b>, see the 
+<p>To grab the bleeding edge <b>smcinit</b>, see the
 <a href="#anoncvs">Anonymous CVS access to source code</a> section.
 
 <a name="test"></a><h2>Testing</h2>
 
 <p>Bellow are configurations for which <b>SMCINIT</b> was tested. It's belived that
-it works on many systems. Please <a href="#contact">send</a> your success / failure story to know and 
+it works on many systems. Please <a href="#contact">send</a> your success / failure story to know and
 fix bugs:
 
 <table border="0" cellspacing="0" cellpadding="0" width="95%" bgcolor="#777777"><tr><td>
@@ -110,10 +188,10 @@ fix bugs:
 
 <a name="install"></a><h2>Install</h2>
 
-<p>Here are the prerequisites to 
+<p>Here are the prerequisites to
 successfully compile and install SMCINIT package:
 <ul>
-<li> have a Linux 2.4.x based system. Preferably Linux 2.4.18 kernel or better. 
+<li> have a Linux 2.4.x based system. Preferably Linux 2.4.18 kernel or better.
 <li> have GCC compiler and glibc devel package installed
 <li> have pciutils and pciutils-devel packages installed
 </ul>
@@ -123,7 +201,7 @@ successfully compile and install SMCINIT package:
 make
 make install</pre>
 
-<p><b>NOTE:</b> I tested the package on SuSE 8.1 and RedHat 9.0. It should work 
+<p><b>NOTE:</b> I tested the package on SuSE 8.1 and RedHat 9.0. It should work
 for any recent Linux distribution.
 <p>Here are relevant packages to compile on <b>SuSE 8.1</b>:
 <pre>  pciutils-devel-2.1.10-33
@@ -154,7 +232,7 @@ This information was provided by Paul Kirk &lt;paolokirk&nbsp;<nobr>@</nobr>&nbs
 
 <p>Send me your story and packages when you compile these package on a system
 other than above ones. Thank you very much!
-  
+
 
 
 <a name="configuration"></a><h2>Configuration</h2>
@@ -163,8 +241,8 @@ other than above ones. Thank you very much!
 SMC intialization utility. This is done before PCMCIA startup because on Tecra 9100
 the <b>orinoco_cs</b> wireless driver will block the I/O region used 47N227 SuperIO.
 
-<p>The only configuration file is <b>/etc/sysconfig/smcinit</b> and the variable 
-<tt>SMCCONFIG</tt> can be set to <tt>1800</tt> or <tt>5100</tt>. By default <tt>5100</tt> 
+<p>The only configuration file is <b>/etc/sysconfig/smcinit</b> and the variable
+<tt>SMCCONFIG</tt> can be set to <tt>1800</tt> or <tt>5100</tt>. By default <tt>5100</tt>
 value is used. Value can be:
 <dl>
 <dt><b>1800</b></dt>
@@ -173,8 +251,8 @@ value is used. Value can be:
 <dd>for Toshiba Satellite 5100 and Toshiba Tecra 9100</dd>
 </dl>
 
-<p>The next step is to configure the kernel IrDA stack package to attach the <b>smc-ircc</b> 
-driver. This is Linux distribution specific. The main thing is that the device 
+<p>The next step is to configure the kernel IrDA stack package to attach the <b>smc-ircc</b>
+driver. This is Linux distribution specific. The main thing is that the device
 should be set to <tt>irda0</tt>. Run the following command (as "root" user):
 <pre>irattach irda0 -s</pre>
 
@@ -187,17 +265,17 @@ should be set to <tt>irda0</tt>. Run the following command (as "root" user):
 </dl>
 
 <p><b>NOTES:</b>
-The <b>smc-ircc</b> driver is preloaded in kernel. I tested the package only on 
-Tecra 9100 without any additional step, but for Toshiba Satellite 1800 Daniele Peri 
+The <b>smc-ircc</b> driver is preloaded in kernel. I tested the package only on
+Tecra 9100 without any additional step, but for Toshiba Satellite 1800 Daniele Peri
 sugest to put the following line in your <tt>/etc/modules.conf</tt> (on one line):
 
 <pre>options smc-ircc ircc_dma=3 ircc_irq=7 ircc_cfg=0x2e \\
         ircc_sir=0x2e8 ircc_fir=0x2f8</pre>
 After that run the command (as "root" user):
 <pre>depmod -a</pre>
-If the laptop enter suspend mode, then resume operation the 
-<b>smc-ircc</b> driver will stop working. You need to stop IrDA service, 
-then SMCINIT, start SMCINIT, and finally start IrDA service. 
+If the laptop enter suspend mode, then resume operation the
+<b>smc-ircc</b> driver will stop working. You need to stop IrDA service,
+then SMCINIT, start SMCINIT, and finally start IrDA service.
 Simply put, the kernel driver must be unloaded, then  reloaded.
 
 
@@ -209,16 +287,16 @@ Simply put, the kernel driver must be unloaded, then  reloaded.
 <table border="0" cellspacing="0" cellpadding="0" width="95%" bgcolor="#777777"><tr><td>
 <table border="0" cellspacing="1" cellpadding="3" width="100%">
 <tr bgcolor="#ffffe7">
-  <td><tt>man smcminit</tt></td>
+  <td><tt>man 7 smcminit</tt></td>
   <td> intro to smcinit utilities</td>
+</tr>
+<tr bgcolor="#ffffe7">
+  <td><tt>man 8 smcinit</tt></td>
+  <td> command line options for the new implementation by Thomas Pinz</td>
 </tr>
 <tr bgcolor="#ffffe7">
   <td><tt>man tosh1800-smcinit</tt></td>
   <td> built from Daniele Peri documentation and with my own additions</td>
-</tr>
-<tr bgcolor="#ffffe7">
-  <td><tt>man tosh5100-smcinit</tt></td>
-  <td> built from Rob Miller documentation and with my own additions</td>
 </tr>
 </table>
 </td></tr></table>
@@ -229,6 +307,10 @@ Simply put, the kernel driver must be unloaded, then  reloaded.
 <p>
 <table border="0" cellspacing="0" cellpadding="0" width="95%" bgcolor="#777777"><tr><td>
 <table border="0" cellspacing="1" cellpadding="3" width="100%">
+<tr bgcolor="#ffffe7">
+  <td>README.Tom</td>
+  <td> Thomas Pinz's README file</td>
+</tr>
 <tr bgcolor="#ffffe7">
   <td>README.Peri</td>
   <td> Peri's README file</td>
@@ -258,53 +340,74 @@ Simply put, the kernel driver must be unloaded, then  reloaded.
 
 <a name="changelog"></a><h2>Change Log</h2>
 
+<h3>2003-04-20 0.4-1 release</h3>
+
+<pre>2004-04-20 claudiuc
+  * add: added tosh2450-smcinit.c from José Manuel Mariño Mariño
+  It make Toshiba Satellite 2450-101 to work on IrDA. Probably
+  will be integrated in the general smcinit utility.
+
+2004-04-13 claudiuc
+  * doc: Written man page for Thomas new smcinit, but still I need
+  to clean up old info.
+  * update: Thomas added more tweaks so we have more supported
+  laptops.
+  * fixes: getopt() fixes be me prevent crash when parsing command
+  line.
+  * rename: renamed tosh-smcinit.c to smcinit.c because it can be
+  used not only with Toshiba laptops, but at least with any
+  LPC 47Nxxx SMSC-based chipset
+
+2003-07-10 claudiuc
+  * doc: added README.Tom from Thomas Pinz
+  * improvement: added tosh-smcinit.c and tosh-superio.h from Thomas
+  Pinz which will replace the tosh5100-smcinit.c
+</pre>
+
 <h3>2003-07-10 0.3-1 release</h3>
 
-<pre>2003-07-10 claudiuc 
-	* doc:  written smcinit.8, improved the other 2 man pages,
-	improved README and INSTALL.
-	* compile: generate config.h because it's needed by *.c files
-	(fixed in Makefile)
+<pre>2003-07-10 claudiuc
+  * doc:  written smcinit.8, improved the other 2 man pages,
+  improved README and INSTALL.
+  * compile: generate config.h because it's needed by *.c files
+  (fixed in Makefile)
 
-2003-07-08 claudiuc 
-	* doc: written INSTALL, updated AUTHORS, documentation from
-	Rob Miller; fixed LSM file, written README, improved SuSE
-	spec file
-	* prog: added GPL notice in tosh5100-smcinit.c as Rob Miller pointed
-	* redhat: RH 9.0 support (init script + spec file)
-	
-2003-07-02 claudiuc 
-	* build: SuSE spec improved to generated compatible SuSE RPM
-	* compile: GNU'fied; now both utilities have --version and --help
-	options;
-	* doc: separated manual pages and some improvements
+2003-07-08 claudiuc
+  * doc: written INSTALL, updated AUTHORS, documentation from
+  Rob Miller; fixed LSM file, written README, improved SuSE
+  spec file
+  * prog: added GPL notice in tosh5100-smcinit.c as Rob Miller pointed
+  * redhat: RH 9.0 support (init script + spec file)
+
+2003-07-02 claudiuc
+  * build: SuSE spec improved to generated compatible SuSE RPM
+  * compile: GNU'fied; now both utilities have --version and --help
+  options;
+  * doc: separated manual pages and some improvements
 2003-07-01  claudiuc
-	* cosmetic: renamed toshsat1800-irdasetup to tosh1800-smcinit
-	* build: improved original Makefile, spec file for SuSE, 
-	my configure script for build system
-	* compile: cleanup to remove warnings, broken compile; include
-	headers for used libc functions
-	* doc: first stage for my docs, manual page and renamed original
-	docs to avoid confusion</pre>
+  * cosmetic: renamed toshsat1800-irdasetup to tosh1800-smcinit
+  * build: improved original Makefile, spec file for SuSE,
+  my configure script for build system
+  * compile: cleanup to remove warnings, broken compile; include
+  headers for used libc functions
+  * doc: first stage for my docs, manual page and renamed original
+  docs to avoid confusion</pre>
 
 
 <a name="contact"></a><h2>Contact</h2>
 
-<p>The SMCINIT package home page is located at: 
+<p>The SMCINIT package home page is located at:
 <a href="http://irda.sourceforge.net/smcinit/">http://irda.sourceforge.net/smcinit/</a>
- 
+
 <p>Please send the bugs and your wishes to the authors.
-The nice and important thing you can do is to send me (Claudiu Costin) 
+The nice and important thing you can do is to send me
 your success story for a laptop or computer which is not listed here.
 
-<p><b>NOTE:</b> <i><tt>tosh1800-smcinit.c</tt> and <tt>tosh5100-smcinit.c</tt> 
-from SMCINIT package 
-are <b>modified</b> versions of original 
-<tt>toshsat1800-irdasetup.c</tt> by Daniele Peri and respectively 
-<tt>tosh5100-smcinit.c</tt> by Rob Miller.</i> I, Claudiu Costin, have no
-good knowledge of PCI and/or chipset programming. Please tell the authors
-that you use a modified version (although functionality was not touched)
-of their utilities.
+<p><b>NOTE:</b> <i><tt>tosh1800-smcinit.c</tt> and <tt>tosh5100-smcinit.c</tt>
+from SMCINIT package
+are <b>modified</b> versions of original
+<tt>toshsat1800-irdasetup.c</tt> by Daniele Peri and respectively
+<tt>tosh5100-smcinit.c</tt> by Rob Miller.</i>.
 
 <p>
 <table border="0" cellspacing="0" cellpadding="0" width="95%" bgcolor="#777777"><tr><td>
@@ -312,6 +415,10 @@ of their utilities.
 <tr bgcolor="#ffffe7">
   <td><b>Author</b></td>
   <td><b>Responsibility</b></td>
+</tr>
+<tr bgcolor="#ffffe7" valign="top">
+  <td>Thomas Pinz<br>&lt;tom_d&nbsp;@&nbsp;gmx.de&gt;</td>
+  <td><tt>smcinit</tt> rewritten and flexible toxhXXXX-smcinit implementation</td>
 </tr>
 <tr bgcolor="#ffffe7" valign="top">
   <td>Daniele Peri<br>&lt;peri&nbsp;@&nbsp;csai.unipa.it&gt;</td>
@@ -323,7 +430,7 @@ of their utilities.
 </tr>
 <tr bgcolor="#ffffe7" valign="top">
   <td>Claudiu Costin<br>&lt;claudiuc&nbsp;@&nbsp;kde.org&gt;</td>
-  <td>packaging, documentation, web page, modifications to utilities</td>
+  <td><i>(not active anymore!)</i> packaging &amp; documentation, web page, modifications to utilities</td>
 </tr>
 </table>
 </td></tr></table>
@@ -331,17 +438,17 @@ of their utilities.
 
 <a name="anoncvs"></a><h2>Anonymous CVS access to source code</h2>
 
-<p>Development sources are available via anonymous CVS at 
-<a href="http://sourceforge.net">sourceforge.net</a>, 
-if you don't have developer account. To grab them you should have 
+<p>Development sources are available via anonymous CVS at
+<a href="http://sourceforge.net">sourceforge.net</a>,
+if you don't have developer account. To grab them you should have
 <b>cvs</b> utility installed and at your prompt shell you must run:
 
 <pre>
 cvs -d:pserver:anonymous@cvs.irda.sourceforge.net:/cvsroot/irda co smcinit
 </pre>
 
-<p>If you're interested to browse the CVS repository via its 
-CVSWeb interface, the follow the  address: 
+<p>If you're interested to browse the CVS repository via its
+CVSWeb interface, the follow the  address:
 <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/irda/smcinit/">http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/irda/smcinit/</a>
 
 <p>For updating you CVS copy then use:
@@ -358,7 +465,7 @@ Note that this command must be run from inside your <b>smcinit</b> source direct
   by Daniele Peri
   <li><a href="http://www.janerob.com/rob/ts5100/irda.html">IrDA page</a>
   by Rob Miller
-  <li><a href="http://irda.sourceforge.net/irda-utils/">irda-utils</a> 
+  <li><a href="http://irda.sourceforge.net/irda-utils/">irda-utils</a>
   web page on Linux-IrDA Project web site
 <ul>
 </divert>
