@@ -7,6 +7,7 @@
 ##############################################################################
 
 
+SUBDIRS = wml
 
 # secvente ANSI pentru a evidentia anumiti pasi ai instalarii
 BOLD=\033\133\61\155

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export RSYNC_RSH="ssh"
+rsync -zrlt -P --exclude=ftp/ --delete -r html/ claudiuc@lkr.sourceforge.net:~/irda/httpd/htdocs/
+
