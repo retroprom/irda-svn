@@ -37,12 +37,8 @@ make all RPM_BUILD_ROOT="$RPM_BUILD_ROOT" RPM_OPT_FLAGS="$RPM_OPT_FLAGS" ROOT="$
 %install
 make install RPM_OPT_FLAGS="$RPM_OPT_FLAGS" ROOT="$RPM_BUILD_ROOT"
 
-for dir in irattach tekram; do
+for dir in irattach irdadump irdaping tekram; do
     cp $dir/README $dir/README.$dir
-done
-
-for dir in irdadump irdaping; do
-    cp $dir/README.txt $dir/README.$dir
 done
 
 %clean
