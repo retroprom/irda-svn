@@ -77,7 +77,7 @@ insserv -r /etc/init.d/boot.smcinit
 %defattr(-, root, root)
 %doc README COPYING ChangeLog INSTALL VERSION smcinit.lsm 
 %doc README.Rob RobMiller-irda.html 
-%doc CHANGELOG.Peri README.Peri 
+%doc CHANGELOG.Peri README.Peri README.Tom
 
 %defattr(0644, root, root)
 

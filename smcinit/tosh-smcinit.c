@@ -1,5 +1,5 @@
 /*
- * tosh5100-smcinit.c
+ * tosh-smcinit.c
  *
  * 
  *
@@ -12,7 +12,7 @@
  *
  *
  * Cleanups, small fixes by Claudiu Costin <claudiuc@kde.org>
- *
+ * Expansions for serveral modes by Thomas Pinz <tom_p@gmx.de>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -38,17 +38,29 @@
 #include <unistd.h>
 #include <pci/pci.h>
 #include "config.h"
-#define PROGNAME "tosh5100-smcinit"
-#define AUTHOR "Rob Miller"
-#define AUTHOR_EMAIL "<rob@janerob.com>"
 
-/* lspci on 5100-501 says */
+/* (*) */
+#include "tosh-superio.h"
+
+#define PROGNAME "tosh-smcinit"
+#define AUTHOR "Thomas Pinz"
+#define AUTHOR_EMAIL "<tom_p (at) gmx.net>"
+
+/* lspci on 5100 says */
 /* 00:1f.0 ISA bridge: Intel Corp. 82801CAM ISA Bridge (LPC) (rev 02) */
     
 #define BUS_LPC 0x00
 #define LPC_DEV 0x1f
 #define LPC_FUNC 0x00
-    
+
+/* (*)  */
+/* Bitshifters */
+#define SMC_SIR_IO ( (SIR_IO & 0xFF8) >> 2 )	/* CR25, p158: shift 2 down */
+#define	SMC_FIR_IO ( (FIR_IO & 0xFF8) >> 3 )	/* CR2B, p162: shift 3 down */
+#define SMC_FIR_IRQ FIR_IRQ	/* CR28, p160: equal */
+#define	SMC_FIR_DMA FIR_DMA	/* CR2C, p162: equal */    
+
+
 /* 82801 registers */
 #define VID 0x00
 #define DID 0x02
@@ -75,19 +87,22 @@
 #define SPR base+7
 #define DLSB base
 #define DMSB base+1
+
 struct option options[] = {
     {"version", no_argument, NULL, 'V'},
     {"help", no_argument, NULL, 'h'},
+    {"verbose", no_argument, NULL, 'v'},
     {NULL, 0, NULL, 0}
 };
 
 static char *options_explications[] = {
     "\t\tshow program version",
     "\t\tshow this help",
+    "\t\tbe verbose, show the compiled-in settings.",
     NULL
 };
 
-static char *short_options = "Vh";
+static char *short_options = "Vhv";
 
 
 void print_usage(struct option *options_array, char **options_explications_array)
@@ -120,6 +135,16 @@ void print_version()
     printf("%s %s\n", PROGNAME, VERSION);
 }
 
+void print_settings()
+{
+    print_version();
+    printf("Compiled for: %s\n", MACHINE);
+    printf("SIR ioport: 0x%x\n", SIR_IO);
+    printf("FIR ioport: 0x%x\n", FIR_IO);
+    printf("FIR interupt: %d\n", FIR_IRQ);
+    printf("FIR DMA: %d\n", FIR_DMA);
+}
+
 int main(int argc, char **argv) 
 {
     int i = 0, opt;
@@ -146,6 +171,11 @@ int main(int argc, char **argv)
                 break;
             }
 
+	      case 'v':
+	          {
+		            print_settings();
+		            break;
+	          }
         default:
             break;
         }
@@ -166,8 +196,8 @@ int main(int argc, char **argv)
         return 1;
     }
     twobyte = pci_read_word(dev, DID);
-    if (twobyte != 0x248c) {
-        fprintf(stderr, "%s IO hub device %x not 82801CAM (0x248c)\n",
+    if ( (twobyte != 0x24cc) | (twobyte != 0x248c) )  {
+        fprintf(stderr, "%s IO hub device %x not 82801CAM (0x248c or 0x24cc)\n",
                  PROGNAME, twobyte);
         return 1;
     }
@@ -206,11 +236,15 @@ int main(int argc, char **argv)
     outb(0x0d, SMC_BASE);       // set for device id
     if ((i = inb(SMC_BASE + 1)) == 0x5a) // if SMC 47N227
     {
+	// ! sir-io !
         outb(0x24, SMC_BASE);  // select CR24 - UART1 base addr
         outb(0x00, SMC_BASE + 1); // disable UART1
         outb(0x25, SMC_BASE);  // select CR25 - UART2 base addr
         //outb(0xBE, SMC_BASE+1); // bits 2-9 of 0x2f8
-        outb(0xFE, SMC_BASE + 1); // bits 2-9 of 0x3f8
+        //outb(0xFE, SMC_BASE + 1); // bits 2-9 of 0x3f8
+        outb(SMC_SIR_IO, SMC_BASE + 1); // bits 2-9 of 0x3f8
+
+	// ! fir-irq !
         outb(0x28, SMC_BASE);  // select CR28 - UART1,2 IRQ select
         i = inb(SMC_BASE + 1);  // get current setting for both
         //outb((i & 0xf0) | 0x0a, SMC_BASE+1);  // low order bits to 0a=irq10
@@ -218,13 +252,21 @@ int main(int argc, char **argv)
         
             //outb((i & 0xf0) | 0x03, SMC_BASE+1);  // low order bits to 03=irq03
             //outb((i & 0xf0) | 0x04, SMC_BASE+1);  // low order bits to 04=irq04
-            outb((i & 0x00) | 0x03, SMC_BASE + 1); // low order bits 
+        // outb((i & 0x00) | 0x03, SMC_BASE + 1); // low order bits 
+        outb((i & 0x00) | SMC_FIR_IRQ, SMC_BASE + 1); // low order bits 
         // but want no irq for serial uart1 ?
+
+	// ! fir-io !
         outb(0x2B, SMC_BASE);  // CR2B - SCE (FIR) base addr
-        outb(0x26, SMC_BASE + 1); // 0x130 bits 2-9
+        //   outb(0x26, SMC_BASE + 1); // 0x130 bits 2-9
+        outb(SMC_FIR_IO, SMC_BASE + 1); // io varialbe
+
+	// ! fir-dma !
         outb(0x2C, SMC_BASE);  // CR2C - SCE (FIR) DMA select
         //   outb(0x01, SMC_BASE+1); // DMA 1
-        outb(0x03, SMC_BASE + 1); // DMA 3
+        //   outb(0x03, SMC_BASE + 1); // DMA 3
+        outb(SMC_FIR_DMA, SMC_BASE + 1); // DMA variable
+
         outb(0x0C, SMC_BASE);  // CR0C - UART mode
         i = inb(SMC_BASE + 1);  // whatever already there
         //outb((i & 0xC7) | 0x08, SMC_BASE+1);   // enable IrDA (HPSIR) mode

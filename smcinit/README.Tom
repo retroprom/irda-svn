@@ -1,0 +1,64 @@
+tosh-smcinit
+============
+
+I've modified the tosh5100-smcinit.c to make it more flexible and renamed
+it to tosh-smcinit.c because it works with several notebooks of Toshiba.
+
+Currently, the following notebooks will work:
+
+Toshiba Satellite 5100
+Toshiba Satellite 5200
+Toshiba Satellite P10
+Toshiba Satellite P20
+Toshiba Satellite (Pro) A30
+Toshiba Satellite Pro 2100
+Toshiba Satellite Pro M10
+
+Please note that the names of the notebooks differ from country to 
+country. I used the German names. 
+
+In many newer notebooks, Toshiba changed the SuperIO chip. They use no
+longer the LPC47N227, instead other chips are used like LPC47N249. But
+SMSC wont give me any information about the newer chips, so I see no
+way to initialize them. Furthermore, for the newer chips there is also
+no support in Linux kernel 2.4.x. I hope somebody find a way in the future.
+
+I tested also the following notebooks, they have newer chips and will *NOT*
+work at this moment:
+
+Toshiba Satellite (Pro) M30
+Toshiba Portegee M100
+Toshiba Portegee M200
+Toshiba Tecra S1
+Toshiba Tecra M1
+
+But if your notebook use a newer chipset from Intel and the LPC47N227 from
+SMSC, there are good chances to get IrDA working. If your notebook is not
+in the list and you have MS Windows installed, please send me your settings
+of the IrDA and I will include it. I need the IRQ, DMA and the 
+2 IO-Port settings.
+
+
+OK, to make it running, you have to do the following steps:
+
+- Edit the tosh-superio.h and uncomment only the define for your machine
+- Compile it.
+- Run tosh-smcinit *before* you insert the "smc-ircc" kernel module. 
+  For example you can do this in the /etc/modules.conf
+  Without parameters, "tosh-smcinit" give no output, but if you run 
+  it as "tosh-smcinit -v", you will see also the compiled-in settings.
+
+More detailed instructions are in README.Rob, just replace tosh5100-smcinit
+with tosh-smcinit in his text. :)
+
+
+If you use a PCMCIA or miniPCI Slot (also built-in WLAN), on some machines
+are conflicts at the IO-Ports between IrDA and some cards. Sometimes it
+helps if you change IO-Port range, which "pcmcia-cs" uses. The line
+
+  include port 0x160-0x3f7, port 0x400-0x4ff, port 0x800-0x8ff, port 0xc00-0xcff
+
+in /etc/pcmcia/config.opts regulates it.
+
+Thomas Pinz, Jan 2004
+E-Mail: tom_p@gmx.de

@@ -4,7 +4,7 @@ smcinit \- initialize the IrDA controler on Toshiba laptops
 .SH SYNOPSIS
 .B tosh1800-smcinit
 or
-.B tosh5100-smcinit
+.B tosh-smcinit
 .SH DESCRIPTION
 .PP
 Toshiba Satellite 1800, Satellite 5100, Tecra 9100 laptops 
@@ -27,7 +27,8 @@ My sole work was to put these utilities as one package, easy to install and use.
 .PP
 When system startup a script is run from \fI/etc/init.d\fR and which run appropriate
 SMC intialization utility. This is done before PCMCIA startup because on Tecra 9100
-the \fBorinoco_cs\fR wireless driver will block the I/O region used 47N227 SuperIO.
+and other models the \fBorinoco_cs\fR wireless driver will block the I/O region 
+used 47N227 SuperIO.
 .PP
 The only configuration file is \fI/etc/sysconfig/smcinit\fR and the variable SMCCONFIG
 can be set to "1800" or "5100". By default "5100" value is used. 
@@ -80,11 +81,14 @@ Configuration file for SMCINIT startup script. It's shell script.
 .SH AUTHOR
 This document is made by Claudiu Costin <claudiuc@kde.org>
 The utilities authors are
-Daniele Peri, Rob Miller and Paul Hampson
+Daniele Peri, Rob Miller and Paul Hampson.
+Thomas Pinz made improvements to \fBtosh-smcinit\fR (the former
+\fBtosh5100-smcinit\fR) to expand the number of Toshiba Satellite models
+supported.
 .SH "SEE ALSO"
-.BR tosh1800-smcinit (8),
+.BR tosh-smcinit (8),
 .br
-.BR tosh5100-smcinit (8),
+.BR tosh1800-smcinit (8),
 .br
 .BR irattach (1),
 .br

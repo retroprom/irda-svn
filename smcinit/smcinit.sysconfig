@@ -2,4 +2,6 @@
 # Which SMC configurator to start
 # See the smcinit(8) man page for more info
 #
-SMCCONFIG="5100"
+# use `1800' as value only you have Toshiba Satellite 1800,
+# otherwise leave it empty
+SMCCONFIG=""
