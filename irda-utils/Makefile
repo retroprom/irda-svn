@@ -24,7 +24,7 @@
 ##     
 ######################################################################
 
-DIRS = irattach irdaping psion etc tekram findchip irdadump 
+DIRS = irattach irdaping etc man psion tekram findchip irdadump 
 CFLAGS= -O2 -W -Wall
 
 all:
