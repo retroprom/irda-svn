@@ -42,13 +42,13 @@ INSTALL_HEADER  = $(INSTALL_DATA)
 
 
 SOURCES1 = tosh1800-smcinit.c 
-SOURCES2 = tosh5100-smcinit.c 
+SOURCES2 = tosh-smcinit.c 
 SOURCES  = $(SOURCES1) $(SOURCES2) 
 OBJECTS1 = $(SOURCES1:%.c=%.o)
 OBJECTS2 = $(SOURCES2:%.c=%.o)
 OBJECTS  = $(OBJECTS1) $(OBJECTS2)
 TARGETS1 = tosh1800-smcinit
-TARGETS2 = tosh5100-smcinit
+TARGETS2 = tosh-smcinit
 TARGETS = $(TARGETS1) $(TARGETS2)
 
 

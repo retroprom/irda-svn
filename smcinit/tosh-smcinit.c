@@ -111,14 +111,14 @@ static char *options_explications[] = {
     "\t\t\tshow program version",
     "\t\t\tshow this help",
     "\t\t\tbe verbose, show the compiled-in settings.",
-    "\t\tset the sir-ioport",
-    "\t\tset the fir-ioport",
-    "\t\tset the fir-interrupt",
-    "\t\tset the fir-dma",
+    "\t\tset the SIR I/O port",
+    "\t\tset the FIR I/O port",
+    "\t\tset the FIR IRQ line",
+    "\t\tset the FIR DMA channel",
     NULL
 };
 
-static char *short_options = "Vhvsfid";
+static char *short_options = "Vhvs:f:i:d:";
 
 
 void print_usage(struct option *options_array, char **options_explications_array)
@@ -161,6 +161,12 @@ void print_settings()
     printf("FIR interupt: %d\n", FIR_IRQ);
     printf("FIR DMA: %d\n", FIR_DMA);
     printf("\n");
+}
+
+void die(const char *message)
+{
+    fprintf(stderr,"%s: %s\n",PROGNAME,message);
+    exit(1);
 }
 
 int set_smc(int sir_io, int fir_io, int fir_irq, int fir_dma, int verbose) {
@@ -314,10 +320,12 @@ int main(int argc, char **argv) {
 	int verbose=0;
 	
 	/* set default values */
-	int sir_io = SIR_IO;
-	int fir_io = FIR_IO;
-	int fir_irq = FIR_IRQ;
-	int fir_dma = FIR_DMA;
+	unsigned int sir_io = SIR_IO;
+	unsigned int fir_io = FIR_IO;
+	unsigned int fir_irq = FIR_IRQ;
+	unsigned int fir_dma = FIR_DMA;
+	const char *nptr;
+	char *endptr;
     
      
     while ((opt = getopt_long(argc, argv, short_options, options, NULL)) != -1) {
@@ -339,19 +347,39 @@ int main(int argc, char **argv) {
 		break;
 		}
 	case 's': {
+		nptr=optarg;
+		endptr=NULL;
 		sir_io=strtoul(optarg, NULL, 0);
 		break;
+		if (!nptr || !*nptr || !endptr || *endptr) {
+		    die("Cannot convert SIR I/O to number");
+		}
 		}
 	case 'f': {
-		fir_io=strtoul(optarg, NULL, 0);
+		nptr=optarg;
+		endptr=NULL;
+		fir_io=strtoul(nptr, &endptr, 0);
+		if (!nptr || !*nptr || !endptr || *endptr) {
+		    die("Cannot convert FIR I/O to number");
+		}
 		break;
 		}
 	case 'i': {
+		nptr=optarg;
+		endptr=NULL;
 		fir_irq=strtoul(optarg, NULL, 0);
+		if (!nptr || !*nptr || !endptr || *endptr) {
+		    die("Cannot convert FIR IRQ to number");
+		}
 		break;
 		}
 	case 'd': {
+		nptr=optarg;
+		endptr=NULL;
 		fir_dma=strtoul(optarg, NULL, 0);
+		if (!nptr || !*nptr || !endptr || *endptr) {
+		    die("Cannot convert FIR DMA to number");
+		}
 		break;
 		}
 	default:  break;
@@ -361,7 +389,7 @@ int main(int argc, char **argv) {
 
 	if (verbose) {
 		print_settings();
-		}
+	}
 	
 	ret_val=set_smc(sir_io, fir_io, fir_irq, fir_dma, verbose);
 
