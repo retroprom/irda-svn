@@ -18,13 +18,12 @@ Please note that the names of the notebooks differ from country to
 country. I used the German names. 
 
 In many newer notebooks, Toshiba changed the SuperIO chip. They use no
-longer the LPC47N227, instead other chips are used like LPC47N249. But
-SMSC wont give me any information about the newer chips, so I see no
-way to initialize them. Furthermore, for the newer chips there is also
-no support in Linux kernel 2.4.x. I hope somebody find a way in the future.
+longer the LPC47N227, instead other chips are used like LPC47N24x. But we
+are working on modify the smc-ircc driver and smcinit so this Chips will 
+also work in the near future.
 
 I tested also the following notebooks, they have newer chips and will *NOT*
-work at this moment:
+work at this moment. I hope this will possible in the near future.
 
 Toshiba Satellite (Pro) M30
 Toshiba Portegee M100
@@ -36,8 +35,8 @@ But if your notebook use a newer chipset from Intel and the LPC47N227 from
 SMSC, there are good chances to get IrDA working. If your notebook is not
 in the list and you have MS Windows installed, please send me your settings
 of the IrDA and I will include it. I need the IRQ, DMA and the 
-2 IO-Port settings.
-
+2 IO-Port settings. Please also attach a copy of your /proc/interrupts,
+/proc/ioports and /proc/dma
 
 OK, to make it running, you have to do the following steps:
 
@@ -67,5 +66,5 @@ to incluence the routing with the "acpi_irq_balance" and "acpi_irq_pci=n"
 kernel-parameters.
 
 
-Thomas Pinz, Jan 2004
+Thomas Pinz, Jan 2004, V0.2
 E-Mail: tom_p@gmx.de
