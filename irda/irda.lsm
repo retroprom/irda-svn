@@ -1,0 +1,14 @@
+Begin4
+Title:          irda
+Version:        0.1-1
+Entered-date:   Thu Aug 7 2003
+Description:    Manage Linux-IrDA stack
+Keywords:       IrDA, infrared, Linux, kernel, administration
+Author:         Claudiu Costin <claudiuc@kde.org>
+Maintained-by:  Claudiu Costin <claudiuc@kde.org>
+Primary-site:   http://irda.sourceforge.net/irda/
+Home-page:      http://irda.sourceforge.net/irda/
+Original-site:  http://irda.sourceforge.net/irda/
+Platforms:      Linux only
+Copying-policy: GNU Public License
+End

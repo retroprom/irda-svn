@@ -1,0 +1,8 @@
+*.spec
+*~
+Makefile
+Makefile.in
+configure
+stamp*
+config.h
+

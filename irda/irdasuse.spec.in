@@ -1,0 +1,65 @@
+%define name  irda
+%define version @VERSION@
+%define release @RELEASE@
+%define builddir $RPM_BUILD_DIR/%{name}-%{version}-%{release}
+
+Name:         %{name}
+Version:      %{version}
+Release:      %{release}
+Vendor:       Claudiu Costin <claudiuc@kde.org>
+Packager:     Claudiu Costin <claudiuc@kde.org>
+URL:          http://irda.sourceforge.net/irda/
+Source:       %{name}-%{version}-%{release}.tar.gz
+Group:        System/Utilities
+Copyright:    GPL
+Provides:     irda
+BuildRoot:    %{_tmppath}/%{name}-%{version}-%{release}
+Summary:      Manage Linux-IrDA stack
+Distribution: SuSE 8.x
+
+%description
+XXX XXX XXX
+XXX XXX XXX
+
+%prep
+%setup -n %{name}-%{version}-%{release}
+
+
+%build
+./configure
+PREFIX="%{_prefix}" make
+
+
+%install
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT"
+PREFIX="%{_prefix}" INSTALL_ROOT="$RPM_BUILD_ROOT" make install 
+
+
+%clean
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT"
+
+
+%post
+
+%postun
+
+%preun
+
+%files
+
+%defattr(0755, root, root)
+%{_sbindir}/*
+
+%defattr(0644, root, root)
+%{_mandir}/man8/*
+
+%defattr(-, root, root)
+%doc README COPYING ChangeLog INSTALL VERSION irda.lsm 
+
+%defattr(0644, root, root)
+
+
+%changelog
+* Thu Aug 7 2003 Claudiu Costin <claudiuc@kde.org>
+- initial RPM
+
