@@ -1,0 +1,217 @@
+
+#include <tags.inc>
+
+<set-var title="Linux-IrDA Project - Documentation - Communicating" />
+<set-var selected="docs" />
+<set-var subselected="docs" />
+
+
+<divert MENU>
+<navbar:render name="docsmenu" select="<get-var subselected />">
+</divert>
+
+
+<divert CONTENT>
+
+<px width="1" height="10"><br>
+<small>
+<navbar:render name="docs2menu" select="comm"><br>
+</small>
+
+<h1>Communicating over IrDA</h1>
+
+<p><small>
+<b>Contents:</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#intro">Introduction</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#apps">Applications and protocols</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#term">Terminal over IrComm</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#phone">IrDA and mobile phones</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#irlan">TCP/IP over IrLAN</a><br>
+</small>
+
+
+<a name="intro"></a><h2>Introduction</h2>
+
+<p>
+The first test is to check if the <b>discovery</b> is happening
+properly. If the IrDA driver is properly configured, the Linux-IrDA
+will discover other IrDA devices in range. If the discover doesn't
+work, this indicate that the low level is not configured properly (and
+you don't need to go any further).
+You can check if there is any device listed in the discovery log
+with:
+<pre>&gt; cat /proc/net/irda/discovery 
+IrLMP: Discovery log:
+nickname: Jean Tourrilhes, hint: 0x8220, saddr: 0x913b1bbc, daddr: 0x5619b45e</pre>
+
+You can also check various other files in <tt>/proc</tt>, or use
+<b>irdadump</b>, check the <a href="advanced.html#debug">debugging section</a>.<br>
+<br>
+Then, you might want to use a simple aplication, such as
+<b>e-Squirt</b> to verify that everything works fine. Or you can skip
+directly to the next section.
+The big advantage of e-Squirt is that it is a really simple protocol,
+doesn't stress the IrDA stack too much and we have implementation for
+<a href="http://www.cooltown.hp.com/code.htm">various platforms</a>,
+so that you can test your setup with almost anything on the other side
+(Linux, Win32, WinCE or Palm).
+Compile the <a href="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/squirt.html">Linux e-Squirt library</a>
+and the test programs on all Linux computers, and go in the <tt>tests</tt>
+directory. On other platforms, load and start the relevant the
+e-Squirt application.
+If you want to use Linux as a <i>receiver</i>, just do:
+<pre>&gt; ./squirt</pre>
+To use Linux as a <i>sender</i>, you can do:
+<pre>&gt; ./ultra_beacon http://cooltown.hp.com/
+&gt; ./socket_squirt http://cooltown.hp.com/</pre>
+With that, you should be able to exchange back and forth URLs and
+check that your IrDA stack works. If not, continue to read below.
+One caveat: Most implementations have two exclusive receiving
+modes, IrDA and Ultra, and they switch between these (either as a
+preference setting, or automatically triggerd by discovery
+packets). Linux is an exception and can listen to both at the same
+time. This means that unless you do a Linux-Linux test, <b>only one of
+the two sender tests</b> listed above will work properly.
+
+
+<a name="apps"></a><h2>Applications and protocols</h2>
+
+<p>
+If you want to run e-Squirt applications, you are done, and you just
+need to run the application themselves, they should work.
+Other applications and protocols you may want to run&nbsp;:
+
+<ul>
+	<li><a href="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrNET.html">TCP/IP over IrNET</a> (external link)
+	<li><a href="#term">Terminal over IrCOMM</a>
+	<li><a href="#phone">Connect to a mobile phones</a>
+	<li><a href="#irlan">TCP/IP over IrLAN</a>
+	<li><a href="http://sourceforge.net/projects/openobex/">Obex</a> (external link) to
+	exchange files/objects with PDAs, Phones and other Obex devices
+</ul>
+
+Note that I don't use IrCOMM and IrLAN, so I can't help much with that...
+
+
+<a name="term"></a><h3>Terminal over IrComm</h3>
+
+<p>This is a simple test to check that <b>IrComm</b> is working between
+two PCs. After that, you can try more complex applications such as
+<b>PPP</b>.<br>
+<b>Server side</b>: Start the terminal server
+<pre>&gt; getty ircomm0 DT19200 vt100	 # Red-Hat syntax</pre>
+or
+<pre>&gt; getty -L ircomm0 19200 vt100  # Debian syntax</pre>
+At this point, your text terminal should get reset and you
+come back to a login prompt. That's normal. I don't know what happen
+in X.<br>
+<br>
+<b>Client side with kermit</b>: Start the terminal emulator
+<pre>&gt; kermit
+&gt; &gt; set line /dev/ircomm0
+&gt; &gt; set speed 19200
+&gt; &gt; connect
+&gt; stty sane	# Get backspace to work ok
+</pre>
+The prompt shouls appear after <i>connect</i>. Also, you need to
+ignore the following message: "<i>Warning: no access to tty
+(Inappropriate ioctl for device).  Thus, no job control enabled</i>",
+and "<i>Can't open terminal /dev/tty</i>".<br>
+<br>
+<b>Client side with minicom</b>: Minicom is a bit more problematic, and 
+I'm still fighting with it. I still don't understand how to connect. 
+I managed to make it work like this:
+
+<ul>
+	<li>start minicom
+	<li>Configure (Ctrl+A O)
+	<li>sub-menu serial
+	<li>set to <tt>/dev/ircomm0</tt>
+	<li>set speed to 19200
+	<li>exit
+	<li>sub-menu "save as dft"
+	<li>exit
+	<li>Exit (Ctrl+A X)
+	<li>restart minicom
+</ul>
+
+<a name="phone"></a><h3>IrDA and mobile phones</h3>
+
+<font color="red"><i>Note: This section must be updated</i></font>
+
+<p>I don't have any <i>mobile phone</i>, and I don't use <i>IrCOMM</i>,
+so I can't help...
+There is many people using this feature, and some of them have put
+instructions in their web pages. The people doing <a
+href="http://gnokii.org/">Gnokii</a> are also quite knowledgeable in
+this area, so you may ask advice on their mailing list, but please
+report IrDA bugs in the IrDA mailing lists.
+If I can't reproduce your problem, I can't debug it, so I can't fix
+it. If I can't see anything obvious in the <b>irdadump</b> log, I
+won't bother. You may also want to try to reproduce the problem
+<i>between two Linux boxes</i> (because I may be able to reproduce
+that).
+
+
+<a name="irlan"></a><h3>TCP/IP over IrLAN</h3>
+
+<font color="red"><i>Note: This section must be updated</i></font>
+
+<p>
+I don't use <b>IrLAN</b> any longer, because I'm only using
+<b>IrNET</b>. I just did a refresh on the original instructions that I
+sent on the mailing list (removing mentions of irmanager).
+IrLAN as an access option, which can be 1 (direct mode), 2 (peer to
+peer) and 3 (hosted). Basically, you would use 2 if you connect to
+another PC, 1 if you connect to a transparent access point, and 3 if
+you are the access point.  The HP
+Netbeamer is an access point, but it accept connections only if the PC
+is in peer mode. Go figure...<br>
+<br>
+<b>PC -&gt; HP NetBeamer</b>:
+<br>
+Here is how to hook to the NetBeamer... After aligning the IrDA port
+or after starting <b>irattach</b>, the light of the NetBeamer should
+flash. If it doesn't, you may want to play with the <tt>slot_timeout</tt>
+value.
+<pre>&gt; insmod irlan access=2
+&gt; ifconfig irlan0 10.0.0.1 netmask 255.255.255.0 broadcast 10.0.0.255</pre>
+At this point, the light goes solid green. Link is on, you can ping
+and everybody is happy. You may want to add a gateway with:<br>
+"<tt>route add default gw ...</tt>".<br>
+<br>
+<b>PC -&gt; PC</b>:
+<br>
+Not everybody has a NetBeamer, so here is a step by step on
+how to create a link between two PCs.<br>
+<br>
+<i>On the first PC</i>:
+<pre>&gt; insmod irlan access=2
+&gt; ifconfig irlan0 10.0.0.1 netmask 255.255.255.0 broadcast 10.0.0.255</pre>
+<i>On the second PC</i>:
+<pre>&gt; insmod irlan access=2
+&gt; ifconfig irlan0 10.0.0.2 netmask 255.255.255.0 broadcast 10.0.0.255</pre>
+After that, you should be able to ping and telnet...<br>
+<br>
+By default, <tt>/etc/irda/network.opts</tt> is not used. In the previous
+example, we ifconfig-ure irlan by hand. If you have a Red-Hat/Mandrake
+distribution, <b>irmanager</b> can do the job automatically at the condition
+that you create a file <tt>/etc/sysconfig/network-scripts/ifcfg-irlan0</tt> and
+set the right values in there... There might be more needed, but I'm
+not totally expert on this...<br>
+For other distribution (like Debian),
+you need to replace the file <tt>/etc/irda/network</tt> with possibly something
+from a Pcmcia package, and with some editing you might get it to load
+network.opts...<br>
+You might also want to add in your <tt>/etc/conf.modules</tt> a 
+"<i>option irlan access=2</i>". So, if you use <b>modprobe</b> instead of 
+<b>insmod</b>, you won't have to specify <i>access=2</i> on the command line.
+
+
+</divert>
+
+#include <layout2.inc>
+
+
+
+

@@ -5,7 +5,8 @@ HTML_WML_FILES= index.wml home.wml news.wml sitemap.wml   \
                 about.wml credits.wml download.wml        \
                 apps.wml irda-utils/index.wml smcinit/index.wml                        \
                 resources.wml companies.wml chipsets.wml dongles.wml devices.wml       \
-                docs/index.wml docs/index2.wml docs/index3.wml docs/index4.wml         \
+                docs/index.wml docs/startirda.wml docs/communicating.wml               \
+                docs/advanced.wml                                                      \
                 docs/developer.wml docs/status.wml                                     \
                 contact.wml
 
@@ -36,7 +37,10 @@ $(RELDIR)html/news.html:       $(RELDIR)common/layout2.inc $(RELDIR)common/news.
 $(RELDIR)html/sitemap.html:    $(RELDIR)common/layout2.inc
 $(RELDIR)html/about.html:      $(RELDIR)common/layout2.inc
 $(RELDIR)html/download.html:   $(RELDIR)common/layout2.inc
-$(RELDIR)html/docs/status.html:     $(RELDIR)common/layout2.inc $(RELDIR)data/docs/status*.inc
+$(RELDIR)html/docs/status.html:        $(RELDIR)common/layout2.inc $(RELDIR)data/docs/status*.inc
+$(RELDIR)html/docs/startirda.html:     $(RELDIR)common/layout2.inc 
+$(RELDIR)html/docs/communicating.html: $(RELDIR)common/layout2.inc 
+$(RELDIR)html/docs/advanced.html:      $(RELDIR)common/layout2.inc 
 
 $(RELDIR)html/apps.html:              $(RELDIR)common/layout2.inc
 $(RELDIR)html/smcinit/index.html:     $(RELDIR)common/layout2.inc
@@ -54,8 +58,5 @@ $(RELDIR)html/devices.html:    $(RELDIR)data/devices.inc
 
 
 $(RELDIR)html/docs/index.html: $(RELDIR)data/docs/index.inc
-$(RELDIR)html/docs/index2.html: $(RELDIR)data/docs/index2.inc
-$(RELDIR)html/docs/index3.html: $(RELDIR)data/docs/index3.inc
-$(RELDIR)html/docs/index4.html: $(RELDIR)data/docs/index4.inc
 $(RELDIR)html/docs/developer.html: $(RELDIR)data/docs/developer.inc
 
