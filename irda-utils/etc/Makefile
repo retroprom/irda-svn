@@ -10,10 +10,6 @@ clean:
 	$(RM_CMD)
 
 install:
-	mkdir -p $(ROOT)/etc/irda
-	install network $(ROOT)/etc/irda/
-	install network.orig $(ROOT)/etc/irda/
-	install network.redhat $(ROOT)/etc/irda/
-	install network.opts $(ROOT)/etc/irda/
-	install drivers $(ROOT)/etc/irda/
-	install irda $(ROOT)/etc/rc.d/init.d/
+	install irda.sysconfig $(ROOT)/etc/sysconfig/
+	install irda.rc $(ROOT)/etc/rc.d/init.d/irda
+	install ifcfg-irlan0 $(ROOT)/etc/sysconfig/network-scrips/

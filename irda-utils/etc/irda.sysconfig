@@ -1,0 +1,3 @@
+IRDA=no
+DEVICE=/dev/ttyS1
+DISCOVERY=yes
