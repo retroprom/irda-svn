@@ -316,7 +316,7 @@ static int get_devlist(char ifnames[][IFNAMSIZ + 1],
 	if(fh == NULL)
 		return(-1);
 
-	/* Success : use data from /proc/net/wireless */
+	/* Success : use data from /proc/net/dev */
 	ifnum = 0;
 
 	/* Eat 2 lines of header */
@@ -611,32 +611,14 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
 
-	/* First arg is device name */
+	/* First arg is device name. Save it now, because in some cases
+	 * getopt() will remove it... */
 	strncpy(device, argv[1], 20);
 	device[20] = '\0';
 
-	/* Check if it's a tty */
-	if(strncmp("/dev", device, 4) == 0) {
-		tty = 1;
-	} else {
-		/* Check for a irda device name */
-		if((strncmp("irda", device, 4) == 0) &&
-		   (isdigit(device[4]))) {
-			/* May fail if no alias in /etc/modules.conf.
-			 * Ignore, because the user may load module by hand.
-			 * Jean II */
-			load_module(device);
-		} else {
-			/* This is a module name - currently experimental */
-			modname = 1;
-
-			/* Get list of devices associated with module */
-			/* This may fork as needed - Jean II */
-			get_module_devices(device);
-		}
-	}
-
 	/* Look for options */
+  /* Do this before processing device, to handle "-h" and -v"
+   * properly. Jean II */
 	while ((c = getopt(argc, argv, "d:hsv")) != -1) {
 		switch (c) {
 		case 's':
@@ -664,6 +646,27 @@ int main(int argc, char *argv[])
 		}
 	}
 
+  /* Check if the device is a tty */
+  if(strncmp("/dev", device, 4) == 0) {
+    tty = 1;
+  } else {
+    /* Check for a irda device name */
+    if((strncmp("irda", device, 4) == 0) &&
+       (isdigit(device[4]))) {
+      /* May fail if no alias in /etc/modules.conf.
+       * Ignore, because the user may load module by hand.
+       * Jean II */
+      load_module(device);
+    } else {
+      /* This is a module name - currently experimental */ 
+      modname = 1;
+ 
+      /* Get list of devices associated with module */
+      /* This may fork as needed - Jean II */
+      get_module_devices(device);
+    }
+  }
+ 
 	/* Go as a background daemon */
 	fork_now();
 
@@ -681,7 +684,7 @@ int main(int argc, char *argv[])
 		syslog(LOG_INFO, "signal(SIGINT): %m");
 
 	/* If device is a tty */
-	/* We may want to move that before the fork() */
+  /* We may want to move that before the fork(), except for the sleep */
 	if (tty) {
 		/* Create tty channel */
 		start_tty(device);

@@ -1,3 +1,6 @@
+2002-07-18  Jean II
+	* Fix "irattach -h/-v" (thanks to Werner Heuser for spotting this)
+
 2002-06-03  Jean II
 	* Added ma600 dongle support
 
