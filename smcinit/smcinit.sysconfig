@@ -5,3 +5,8 @@
 # use `1800' as value only you have Toshiba Satellite 1800,
 # otherwise leave it empty
 SMCCONFIG=""
+SMC_TTY=ttyS2
+SMC_SIRIOPORT=0x3e8
+SMC_FIRIOPORT=0x130
+SMC_FIRIRQ=7
+SMC_FIRDMA=3

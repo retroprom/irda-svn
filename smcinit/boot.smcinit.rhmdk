@@ -1,0 +1,104 @@
+#! /bin/sh
+#
+# /etc/init.d/smcinit
+#
+# smcinit:       Initialize SMC-IRCC IrDA hardware
+#
+# Version:      @(#) /etc/rc.d/init.d/smcinit 1.0
+#
+# chkconfig: 2345 09 91
+# description: Initialize SMC-IRCC IrDA hardware
+#
+# config: /etc/sysconfig/smcinit
+# h i d  e: true
+
+# Copyright (c) 2005 Jérôme Fenal <jfenal at free dot fr>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+[ -f /etc/sysconfig/smcinit ] && . /etc/sysconfig/smcinit 
+
+SMCINIT=/usr/sbin/smcinit
+MODULE=smsc-ircc2
+
+[ -x $SMCINIT ] || exit 0
+
+start() {
+	cl=""	# command line for smcinit
+	op=""   # options for modprobe
+
+	if [ ! -z "$SMC_SIRIOPORT" ] ; then cl="$cl -s $SMC_SIRIOPORT" ; op="$op ircc_sir=$SMC_SIRIOPORT" ; fi
+	if [ ! -z "$SMC_FIRIOPORT" ] ; then cl="$cl -f $SMC_FIRIOPORT" ; op="$op ircc_fir=$SMC_FIRIOPORT" ; fi
+	if [ ! -z "$SMC_FIRIRQ" ]    ; then cl="$cl -i $SMC_FIRIRQ"    ; op="$op ircc_irq=$SMC_FIRIRQ" ; fi
+	if [ ! -z "$SMC_FIRDMA" ]    ; then cl="$cl -d $SMC_FIRDMA"    ; op="$op ircc_dma=$SMC_FIRDMA" ; fi
+
+	# First, unbind FIR tty from serial driver
+	if [ ! -z "$SMC_TTY" ] ; then
+		if [ -f "/dev/$SMC_TTY" ] ; then
+			action "Unbind FIR tty from serial driver" setserial /dev/$SMC_TTY uart none
+		fi
+	fi
+	
+	# Second initialize the hardware
+	gprintf "Initialize SMC-IRCC IrDA hardware"
+	$SMCINIT $cl
+	rc1=$?
+	
+	# Third, load the device driver
+	if [ $rc1 -eq 0 ] ; then 
+		success		# smcinit
+		echo
+		action "Loading module $MODULE " "modprobe $MODULE $op"
+		rc2=$?
+		RETVAL=$?
+	else
+		failure		# smcinit
+		echo
+		RETVAL=-1
+	fi
+}
+
+stop() {
+	gprintf "Unloading smc-ircc kernel module"
+	modprobe -r $MODULE
+	rc=$?
+	if [ $rc -eq 0 ] ; then
+		success
+	else
+     		failure 
+	fi
+	echo
+	return $rc
+}
+
+case "${1}" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	status)
+		echo -n "Checking for smc-ircc kernel module"
+		line=`lsmod 2>/dev/null | grep $MODULE | grep -v grep`
+		if [ -z "$line" ] ; then
+			failure
+			RETVAL=3    
+		else
+			success
+		fi 
+		echo
+		;;
+	*)
+		echo "Usage: $0 {start|stop|status}"
+		exit 1
+		;;
+esac
+
+#exit $RETVAL
