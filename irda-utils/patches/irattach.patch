@@ -1,0 +1,12 @@
+diff -Naur irattach.orig/Makefile irattach/Makefile
+--- irattach.orig/Makefile	2003-05-07 13:51:21.000000000 +0200
++++ irattach/Makefile	2003-05-07 13:49:50.000000000 +0200
+@@ -37,7 +37,7 @@
+ #
+ # System stuff
+ #
+-SYS_INCLUDES = -I/usr/include -I/usr/src/linux/include
++SYS_INCLUDES = -I/usr/include
+ SYS_LIBRARIES = 
+ SYS_LIBPATH = -L/usr/lib -L/usr/local/lib 
+ 

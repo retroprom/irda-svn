@@ -1,0 +1,19 @@
+diff -Naur psion.orig/irpsion5.c psion/irpsion5.c
+--- psion.orig/irpsion5.c	2000-11-06 22:13:50.000000000 +0100
++++ psion/irpsion5.c	2003-05-07 12:48:46.000000000 +0200
+@@ -51,12 +51,12 @@
+ #endif /* AF_IRDA */
+ 
+ /* Default slot_timeout */
+-static slot_timeout = 120;
++static int slot_timeout = 120;
+ 
+-static debug_level = 0;
++static int debug_level = 0;
+ #define DEBUG(n, str...) ( debug_level >= (n) ? printf(str) : 0 )
+ 
+-static verbose = 1;
++static int verbose = 1;
+ 
+ #define MAX_DEVICES 10
+ 

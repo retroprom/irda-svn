@@ -44,6 +44,7 @@
 
 int config_print_diff = 0;
 int config_dump_frame = 0;
+int config_print_irlap = 1;
 int config_print_irlmp = 1;
 int config_print_lost_frames = 0;
 int config_snaplen = 32;
@@ -81,6 +82,9 @@ inline void print_time(const struct timeval *timev, GString *str)
         int s;
 	
 	s = (timev->tv_sec) % 86400;
+	/* Modulo is not a proper modulo for negative ints */
+	if(s < 0)
+		s += 86400;
 	g_string_sprintfa(str, "%02d:%02d:%02d.%06u ", 
 			  s / 3600, (s % 3600) / 60, 
 			  s % 60, (u_int32_t) timev->tv_usec);
@@ -207,6 +211,11 @@ int msb_index (guint16 word)
 	guint16 msb = 0x8000;
 	int bit_index = 15;   /* Current MSB */
 	
+	if (word == 0) {
+		fprintf(stderr, "Detected buggy peer, adjust null PV to 0x1!\n");
+		/* The only safe choice (we don't know the array size) */
+		word = 0x1;
+	}
 	while (msb) {
 		if (word & msb)
 			break;   /* Found it! */
@@ -333,6 +342,9 @@ inline void parse_xid_frame(guint8 command, guint8 pf, int type,
 	char *info = NULL;
 	guint8 hint[2];
 	
+	/* Kill "unused" warning */
+	pf = pf;
+
 	hint[0] = hint[1] = 0;
 	
 	saddr = GINT32_FROM_LE(frame->saddr);
@@ -627,6 +639,9 @@ inline void parse_ua_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 inline void parse_disc_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
 			     GNetBuf *buf, GString *str)
 {
+	/* Kill "unused" warning */
+	buf = buf;
+
 	g_string_sprintfa(str, "disc:%s %s ca=%#02x pf=%d ", 
 			  cmd ? "cmd" : "rsp", type ? ">" : "<", caddr, pf);
 	/* LAP is closing, remove all zombies connections on this LAP */
@@ -642,6 +657,9 @@ inline void parse_disc_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 inline void parse_dm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
 			   GNetBuf *buf, GString *str)
 {
+	/* Kill "unused" warning */
+	buf = buf;
+
 	g_string_sprintfa(str, "dm:%s %s ca=%#02x pf=%d ", cmd?"cmd":"rsp", 
 			  type ? ">" : "<", caddr, pf);	
 }
@@ -655,6 +673,9 @@ inline void parse_dm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 inline void parse_rd_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
 			   GNetBuf *buf, GString *str)
 {
+	/* Kill "unused" warning */
+	buf = buf;
+
 	g_string_sprintfa(str, "rd:%s %s ca=%#02x pf=%d ", cmd?"cmd":"rsp", 
 			 type ? ">" : "<", caddr, pf);	
 }
@@ -932,8 +953,10 @@ int irdadump_loop(GString *str)
 		prev_time = curr_time;
 		curr_time = tmp_time;
 	}
-	parse_irda_frame(from.sll_pkttype, frame_buf, str);
-	
+	/* Full decoding of Frame */
+	if (config_print_irlap)
+		parse_irda_frame(from.sll_pkttype, frame_buf, str);
+	/* Overall size */
         g_string_sprintfa(str, "(%d) ", len);
 
 	if (config_dump_frame) {

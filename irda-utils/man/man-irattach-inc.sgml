@@ -12,7 +12,7 @@ v0.1 wh 2001/03/26
 <REFNAMEDIV>
 <REFNAME>irattach</REFNAME> 
  <REFPURPOSE>
-binds the Linux/IrDA stack to a device driver
+binds the Linux-IrDA stack to a IrDA port
  </REFPURPOSE>
 </REFNAMEDIV>
 
@@ -23,6 +23,7 @@ binds the Linux/IrDA stack to a device driver
  <ARG><REPLACEABLE>-s</REPLACEABLE></ARG>
  <ARG><REPLACEABLE>-d dongle</REPLACEABLE></ARG>
  <ARG><REPLACEABLE>-v</REPLACEABLE></ARG>
+ <ARG><REPLACEABLE>-h</REPLACEABLE></ARG>
 </CMDSYNOPSIS>
 </REFSYNOPSISDIV>
 
@@ -31,13 +32,15 @@ binds the Linux/IrDA stack to a device driver
 <TITLE>DESCRIPTION</TITLE>
 
 <PARA>
-<COMMAND>irattach</COMMAND> binds the Linux/IrDA stack to an IrDA port.
-So this is something you must do in order to use IrDA on your Linux machine.
+<COMMAND>irattach</COMMAND> binds the Linux-IrDA stack to an IrDA
+port. It configures the low level of the Linux-IrDA stack in the
+kernel. This step is usually necessary before you (or applications)
+can use the higher layer of the IrDA stack.
 </PARA>
 
 <PARA>
-The <COMMAND>irattach</COMMAND> command will load the necessary IrDA
-driver, which will configure the IrDA hardware, and configure the IrDA
+The <COMMAND>irattach</COMMAND> command loads the necessary Linux-IrDA
+driver, which configures the IrDA hardware, and configures the IrDA
 stack to operate on the new IrDA port. Multiple IrDA ports can be
 activated through multiple <COMMAND>irattach</COMMAND> commands.
 </PARA>
@@ -50,17 +53,19 @@ for most machines and configurations, but limits the baud rate to
 115200bps (IrDA SIR mode). The mode of operation will work with most
 FIR hardware (as found in laptops - they provide serial emulation) and
 most serial dongles (provided the proper dongle type is specified),
-making it a safe choice. However, this doesn't work with USB hardware
-and a few other FIR hardware.
-
+making it a safe choice. However, USB dongles and a few FIR hardware
+don't support serial emulation and can't be used with the
+<OPTION>irtty</OPTION> driver.
 </PARA>
 
 <PARA>
-<COMMAND>irattach</COMMAND> can also use one of the Linux FIR drivers,
-with either the proper command line options or module configuration
-(this is documented below). This will allow you to use higher baud
-rates (generally up to 4Mbps). In general, Linux FIR support is not as
-stable and mature, due to lack of time and documentation.
+<COMMAND>irattach</COMMAND> can also use one of the Linux FIR drivers
+(including USB dongle drivers) instead of the <OPTION>irtty</OPTION>
+driver. Most FIR drivers require proper configuration of module
+parameters (this is documented below). FIR drivers allow you to use
+higher baud rates (generally up to 4Mbps). In general, Linux FIR
+support is not as stable and mature, due to lack of time and
+documentation.
 </PARA>
 
 <PARA>
@@ -78,8 +83,10 @@ details.
 <TITLE>OPTIONS</TITLE>
 
 <PARA>
-<OPTION>&lt;dev&gt;</OPTION> is the name of a TTY, an IrDA interface
-or IrDA driver.
+<OPTION>&lt;dev&gt;</OPTION> : this is the name of a TTY, an IrDA
+interface or IrDA driver. <COMMAND>irattach</COMMAND> decides to use
+the <OPTION>irtty</OPTION> driver or one of the FIR drivers based on
+this argument.
 
 <ITEMIZEDLIST>
 
@@ -87,29 +94,31 @@ or IrDA driver.
 <PARA>
 <COMMAND>TTY name</COMMAND> : this is the serial port to be configured
 using the <OPTION>irtty</OPTION> driver, such as
-<OPTION>/dev/ttyS0</OPTION>. You need to check your serial
-configuration or BIOS to know which serial port is the IrDA port.
+<OPTION>/dev/ttyS0</OPTION>. <COMMAND>irattach</COMMAND> will use the
+<OPTION>irtty</OPTION> driver, so only SIR will be available. You need
+to check your serial configuration or BIOS to know which serial port
+is the IrDA port that need to be passed to <COMMAND>irattach</COMMAND>.
 </PARA>
 </LISTITEM>
 
 <LISTITEM>
 <PARA>
 <COMMAND>interface name</COMMAND> : this is the device name of an IrDA
-interface, such as <OPTION>irda0</OPTION>. For this to work, either
-the driver need to be loaded prior to the call to
-<COMMAND>irattach</COMMAND>, or the proper alias must be set in
-<FILENAME>/etc/modules.conf</FILENAME>.
+interface, such as <OPTION>irda0</OPTION>. <COMMAND>irattach</COMMAND>
+will use one of the FIR drivers (including USB dongle drivers). The
+selected FIR driver must be loaded prior to the call to
+<COMMAND>irattach</COMMAND>, or the proper alias for the device name
+must be set in <FILENAME>/etc/modules.conf</FILENAME>.
 </PARA>
 </LISTITEM>
 
 <LISTITEM>
 <PARA>
-<COMMAND>module name</COMMAND> : this is the name of an IrDA device
-driver module, such as <OPTION>irda-usb</OPTION> or
-<OPTION>nsc-ircc</OPTION> (see list below). All new IrDA interfaces
-created after loading the module will be configured, so this won't
-work if the module is already loaded. This feature is still
-experimental.
+<COMMAND>module name</COMMAND> : this is the name of an FIR driver
+module, such as <OPTION>nsc-ircc</OPTION> (see list below). All new
+IrDA interfaces created after loading the module will be configured,
+so this won't work if the module is already loaded. This feature is
+still experimental.
 </PARA>
 </LISTITEM>
 
@@ -117,17 +126,21 @@ experimental.
 </PARA>
 
 <PARA>
-<OPTION>-s</OPTION> starts discovery of remote IrDA devices (note that
+<OPTION>-s</OPTION> : starts discovery of remote IrDA devices (note that
 the form "-s 1" is no longer supported)
 </PARA>
 
 <PARA>
-<OPTION>-v</OPTION> shows version information (this happens, when no option 
+<OPTION>-v</OPTION> : shows version information (this happens, when no option 
 is given, too)
 </PARA>
 
 <PARA>
-<OPTION>-d dongle</OPTION> attaches an additional dongle driver to the
+<OPTION>-h</OPTION> : shows help information.
+</PARA>
+
+<PARA>
+<OPTION>-d dongle</OPTION> : attaches an additional dongle driver to the
 IrDA port.
 </PARA>
 
@@ -136,7 +149,8 @@ You need a dongle driver if you have an infrared device that connects
 to your computer's serial port (normal 9-pin serial port
 connector). These devices are called dongles, and can currently be
 used by any SIR driver (IrTTY or irport).  This option is not
-compatible with FIR drivers.
+compatible with FIR drivers, and only works with the irtty and irport
+drivers.
 </PARA>
 
 <PARA>
@@ -197,7 +211,7 @@ dongle only capable of 9600 bauds
 <LISTITEM>
 <PARA>
 <COMMAND>ep7211</COMMAND>     IR port driver for the Cirrus Logic EP7211
-processor (ARM based).
+processor (ARM based)
 </PARA>
 </LISTITEM>
 
@@ -229,18 +243,21 @@ processor (ARM based).
 <TITLE>FIR DRIVER MODULES</TITLE>
 
 <PARA>
-If you are one of the lucky people which have a FIR chipset that is
-supported, you can use <COMMAND>irattach</COMMAND> with the interface
-name of the IrDA port to configure. You will need to configure
+If you are one of the lucky people which have a FIR chipset or USB
+dongle that is supported by one of the Linux-IrDA drivers, you can use
+<COMMAND>irattach</COMMAND> with the interface name of the IrDA port
+to configure. You will need to configure
 <FILENAME>/etc/conf.modules</FILENAME> appropriately, with at least an
-alias of <OPTION>irda0</OPTION> to the driver name.
+alias of <OPTION>irda0</OPTION> to the driver name, or load the driver
+manually beforehand.
 </PARA>
 
 <PARA>
 You don't strictly need to use <COMMAND>irattach</COMMAND> with FIR
-drivers, you can use <COMMAND>modprobe</COMMAND> to load the driver
-and <COMMAND>ifconfig</COMMAND> to bring up the interface. You can
-also use <COMMAND>irattach</COMMAND> with the module name.
+drivers, you can use <COMMAND>modprobe</COMMAND> to load the driver,
+<COMMAND>ifconfig</COMMAND> to bring up the interface and set the
+various sysctl by hand, but <COMMAND>irattach</COMMAND> offer a
+convenient way to do it.
 </PARA>
 
 <PARA>
@@ -253,7 +270,8 @@ retrieve these data.
 <PARA>
 Also, you often need to configure the <OPTION>Linux-serial
 driver</OPTION> to ignore the IrDA port, otherwise both drivers will
-conflict.
+conflict. This can usually be done with
+<COMMAND>setserial /dev/ttySx uart none</COMMAND>.
 </PARA>
 
 <PARA>
@@ -280,7 +298,9 @@ is embedded in ALi M1543C, M1535, M1535D, M1535+, M1535D South Bridge.
 <PARA>
 <COMMAND>irda-usb</COMMAND> IrDA-USB device driver, for USB
 devices/dongles that comply with the official IrDA-USB class
-specification, for e.g.:
+specification. Note: USB 2.0 is not yet tested.
+(options: qos_mtt_bits int, description "Minimum Turn Time").
+This is used, for e.g.:
 </PARA>
 
 <PARA>
@@ -296,8 +316,13 @@ Extended Systems XTNDAccess ESI-9685
 <PARA>
 Note that there is another USB driver for those devices called
 <COMMAND>ir-usb</COMMAND> which is NOT compatible with the IrDA stack
-and conflict with <COMMAND>irda-usb</COMMAND>, so you need to make
-sure it doesn't get loaded.
+and conflict with <COMMAND>irda-usb</COMMAND>. Because it
+always loads first, you have to remove <COMMAND>ir-usb</COMMAND> completely.
+</PARA>
+<PARA>
+Devices based on the SigmaTel chip are not not compliant with the
+IrDA-USB class specification and therfore not supported by this
+driver.
 </PARA>
 </LISTITEM>
 
@@ -310,7 +335,7 @@ This chipset is used by e.g.:
 </PARA>
 
 <PARA>
-IBM ThinkPad		dongle_id=0x08
+IBM ThinkPad		dongle_id=0x09
 </PARA>
 <PARA>
 HP OmniBook 6000	dongle_id=0x08
@@ -320,14 +345,15 @@ HP OmniBook 6000	dongle_id=0x08
 <LISTITEM>
 <PARA>
 <COMMAND>sa1100_ir</COMMAND>
-
-Infra-red driver for devices based on the StrongARM SA1100 embedded
-microprocessor (options: power_level, tx_lpm). This driver may support
-FIR on devices that can do it. This chipset is used by e.g.:
+Infrared driver for devices based on the StrongARM SA1100 embedded
+microprocessor 
+(options: power_level, tx_lpm). 
+This driver may support FIR on devices that can do it. 
+This chipset is used by e.g.:
 </PARA>
 
 <PARA>
-Samsung YOPY, COMPAQ iPAQ, SHARP Zaurus SL5000/5500...
+Samsung YOPY, COMPAQ iPAQ, SHARP Zaurus SL5000/5500
 </PARA>
 </LISTITEM>
 
@@ -390,13 +416,15 @@ Toshiba laptops.
 <PARA>
 <COMMAND>vlsi_ir</COMMAND>
 VLSI 82C147 SIR/MIR/FIR device driver
-(options: ..).
 This chipset is used by e.g.:
 </PARA>
 
 <PARA>
 HP Omnibook 800
 </PARA>
+
+<PARA>
+(options: ..).
 
         <ITEMIZEDLIST>
         <LISTITEM>
@@ -421,6 +449,7 @@ descriptor size"
         </PARA>
         </LISTITEM>
         </ITEMIZEDLIST>
+</PARA>
 
 </LISTITEM>
 
@@ -434,27 +463,123 @@ descriptor size"
 <TITLE>EXAMPLES</TITLE>
 
 <PARA>
-Attach the IrDA stack to the second serial port and start discovery
+Attach the IrDA stack to the second serial port (integrated IrDA port
+using serial emulation) and start discovery:
+<ITEMIZEDLIST>
+<LISTITEM>
+<PARA>
 <COMMAND>irattach /dev/ttyS1 -s</COMMAND>
+</PARA>
+</LISTITEM>
+</ITEMIZEDLIST>
 </PARA>
 
 <PARA>
-Attach the IrDA stack to the first serial port where you have an ACTiSYS
-dongle and start discovery
+Attach the IrDA stack to the first serial port where you have an
+external ACTiSYS serial dongle and start discovery:
+<ITEMIZEDLIST>
+<LISTITEM>
+<PARA>
 <COMMAND>irattach /dev/ttyS0 -d actisys+ -s</COMMAND>
+</PARA>
+</LISTITEM>
+</ITEMIZEDLIST>
+</PARA>
+
+<PARA>
+Attach the IrDA stack to the first IrDA-USB dongle and start discovery:
+<ITEMIZEDLIST>
+<LISTITEM>
+<PARA>
+<COMMAND>modprobe irda-usb ; irattach irda0 -s</COMMAND>
+</PARA>
+</LISTITEM>
+</ITEMIZEDLIST>
 </PARA>
 
 <PARA>
 Attach the IrDA stack to the NSC FIR (4Mbps) device driver on a Thinkpad
-laptop <COMMAND>irattach irda0 -s</COMMAND>. 
-Note: You must also add some entries to 
+laptop:
+<ITEMIZEDLIST>
+<LISTITEM>
+<PARA>
+<COMMAND>modprobe nsc-ircc dongle_id=0x9 ; irattach irda0 -s</COMMAND>. 
+</PARA>
+</LISTITEM>
+</ITEMIZEDLIST>
+</PARA>
+
+<PARA>
+Attach the IrDA stack to the NSC FIR (4Mbps) device driver on a Thinkpad
+laptop:
+<ITEMIZEDLIST>
+<LISTITEM>
+<PARA>
+<COMMAND>irattach irda0 -s</COMMAND>. 
+</PARA>
+<PARA>
+This assume that you have added the following entries to 
 <FILENAME>/etc/conf.modules</FILENAME>:
-
-<PROGRAMLISTING>
+</PARA>
+<PARA>
 options nsc-ircc dongle_id=0x09
+</PARA>
+<PARA>
 alias irda0 nsc-ircc
-</PROGRAMLISTING>
+</PARA>
+</LISTITEM>
+</ITEMIZEDLIST>
+</PARA>
 
+</REFSECT1>
+
+<REFSECT1>
+
+<TITLE>CAVEATS</TITLE>
+
+<PARA>
+The following hints are a very short introduction into the
+configuration of Linux/IrDA. If this doesn't help
+read the &ir-tutorial; and/or the &ir-howto; .
+Before configuring Linux/IrDA make sure whether you want to configure
+SIR or FIR. It's recommended to try SIR first, unless your device is
+not compatible with SIR (for example USB dongles).
+</PARA>
+
+<PARA>
+To get the SIR "serial" device
+have a look into the BIOS. Then run <COMMAND>dmesg | grep tty</COMMAND>
+to get a survey of tty devices supported by your machine. Now try to 
+choose the one, which is probably the IrDA device and use
+<COMMAND>irattach /dev/ttySx -s</COMMAND>.
+</PARA>
+
+<PARA>
+If you don't succeed with SIR (which seems a rare case) you may
+try FIR. First look up the BIOS. Then run <COMMAND>findchip</COMMAND>
+to get information about the IrDA controller chip. Use 
+<COMMAND>setserial /dev/ttySx uart none </COMMAND> to avoid conflicts with the serial driver.
+Note: don't use <COMMAND>setserial</COMMAND> if you configure SIR.
+Now you may use <COMMAND>irattach</COMMAND>.
+</PARA>
+
+<PARA>
+Finally <COMMAND>irdadump</COMMAND> should show at least your computer
+itself. If it doesn't start at the beginning.
+</PARA>
+
+<PARA>
+This man page deal only with the low level of the IrDA stack (IrDA
+ports and IrDA drivers). After this step is done, you usually need to
+setup your favorite application to access the high level IrDA stack
+(via IrCOMM, IrLPT, IrNET, IrLAN or IrSOCK), which is documented
+elsewhere.
+</PARA>
+
+<PARA>
+This man page doesn't document the usage of the irport driver. The
+irport driver support the same hardware as the irtty driver, but is
+configured like a FIR driver.
 </PARA>
 
 </REFSECT1>
@@ -462,6 +587,11 @@ alias irda0 nsc-ircc
 <REFSECT1>
 
 <TITLE>DIAGNOSTICS</TITLE>
+
+<PARA>
+This section currently contains the raw error messages from source
+code only.
+</PARA>
 
 <PARA>
 "ioctl(TIOCGETD): %m"

@@ -1,3 +1,11 @@
+2002-10-10  JeanII
+	* Get rid of compiler warnings
+	* Avoid printing negative time
+	* Add -p flag to disable parsing
+	* Detect zero bitfields, workaround
+	* Detect fragmented Obex packet, print {unterminated}
+	* Parse headers of OBEX_CONTINUE packets
+
 2002-04-04  JeanII
 	* Fix and enable IrCOMM decoding (including IrLPT)
 	* Add Extra IrCOMM parameters

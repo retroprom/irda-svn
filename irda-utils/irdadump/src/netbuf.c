@@ -149,7 +149,8 @@ gint8 *g_netbuf_put(GNetBuf *msg, guint len)
         msg->len += len;
 	
         if (msg->tail > msg->end) {
-		g_print(__FUNCTION__ "(), put over, trying to realloc ...!\n");
+		g_print("%s(), put over, trying to realloc ...!\n",
+			__FUNCTION__ );
 		
 		msg = g_netbuf_realloc(msg, msg->truesize+len);
 		if (!msg)
@@ -182,7 +183,8 @@ gint8 *g_netbuf_put_data(GNetBuf *msg, gint8 *data, guint len)
 gint8 *g_netbuf_push(GNetBuf *msg, guint len)
 {
 	if ((msg->data - len) < msg->head) {
-		g_print(__FUNCTION__ "(), pushed under, trying to realloc!\n");
+		g_print("%s(), pushed under, trying to realloc!\n",
+			__FUNCTION__);
 
 		msg = g_netbuf_realloc(msg, msg->truesize+len);
 		if (!msg)

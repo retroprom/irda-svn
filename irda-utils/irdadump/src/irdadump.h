@@ -231,6 +231,7 @@ int find_connection(guint8 slsap_sel, guint8 dlsap_sel);
 int find_free_connection(void);
 
 extern int config_print_diff;
+extern int config_print_irlap;
 extern int config_dump_frame;
 extern int config_snaplen;
 extern int config_dump_bytes;

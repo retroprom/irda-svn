@@ -22,26 +22,31 @@
  *     
  ********************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <signal.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/socket.h>
 #include <sys/ioctl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <string.h>
-
-#include <asm/byteorder.h>
+#include <net/if.h>		/* For struct ifreq */
+#include <net/if_packet.h>	/* For struct sockaddr_pkt */
+#include <net/if_arp.h>		/* For ARPHRD_IRDA */
+#include <netinet/if_ether.h>	/* For ETH_P_ALL */
+#include <netinet/in.h>		/* For htons */
 
 /* 
  * We should not really include kernel header files, but they are currently
- * the only ones that knows anything about IrDA
+ * the only ones that knows anything about IrDA and byte ordering.
  */
 
-#include <linux/if_ether.h>
-#include <linux/if_arp.h>
-#include <linux/types.h>
+#include <asm/byteorder.h>	/* __cpu_to_le32 and co. */
+
+#include <linux/types.h>	/* For __u8 and co. */
+#include <irda.h>
 
 #ifndef AF_IRDA
 #define AF_IRDA    23        /* <linux/socket.h> */
@@ -171,7 +176,7 @@ int main(int argc, char *argv[])
 	int c;
 	
 	if (argc < 2) {
-		printf("Usage: irdaping <daddr> [-s <framesize>]\n");
+		printf("Usage: irdaping <daddr> [-s <framesize>] [-i <iface>]\n");
 		exit(-1);
 	}
 	
@@ -181,11 +186,17 @@ int main(int argc, char *argv[])
 	self.framelen = 32;
 	strncpy(self.device, DEV_DEFAULT, 14);
 
-	while ((c = getopt(argc, argv, "s:")) != -1) {
+	while ((c = getopt(argc, argv, "hs:i:")) != -1) {
 		switch (c) {
 		case 's': /* Packet size */
 			self.framelen = strtol(optarg, NULL, 10);
 			break;
+		case 'i': /* Interface name */
+			strncpy(self.device, optarg, 14);
+			break;
+		case 'h': /* Help */
+			printf("Usage: irdaping <daddr> [-s <framesize>] [-i <iface>]\n");
+			exit(-1);
 		default:
 			break;
 		} 
@@ -231,7 +242,7 @@ int main(int argc, char *argv[])
 	itime.it_interval.tv_usec = 0;
 	setitimer(ITIMER_REAL, &itime, NULL);
 	
-	printf("IrDA ping (0x%08x): %d bytes\n", self.daddr, self.framelen);
+	printf("IrDA ping (0x%08x on %s): %d bytes\n", self.daddr, self.device, self.framelen);
 	
 	while(1) {
 		fromlen = sizeof(struct sockaddr_pkt);

@@ -51,12 +51,12 @@
 #endif /* AF_IRDA */
 
 /* Default slot_timeout */
-static slot_timeout = 120;
+static int slot_timeout = 120;
 
-static debug_level = 0;
+static int debug_level = 0;
 #define DEBUG(n, str...) ( debug_level >= (n) ? printf(str) : 0 )
 
-static verbose = 1;
+static int verbose = 1;
 
 #define MAX_DEVICES 10
 

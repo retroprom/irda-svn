@@ -37,7 +37,7 @@ LIBPATH   = $(SYS_LIBPATH)
 #
 # System stuff
 #
-SYS_INCLUDES = -I/usr/include -I/usr/src/linux/include
+SYS_INCLUDES = -I/usr/include
 SYS_LIBRARIES = 
 SYS_LIBPATH = -L/usr/lib -L/usr/local/lib 
 

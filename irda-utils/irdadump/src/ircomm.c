@@ -124,7 +124,8 @@ void parse_ircomm_connect(GNetBuf *buf, GString *str)
 
 void parse_ircomm_lmp(GNetBuf *buf, GString *str)
 {
-	guint8 clen;
+	/* Kill "unused" warning */
+	buf = buf;
 
 	g_string_append(str, "IrCOMM (IrLPT) ");
 

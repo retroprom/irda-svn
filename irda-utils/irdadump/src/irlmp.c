@@ -56,6 +56,9 @@ inline void parse_iriap_command(GNetBuf *buf, GString *str, guint8 slsap_sel)
 	int name_len;
 	int attr_len;
 
+	/* Kill "unused" warning */
+	slsap_sel = slsap_sel;
+
 	opcode = buf->data[n++];
 
 	opcode &= ~IAP_LST; /* Mask away LST bit */
@@ -194,6 +197,9 @@ inline void parse_iriap_response(GNetBuf *buf, GString *str, guint8 dlsap_sel)
 {
 	guint8 opcode, rsp;
 
+	/* Kill "unused" warning */
+	dlsap_sel = dlsap_sel;
+
 	opcode = buf->data[0] & ~IAP_LST; /* Mask away LST bit */
 	rsp = buf->data[1];
 
@@ -235,6 +241,9 @@ inline void parse_iriap_response(GNetBuf *buf, GString *str, guint8 dlsap_sel)
  */
 inline void parse_irnet(GNetBuf *buf, GString *str) 
 {
+	/* Kill "unused" warning */
+	buf = buf;
+
 	g_string_sprintfa(str, "IrNET ");
 	/* If you want to hook PPP frame decoding, you can do it here.
 	 * I don't think it's worth it, PPP has debug capabilities.
@@ -433,6 +442,9 @@ inline void parse_ui_irlmp(GNetBuf *buf, GString *str, int type)
 	guint8 slsap_sel, dlsap_sel;
 	int ctrl;
 	
+	/* Kill "unused" warning */
+	type = type;
+
 	ctrl = buf->data[0] & CONTROL_BIT;
 	dlsap_sel = buf->data[0] & LSAP_MASK;
 	slsap_sel = buf->data[1];

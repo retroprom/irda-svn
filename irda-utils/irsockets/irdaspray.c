@@ -118,7 +118,7 @@ int two = 0;		/* Open only one client sockets (1 = two) */
  */
 void irdaspray_sethintmask(int fd)
 {
-	int hints;
+	unsigned char	hints[4];
 
 	/*
 	 * The hint mask we use is set to catch any device that potentially
@@ -127,11 +127,12 @@ void irdaspray_sethintmask(int fd)
 	 * Setting the hint mask with IrComm or IrObex could be usefull
 	 * for some apps...
 	 */
-	hints = HINT_COMPUTER | HINT_PDA;
+	hints[0] = HINT_COMPUTER | HINT_PDA;
+	hints[1] = 0;
 
 	/* Set the filter used for performing discovery */
-	if (setsockopt(fd, SOL_IRLMP, IRLMP_HINT_MASK_SET, &hints, 
-		       sizeof(hints))) 
+	if (setsockopt(fd, SOL_IRLMP, IRLMP_HINT_MASK_SET,
+		       hints, sizeof(hints))) 
 	{
 		perror("setsockopt");
 		exit(-1);

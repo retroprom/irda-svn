@@ -2,11 +2,11 @@
 ##                
 ## Filename:      Makefile
 ## Version:       
-## Description:   Makefile for irdaping
+## Description:   Makefile for irnetd
 ## Status:        Experimental.
 ## Author:        Dag Brattli <dagb@cs.uit.no>
 ## Created at:    Thu Feb 19 00:10:23 1998
-## Modified at:   Mon Jun 21 10:20:50 1999
+## Modified at:   Sat Dec 25 16:13:54 1999
 ## Modified by:   Dag Brattli <dagb@cs.uit.no>
 ## 
 ## $Id$
@@ -28,44 +28,36 @@ CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a
+RM_CMD = $(RM) *.BAK *.bak *.o *.so ,* *~ *.a *.orig *.rej
 
-INCLUDES  = $(SYS_INCLUDES) -I../include/
+INCLUDES  = $(SYS_INCLUDES) -I../include
 LIBRARIES = $(SYS_LIBRARIES)
 LIBPATH   = $(SYS_LIBPATH)
 
-#
-# System stuff
-#
-SYS_INCLUDES = -I/usr/include
-SYS_LIBRARIES = 
-SYS_LIBPATH = -L/usr/lib -L/usr/local/lib 
-
-CFLAGS= $(RPM_OPT_FLAGS) $(SYS_INCLUDES) -Wall -Wstrict-prototypes
+CFLAGS= $(RPM_OPT_FLAGS) -O2 -Wall -Wstrict-prototypes
 
 # 
 # Files to make 
 # 
-SRCS = irdaping.c
-OBJS = $(SRCS:.c=.o)
+PROG_SOCKET=irnetd
 
-all:: irdaping
+all:: $(PROG_SOCKET)
 
-irdaping: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
-
-.c.o:
+%: %.o
+	$(CC) $(XCFLAGS) -o $@ $^ $(LIBS)
+%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-install: all
-	install irdaping $(ROOT)/usr/sbin
+irnetd: irnetd.o
 
 clean::
-	$(RM_CMD)
+	$(RM_CMD) 
 
-distclean::
-	$(RM_CMD)
-	$(RM) irdaping
+realclean::
+	$(RM_CMD) 
+	$(RM) $(PROG_SOCKET) $(PROG_EXTRA)
+
+distclean:: realclean
 
 depend::
 	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)

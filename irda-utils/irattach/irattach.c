@@ -55,7 +55,7 @@ extern int set_sysctl_param(char *name, char *value);
 extern int execute(char *msg, char *cmd);
 /* Internal prototypes */
 
-#define VERSION "1.1 Tue Nov  9 15:30:55 1999 Dag Brattli"
+#define VERSION "0.9.16 (10.10.2002) Dag Brattli/Jean Tourrilhes"
 
 extern char *optarg;
 extern int optind;
@@ -122,7 +122,7 @@ static int modify_flags(char *dev, int set, int clear)
 	/* Create socket */
         sockfd = socket(AF_IRDA, SOCK_STREAM, 0);
         if (sockfd < 0) {
-                perror("socket");
+                syslog (LOG_WARNING, "socket(AF_IRDA): %m");
 		return(-1);
 		/* Can't clean_exit(), will recurse - Jean II */
         }

@@ -42,6 +42,7 @@ void beep(unsigned int ms, unsigned int freq)
 	usleep(ms*1000);
 }
 
+#if 0	/* Unused ??? */
 /*
  * Function open_dev (dev, mode)
  *
@@ -60,6 +61,7 @@ int open_dev(dev_t dev, int mode)
 	unlink(fn);
 	return fd;
 }
+#endif
 
 /*
  * Function lookup_dev (name)

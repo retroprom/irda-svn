@@ -1,7 +1,0 @@
-TODO
-
-* separate header and footer include files
-* more man pages: irkbd, irsockets, ..
-* write DIAGNOSTICS section for every man page
-* format all SGML tags in uppercase (for XML compatibility)
-* explain module options in detail, e.g. dongle_id=0xNN

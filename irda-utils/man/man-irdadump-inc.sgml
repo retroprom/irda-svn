@@ -13,18 +13,22 @@ v0.1 wh 2001/08/18
 <REFNAMEDIV>
 <REFNAME>irdadump</REFNAME>
   <REFPURPOSE>
-monitors the IrDA traffic on one ore more links.
+monitors the IrDA traffic on one or more links.
   </REFPURPOSE>
 </REFNAMEDIV>
 
 <REFSYNOPSISDIV>
 <CMDSYNOPSIS>
   <COMMAND>irdadump</COMMAND>
-  <ARG><REPLACEABLE>-i device</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-b</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-c n</REPLACEABLE></ARG>
   <ARG><REPLACEABLE>-d</REPLACEABLE></ARG>
-  <ARG><REPLACEABLE>-l</REPLACEABLE></ARG>
-  <ARG><REPLACEABLE>-s n</REPLACEABLE></ARG>
   <ARG><REPLACEABLE>-x</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-s n</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-t</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-l</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-v</REPLACEABLE></ARG>
+  <ARG><REPLACEABLE>-i device</REPLACEABLE></ARG>
 </CMDSYNOPSIS>
 </REFSYNOPSISDIV>
 
@@ -32,23 +36,39 @@ monitors the IrDA traffic on one ore more links.
 <TITLE>OPTIONS</TITLE>
 
 <PARA>
-<OPTION>-i device</OPTION> N.N.
+<OPTION>-b</OPTION> dump bytes in columns
 </PARA>
 
 <PARA>
-<OPTION>-l</OPTION> set line buffering on output file.
+<OPTION>-c n</OPTION> set snapcols for byte printing with -b option
 </PARA>
 
 <PARA>
-<OPTION>-d</OPTION> prints the time difference between the current and the previous frame.
+<OPTION>-d</OPTION> prints the time difference between the current and the previous frame
 </PARA>
 
 <PARA>
-<OPTION>-s n</OPTION> Set snaplen for -x.
+<OPTION>-x</OPTION> dump frame (bytes and ascii)
 </PARA>
 
 <PARA>
-<OPTION>-x</OPTION> dump frame.
+<OPTION>-s n</OPTION> set snaplen for -b and -x option
+</PARA>
+
+<PARA>
+<OPTION>-t</OPTION> force TTP decoding of unknown connections
+</PARA>
+
+<PARA>
+<OPTION>-l</OPTION> set line buffering on output file
+</PARA>
+
+<PARA>
+<OPTION>-v</OPTION> verbose
+</PARA>
+
+<PARA>
+<OPTION>-i device</OPTION> interface
 </PARA>
 
 </REFSECT1>

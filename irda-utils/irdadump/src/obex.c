@@ -32,6 +32,7 @@
 #include "obex.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <netinet/in.h>		/* ntohs */
 
 void unicode_to_char(guint8 *buf)
@@ -170,7 +171,10 @@ inline void parse_obex_headers(GNetBuf *buf, GString *str)
 			break;
 		}
                 /* g_print("len=%d\n", len);fflush(stdout); */
-		g_netbuf_pull(buf, len);
+		if(g_netbuf_pull(buf, len) == NULL) {
+			g_string_append(str, "{unterminated} ");
+			break;
+		}
 	}
 }
 
@@ -268,6 +272,7 @@ inline void parse_obex(GNetBuf *buf, GString *str, int cmd)
 		switch (opcode) {
 		case OBEX_CONTINUE:
 			g_string_append(str, "CONTINUE ");
+			parse_obex_headers(buf, str);
 			break;
 		case OBEX_SWITCH_PRO:
 			g_string_append(str, "SWITCH_PRO ");

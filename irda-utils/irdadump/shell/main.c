@@ -40,6 +40,7 @@ extern int irdadump_init(char *);
 extern int irdadump_loop(GString *);
 
 extern int config_print_diff;
+extern int config_print_irlap;
 extern int config_dump_frame;
 extern int config_snaplen;
 extern int config_dump_bytes;
@@ -47,10 +48,16 @@ extern int config_snapcols;
 extern int config_force_ttp;
 extern int config_force_obex;
 
+#define VERSION "0.9.16 (10.10.2002) Dag Brattli/Jean Tourrilhes"
+
 int packets = 0;
 
 void cleanup(int signo)
 {
+
+	/* Kill "unused" warning */
+	signo = signo;
+
 	fflush(stdout);
 	putc('\n', stdout);
 
@@ -65,7 +72,7 @@ int main(int argc, char *argv[])
 	char *ifdev = NULL;
 	int fd, c;
 
-	while ((c = getopt(argc, argv, "i:bc:dxs:tol?")) != -1) {
+	while ((c = getopt(argc, argv, "i:bc:dxs:ptolv?")) != -1) {
 		switch (c) {
 		case 'b': /* Dumb bytes */
 			config_dump_bytes = 1;
@@ -91,21 +98,25 @@ int main(int argc, char *argv[])
 			} else {
  				config_snaplen = c ;
  			}
+		case 'p': /* Disable IrDA frame parsing, in case they
+			   * are garbage... */
+			config_print_irlap = 0;
+			break;
 		case 't': /* Force TTP decoding of unknown connections */
 			config_force_ttp = 1;
 			break;
  		case 'l': /* Set linebuffering */
  			setlinebuf(stdout);
  			break;
- 		case 'v': /* verbose */
- 			/* verbose++; */
- 			break;
+ 		case 'v': /* version */
+			printf("Version: %s\n", VERSION);
+			exit(0);
 		case 'i': /* Interface */
 			ifdev = (char *) strdup(optarg);
 			printf("Using interface: %s\n", ifdev);
 			break;
  		case '?': /* usage */
-			fprintf(stderr,"Usage: %s [-d] [-x] [-b] [-s <n>] [-c <n>] [-i device]\n", 
+			fprintf(stderr,"Usage: %s [-d] [-x] [-b] [-s <n>] [-c <n>] [-p] [-i device]\n", 
 				argv[0]);
  			fprintf(stderr,"\t-d\tPrint diffs\n");
  			fprintf(stderr,"\t-l\tSet line buffering on output file.\n");
@@ -113,6 +124,7 @@ int main(int argc, char *argv[])
  			fprintf(stderr,"\t-x\tDump frame (bytes + ascii)\n");
  			fprintf(stderr,"\t-b\tDump bytes in columns\n");
 			fprintf(stderr,"\t-c <n>\tSet number of colums for -b\n");
+			fprintf(stderr,"\t-p <n>\tDisable parsing/decoding\n");
  			exit(1);
 		default:
 			break;

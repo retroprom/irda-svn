@@ -12,7 +12,7 @@
 
 <!-- 
      Manual pages for Linux/IrDA, DocBook source file
-     (C) 2001 Werner Heuser wehe@mobilix.org
+     (C) 2001 Werner Heuser wehe@tuxmobil.org
      v0.1 2001/03/26 wh
 
      Please use docbook-to-man from
@@ -24,7 +24,7 @@
 
   <refentryinfo>
     <address>
-      <email>wehe@mobilix.org</email>
+      <email>wehe@tuxmobil.org</email>
     </address>
     <author>
       <firstname>Werner</firstname>
@@ -44,14 +44,14 @@
 
     <PARA>
       irattach(8), irdaping(8), irdadump(8), findchip(8), 
-      irkbd(8), irpsion5(8), modprobe(8)
+      irpsion5(8), modprobe(8)
     </PARA>
 
     <PARA>
     &lip; http://irda.sourceforge.net -*-
     &ir-tutorial; http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/index.html -*-
-    &ir-howto; http://mobilix.org/howtos.html -*-
-    &ir-hw; http://mobilix.org/ir_misc.html
+    &ir-howto; http://tuxmobil.org/howtos.html -*-
+    &ir-hw; http://tuxmobil.org/ir_misc.html
     </PARA>
   </REFSECT1>
 
@@ -60,7 +60,7 @@
 
     <PARA>
       This manual page is written by Werner Heuser
-      <email>wehe@mobilix.org</email>. It is based on the READMEs
+      <email>wehe@tuxmobil.org</email>. It is based on the READMEs
       from <COMMAND>irda-utils</COMMAND> by the &lip; and the &ir-tutorial;.
       It was subsequently updated and modified by Jean Tourrilhes
       <email>jt@hpl.hp.com</email>.
