@@ -13,7 +13,7 @@
 
 <divert CONTENT>
 
-<h1>Linux-IrDA Current Status [July 2003]</h1>
+<h1>Linux-IrDA Current Status [22 July 2003]</h1>
 
 <p><font color="#008800"><i>
 These information are copied from 
@@ -22,19 +22,39 @@ Jean's IrDA page. Note that I modified links to point to Linux-IrDA WEB-FTP area
 <a href="http://sourceforge.net">SourceForge.net</a> and I corrected some text were needed.
 </i></font>
 
-<h2>Overview</h2>
+<p>
+<small>
+<b>Contents:</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#overview">Overview</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#24">Linux Kernel 2.4.x</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#25">Linux Kernel 2.5.x</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#26">Linux Kernel 2.6.x</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#future">Future</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#utils">Irda-Utils</a><br>
+</small>
+
+
+<a name="overview"></a><h2>Overview</h2>
 <p>
 #include <docs/status.inc>
 
-<h2>Linux Kernel 2.4.x</h2>
+<a name="24"></a><h2>Linux Kernel 2.4.x</h2>
 <p>
 #include <docs/status-24.inc>
 
-<h2>Linux Kernel 2.5.x</h2>
+<a name="25"></a><h2>Linux Kernel 2.5.x</h2>
 <p>
 #include <docs/status-25.inc>
 
-<h2>Irda-Utils</h2>
+<a name="26"></a><h2>Linux Kernel 2.6.x</h2>
+<p>
+#include <docs/status-26.inc>
+
+<a name="future"></a><h2>Future</h2>
+<p>
+#include <docs/status-future.inc>
+
+<a name="utils"></a><h2>Irda-Utils</h2>
 <p>
 #include <docs/status-utils.inc>
 

@@ -1,4 +1,3 @@
-
 Willing or not, it seem that I'm the one responsible of making sure
 the Linux-IrDA stack work properly. Here is a quick status report...
 
@@ -16,14 +15,15 @@ wrong&nbsp;;-)
 
 <LI>What's the <B>latest version</B>&nbsp;? Things are always
 evolving, so I recommend to get a very recent kernel 2.4.X (like the
-latest one) and apply some patches from this page. The IrDA stack in
-<B>2.5.X</B> contains a large number of fixes and improvement over
-what is available in 2.4.X (list below), so you are welcome to try it.
+latest one) and apply some patches from this page. Note the the
+development of Linux-IrDA in 2.4.X is <B>stopped</B>, and I will no
+longer accept major patches for it, development is now happening only
+in <B>2.5.X</B>, see below.
 
-<LI>The latest essential update was in kernel <B>2.4.16</B>, which
-fixed various race conditions, memory leaks and endianess issues,
-therefore I don't even want to hear about version prior to
-<B>2.4.16</B>. And don't mention 2.2.X&nbsp;;-)
+<LI>The latest essential update of 2.4.X was in kernel <B>2.4.21</B>,
+which fixed various race conditions and connection issues, therefore I
+don't even want to hear about version prior to <B>2.4.21</B>. And
+don't mention 2.2.X&nbsp;;-)
 
 <LI>Kernel <B>2.4.18</B> has essential fixes for <B>IrLAN</B> and
 <B>IrLPT</B>. I don't normally use them, but they now seem to
@@ -38,11 +38,21 @@ using any higher level protocol, such as with <I>IrCOMM</I>.
 fixes the <I>USB</I> driver unplug code, fixes <I>IrNET</I> retries
 and add various new <I>dongle</I> drivers (mcp2120, act200l & ma600).
 
-<LI>Kernel <B>2.5.21</B> has a new socket scheduler (improve fairness
+<LI>Kernel <B>2.4.21</B> has a new socket scheduler (improve fairness
 between IrDA sockets) and a partial rewrite of IrTTP (kill zillion of
 bugs and race conditions, and improve performance). It also includes a
 fix for when two IrNET peers connect to each other simultaneously, and
 adds the Donauboe FIR driver.
+
+<LI>Kernel <B>2.4.22</B> fixes some IrCOMM problems with chat, add
+workarounds for interoperability with buggy devices and fix a common
+memory leak. This is the last Linux-IrDA update for 2.4.X, no more
+updates are planned.
+
+<LI>The IrDA stack in <B>2.5.X</B> contains a large number of fixes
+and improvement over what is available in 2.4.X (list below), and this
+is where new development is happening so you are welcome to try
+it. Usually later version are better.
 
 <LI>Kernel <B>2.5.28</B> broke the IrDA stack, and that was only
 repaired in <B>2.5.39</B> with a massive patch to fix SMP
@@ -61,8 +71,8 @@ driver and fix a large number of sbk memory leaks.
 
 <LI>My changes to IrTTP and the addition of the Socket scheduler (see
 above) are pretty big changes. I've tested the performance of it with
-<A HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/perf.txt">irtty</A> and 
-<A HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/perf4.txt">nsc-ircc</A>. You
+<A HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrDA.html/perf.txt">irtty</A> and 
+<A HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrDA.html/perf4.txt">nsc-ircc</A>. You
 can see that unidirectional small packet performance has increased by
 a factor 3 at 4Mb/s. Also, the maximum number of Tx buffers queued in
 the IrDA stack decreased from 21 to 10, which improves
@@ -72,7 +82,7 @@ latency. Lastly, it seems that the TTY layer is becoming a bottleneck.
 old irtty driver. It fixes some architectural issue in the interaction
 with the serial driver. The downside is that all <B>dongle drivers</B>
 need to be updated to the new dongle infrastructure. Martin has
-<A HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/irda_dongle_api.html">documented that</A>.
+<A HREF="http://www.hpl.hp.com/personal/Jean_Tourrilhes/IrDA/IrDA.html/irda_dongle_api.html">documented that</A>.
 
 <LI>The <B>SMC</B> driver will soon be replaced with the <A
 HREF="http://www.csai.unipa.it/peri/smsc-ircc2/">new SMC
