@@ -8,13 +8,19 @@ just send a mail to <webmaster>.
 
 <h3>Main developers</h3>
 <p>
-&nbsp;&nbsp;Dag Brattli<br>
 &nbsp;&nbsp;Jean Tourrilhes<br>
+&nbsp;&nbsp;Martin Diehl<br>
+&nbsp;&nbsp;Dag Brattli - retired<br>
 &nbsp;&nbsp;Thomas Davis - retired <br>
 &nbsp;&nbsp;Takahide Higuchi - retired<br>
 
 <h3>Source code contributors</h3>
 <p>
+&nbsp;&nbsp;Christian Gennerat<br>
+&nbsp;&nbsp;Martin Lucina<br>
+&nbsp;&nbsp;Frank Liu<br>
+&nbsp;&nbsp;Paul Stewart<br>
+&nbsp;&nbsp;<br>
 &nbsp;&nbsp;Shimizu Takuya<br>
 &nbsp;&nbsp;Benjamin Kong<br>
 &nbsp;&nbsp;Ryan Shillington<br>

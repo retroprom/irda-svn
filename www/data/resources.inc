@@ -35,7 +35,12 @@ OpenObex.
 Tang</a> has a page on how to build a <b>cheap SIR dongle</b>.
 
 <li><a href="http://www.csai.unipa.it/peri/toshsat1800-irdasetup/">Daniele
-Peri</a> has some utility to help configure some <b>Toshiba IrDA ports</b>.
+Peri</a> has some utility to help configure <b>Toshiba Satellite 1800</b>
+IrDA ports. <a href="$(ROOT)smcinit/">smcinit</a> use it.
+
+<li><a href="http://www.janerob.com/rob/ts5100/irda.html">Rob
+Miller</a> has some utility to help configure <b>Toshiba Satellite 5100 
+IrDA ports</b>. <a href="$(ROOT)smcinit/">smcinit</a> use it.
 
 <li><a href="http://libxg.free.fr/irda/lib-irda.html">James McKenzie
 and Christian Gennerat</a> have done a rewrite of the <b>toshoboe</b>
