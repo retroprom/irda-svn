@@ -1,0 +1,72 @@
+
+# status: yes, no, unk, work
+
+:::begin
+unk
+Crystal CS8130
+http://www.cirrus.com/products/overviews/cs8130.html
+This chipsets bla bla
+
+:::end
+
+:::begin
+yes
+IBM31T1502, IBM31T1602
+http://www.chips.ibm.com/products/infrared/products/ircntrl.html
+:::end
+
+
+:::begin
+yes
+NSC PC87108
+http://www.nsc.com/pf/PC/PC87108.html
+:::end
+
+:::begin
+unk
+NSC PC87338
+http://www.nsc.com/pf/PC/PC87338.html
+:::end
+
+:::begin
+yes
+NSC PC97338
+http://www.national.com/pf/PC/PC97338.html
+:::end
+
+:::begin
+work
+Sharp UIRCC
+
+:::end
+
+:::begin
+work
+SMC IrCC chipset
+http://www.smsc.com/main/datasheet.html
+:::end
+
+:::begin
+work
+TIR-2000
+http://www.ti.com/sc/docs/folders/analog/tir2000.html
+:::end
+
+:::begin
+yes
+Toshiba-Hoboe
+
+:::end
+
+:::begin
+work
+VLSI VL82C147
+
+:::end
+
+:::begin
+yes
+Winbond W83977AF
+http://www.winbond.com/produ/w83977faf.htm
+:::end
+

@@ -38,7 +38,7 @@ $(RELDIR)html/contact.html:    $(RELDIR)data/contact.inc
 
 $(RELDIR)html/resources.html:  $(RELDIR)data/resources.inc
 $(RELDIR)html/companies.html:  $(RELDIR)data/companies.inc
-$(RELDIR)html/chipsets.html:   $(RELDIR)data/chipsets.inc
+$(RELDIR)html/chipsets.html:   $(RELDIR)data/chipsets/*.data $(RELDIR)/common/chipsets.pl
 $(RELDIR)html/dongles.html:    $(RELDIR)data/dongles.inc
 $(RELDIR)html/devices.html:    $(RELDIR)data/devices.inc
 

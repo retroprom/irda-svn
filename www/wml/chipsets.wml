@@ -1,5 +1,6 @@
 
 #include <tags.inc>
+#include <chipsets.pl>
 
 <set-var title="Linux-IrDA Project - Resources - Chipsets" />
 <set-var selected="resources" />
@@ -52,7 +53,31 @@
    </td>   
    <td bgcolor="#ffe496"><px width="10" height="1"></td>
    <td bgcolor="#ffe496" valign="top" width="100%">
-#include <chipsets.inc>   
+
+
+<h2>Chipsets</h2>
+
+<f2>
+Here is list of IrDA chipsets and their functional status relative to
+Linux kernel. All the stuff marked with (<yes>)
+are supported by Linux-IrDA. These with (<gear>) sign are still in development.
+Please send more links or info about new manufactured chipsets to have acurate
+listing.<br>
+<br>
+</f2>
+
+<table border="0" cellpadding="0" cellspacing="0" bgcolor="#777777" width="90%" align="center"><tr><td>
+<table border="0" cellpadding="2" cellspacing="1" width="100%">
+  <tr bgcolor="#ffffe7">
+    <td><f2><b>Chipset</b></f2></td>
+    <td><f2><b>Status</b></f2></td>
+  </tr>
+
+<perl>&render_chipsets();</perl>
+
+</table>
+</td></tr></table>
+
    </td>     
    <td background="$(ROOT)img/i4.png" width="16"><px width="16" height="1"></td>
  </tr>
@@ -65,6 +90,7 @@
  </tr>
 </table>
 </div>
+
 
 #include <inside-bottom.inc>
 
