@@ -56,6 +56,7 @@
 
 #define HEADER_COUNT       0xc0
 #define HEADER_NAME        0x01 /* - */
+#define HEADER_ANAME       0x31 /* Same as HEADER_NAME, but in ASCII */
 #define HEADER_TYPE        0x42 /* - */
 #define HEADER_TIME        0x44
 #define HEADER_LENGTH      0xc3 /* - */

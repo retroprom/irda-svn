@@ -135,8 +135,9 @@ inline void parse_obex_headers(GNetBuf *buf, GString *str)
 		/* g_print("hi=%02x", buf->data[0]);fflush(stdout); */
 		switch (buf->data[0]) {
 		case HEADER_NAME:
+		case HEADER_ANAME:
 			g_string_append(str, "Name=");
-			len = parse_obex_header(buf, str, 0);
+			len = parse_obex_header(buf, str, 1);
 			break;
 		case HEADER_DESCRIPTION:
 			g_string_append(str, "Description=");
