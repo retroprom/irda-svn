@@ -14,7 +14,10 @@ The mailing list posting address is:<br>
 <ul>
   <li>
     <b>list archive:</b> you can also browse the list-archive to view previous postings at
-    <a href="http://www.geocrawler.com/redir-sf.php3?list=irda-users">Geocrawler</a>
+    <a href="http://www.geocrawler.com/lists/3/SourceForge/18052/0/">Geocrawler</a>
+    (for messages from 1999 to 2001)
+    and at <a href="http://sourceforge.net/mailarchive/forum.php?forum_id=4987">SourceForge.Net</a>
+    (for messages from 2001 to present).
   </li>
   <li>
     <b>for subscribing:</b> point your browser to
