@@ -3,4 +3,5 @@ Makefile.in
 *.o
 *~
 irda
-
+.deps
+.libs
