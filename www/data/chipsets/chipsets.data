@@ -5,34 +5,96 @@
 unk
 Crystal CS8130
 http://www.cirrus.com/products/overviews/cs8130.html
-This chipsets bla bla
-
+The CS8130 is an infrared transceiver integrated circuit.
+Product features: adds IR port to standard UART;
+IrDA, HPSIR, ASK (CW) and TV remote compatible;
+1200bps to 115kbps data rate. External PIN diode and 
+transmit LED are required.
 :::end
 
 :::begin
 yes
 IBM31T1502, IBM31T1602
-http://www.chips.ibm.com/products/infrared/products/ircntrl.html
+http://www.intel-u-press.com/usb_dbe/Chapter09/IR/IBM/IrCntl.pdf
+The IBM31T1602 is a low-cost, low-power highly integrated Infrared 
+Communications Controller capable of supporting both low-speed and 
+high-speed infrared modulation schemes: 115.2 kbits/s, 1.152 Mbits/s and 
+4 Mbits/s data rates.
+
 :::end
 
 
 :::begin
 yes
 NSC PC87108
-http://www.nsc.com/pf/PC/PC87108.html
+http://www.national.com/pf/PC/PC87108.html
+The PC87108A is a serial communications device with infrared capability. 
+It supports 6 modes of operation and is backward compatible with the 
+16550 and 16450. The operational modes are: UART, Sharp-IR, IrDA 1.0 
+SIR, IrDA 1.1 MIR and FIR, and Consumer Electronics IR (also referred 
+to as TV Remote or Consumer Remote Control). 
+<i>Production discontinued</i>.
 :::end
 
 :::begin
 unk
-NSC PC87338
-http://www.nsc.com/pf/PC/PC87338.html
+NSC PC87109
+http://www.national.com/pf/PC/PC87109.html
+The PC87109 is a serial communication device with infrared capability. 
+It supports 6 modes of operation and is backward compatible with the 
+16550 and 16450. The operational modes are: UART, Sharp-IR, IrDA 1.0 SIR, 
+IrDA 1.1 MIR and FIR, and Consumer-IR.
+<i>Life-time buy</i>.
 :::end
+
+
+:::begin
+unk
+NSC PC87338
+http://www.national.com/pf/PC/PC87338.html
+Is a fully ACPI 1.0 and PC98/PC99 compliant, ISA based Super I/O.
+Among many things it have 
+a fast universal Infrared interface on SCC2 which supports the following:
+Data rates of up to 115.2 Kbps (SIR);
+A data rate of 1.152 Mbps (MIR);
+A data rate of 4.0 Mbps (FIR);
+Selectable internal or external modulation/demodulation (Sharp-IR);
+Consumer Electronic IR mode. Production is discontinued.
+See <a href="http://www.national.com/pf/PC/PC97338.html">PC97338</a>.
+:::end
+
 
 :::begin
 yes
 NSC PC97338
 http://www.national.com/pf/PC/PC97338.html
+Is a fully ACPI 1.0 and PC98/PC99 compliant, ISA based Super I/O
+and fully compatible with the 
+<a href="http://www.national.com/pf/PC/PC87338.html">PC87338</a>.
+Among many things it have 
+a fast universal Infrared interface on SCC2 which supports the following:
+Data rates of up to 115.2 Kbps (SIR);
+A data rate of 1.152 Mbps (MIR);
+A data rate of 4.0 Mbps (FIR);
+Selectable internal or external modulation/demodulation (Sharp-IR);
+Consumer Electronic IR mode.
 :::end
+
+
+:::begin
+unk
+NSC PC87392
+http://www.national.com/pf/PC/PC87392.html
+PC8739x family of LPC SuperI/O devices is targetted for a wide range 
+of portable applications. It integrates 
+two enhanced Serial Ports (UARTs), one with Fast Infrared 
+(FIR, IrDA 1.1 compliant). 
+Is used in the IBM A31
+Laptop, probably in many of that series, and other recent IBM Thinkpads.
+[entry suggested by Aaron Denney]
+:::end
+
+
 
 :::begin
 work
@@ -40,17 +102,81 @@ Sharp UIRCC
 
 :::end
 
+
 :::begin
-work
-SMC IrCC chipset
-http://www.smsc.com/main/datasheet.html
+unk
+Sharp LZ8520X
+http://www.intel-u-press.com/usb_dbe/Chapter09/IR/Sharp/LX8520ds.pdf
+The Sharp IrDA-Control Host Controller (HC) is a single-chip communication 
+LSI with built-in USB protocol and IrDA-Control protocol 
+(MAC Layer and HID LLC Layer) services. 
 :::end
+
+
+:::begin
+unk
+SMSC CIrCC
+http://www.smsc.com/main/datasheets/circc.pdf
+The Consumer Infrared Communications Controler (CIrCC) 
+UART-driven IrDA SIR (2.4 kbps to 115.2 kbps) and SHARP ASKmodes
+are backward-compatible with early SMSC Super I/O and
+Ultra I/O implementations. The CIrCC SCE supports IrDA version 1.0
+and consumer IR modes. All of the SCE modes use DMA.
+:::end
+
 
 :::begin
 work
-TIR-2000
-http://www.ti.com/sc/docs/folders/analog/tir2000.html
+SMSC IrCC
+http://www.smsc.com/main/datasheets/ircc.pdf
+The Infrared Communications Controler (IrCC) is common
+to the following devices: 
+<a href="http://www.smsc.com/main/datasheets/37c93xfr.pdf">FDC37C93xFR</a>
+and 
+<a href="http://www.smsc.com/main/datasheets/37c957.pdf">FDC37C957FR</a>. 
+The IrCC SCE (Synchronous Communications Engine) support
+IrDA v1.1 0.576Mbps, 1.152Mbps, 4Mbps and Consumer IR
+modes. All of the SCE modes use DMA.
 :::end
+
+
+:::begin
+unk
+TI TIR1000
+http://focus.ti.com/docs/prod/productfolder.jhtml?genericPartNumber=TIR1000
+TIR1000 is standalone IrDA encoder and decoder.
+Features: adds infrared (IR) port to (UART);
+compatible with IrDA and HPSIR;
+provides 1200 bps to 115 kbps data rate;
+decodes negative or positive pulse.
+:::end
+
+
+:::begin
+work
+TI TIR2000
+http://focus.ti.com/docs/prod/productfolder.jhtml?genericPartNumber=TIR2000
+The TIR2000 high-speed IrDA compliant controller and is 
+a serial communication controller with full infrared support 
+which is also compatible to the TL16C550C and the TL16C750 UART devices. 
+This device also supports the Sharp-IR, HPSIR, MIR, FIR and TV modes.
+Features: IrDA 1.0 mode with a data rate up to 115.2 Kbps;
+IrDA 1.1 mode with a data rate up to 1.15 Mbps;
+IrDA 1.1 mode with a data rate up to 4 Mbps;
+ISA compatible bus interface.
+:::end
+
+
+:::begin
+unk
+TI TL16PIR552 
+http://focus.ti.com/docs/prod/productfolder.jhtml?genericPartNumber=TL16PIR552
+The TL16PIR552 is a dual UART with 16-byte fifos, selectable IR 
+and 1284 modes. Features: serial ports have IrDA inputs and outputs
+with 1200 bps to 115.2 kbps data rate;
+IEEE 1284 bidirectional parallel data port.
+:::end
+
 
 :::begin
 yes
