@@ -1,4 +1,4 @@
-<div align="center"><f2>
+<div align="center"><small>
 <navbar:render name="tmainmenu" select="<get-var selected />" txtonly nohints>
-</f2></div>
+</small></div>
 

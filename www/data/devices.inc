@@ -1,58 +1,58 @@
 
 <h2>Devices</h2>
 
-<f2>
+<p>
 Here is list of IrDA devices and their functional status relative to
 Linux kernel. All the stuff marked with (<yes>)
 are supported by Linux-IrDA. These with (<gear>) sign are still in development.
 Please send more links or info about new manufactured chipsets to have acurate
-listing.<br>
-<br>
+listing.
+
+<p>
 <b>Notice:</b> Werner Heuser have more up to date page at
 <a href="http://tuxmobil.org/ir_misc.html">http://tuxmobil.org/ir_misc.html</a>
 with devices working with Linux-IrDA.
-Soon, this section will be in sync with his page.<br>
-</f2>
+This section may not be in sync with his page.
 
 <h3>Mobile Phones</h3>
 <div align="left">
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" width="70%"><tr><td>
 <table border="0" cellpadding="3" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Devices</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Devices</b></td>
+    <td><b>Status</b></td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Ericsson I 888 World</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Ericsson I 888 World</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Ericsson SH888</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Ericsson SH888</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Ericsson GH688/GH768 + DI27</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Ericsson GH688/GH768 + DI27</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Motorola L7089</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Motorola L7089</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Nokia 8810</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Nokia 8810</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Nokia 9110</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Nokia 9110</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Nokia NM-207</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Nokia NM-207</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Siemens S25</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Siemens S25</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 </td></tr></table>
@@ -64,184 +64,184 @@ Soon, this section will be in sync with his page.<br>
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" width="70%"><tr><td>
 <table border="0" cellpadding="3" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Devices</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Devices</b></td>
+    <td><b>Status</b></td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Asus L7300</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Asus L7300</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Acer Acernote 350</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Acer Acernote 350</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Digital HiNote VP565</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Digital HiNote VP565</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Fujitsu Lifebook B110</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Fujitsu Lifebook B110</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP Omnibook 800CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP Omnibook 800CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP Omnibook 5500</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP Omnibook 5500</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP Omnibook 5700</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP Omnibook 5700</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Palmax PD-1x00 series</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Palmax PD-1x00 series</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 390E</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 390E</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 560X</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 560X</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 560Z</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 560Z</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 570</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 570</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 600E</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 600E</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 600X</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 600X</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>IBM Thinkpad 770</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>IBM Thinkpad 770</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Sharp Mebius PC-PJ2-M2</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Sharp Mebius PC-PJ2-M2</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Sony Vaio Z505SX</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Sony Vaio Z505SX</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Sony Vaio PCG737</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Sony Vaio PCG737</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Portege 300CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Portege 300CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Portege 320CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Portege 320CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Portege 3010CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Portege 3010CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Portege 3015CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Portege 3015CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Portege 3020CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Portege 3020CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Libretto 50CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Libretto 50CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Libretto 70CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Libretto 70CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Libretto 100CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Libretto 100CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Libretto 1000CT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Libretto 1000CT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Satellite 230CX</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Satellite 230CX</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba SatellitePro 440</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba SatellitePro 440</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba SatellitePro 440CDX</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba SatellitePro 440CDX</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba SatellitePro 480</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba SatellitePro 480</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba SatellitePro 490XCDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba SatellitePro 490XCDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Satellite 2520</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Satellite 2520</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Satellite 4000CDS</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Satellite 4000CDS</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Satellite 4025CDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Satellite 4025CDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 500CDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 500CDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 730CDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 730CDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 730XCDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 730XCDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 740CDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 740CDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 750DVD</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 750DVD</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 750CDT</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 750CDT</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 780</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 780</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Toshiba Tecra 8000</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Toshiba Tecra 8000</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Twinhead Slimnote XL</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Twinhead Slimnote XL</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 </td></tr></table>
@@ -253,12 +253,12 @@ Soon, this section will be in sync with his page.<br>
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" width="70%"><tr><td>
 <table border="0" cellpadding="3" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Devices</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Devices</b></td>
+    <td><b>Status</b></td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>NetWinder</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>NetWinder</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 </td></tr></table>
@@ -269,12 +269,12 @@ Soon, this section will be in sync with his page.<br>
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" width="70%"><tr><td>
 <table border="0" cellpadding="3" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Devices</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Devices</b></td>
+    <td><b>Status</b></td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP Jornada 680 </f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP Jornada 680 </td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 </td></tr></table>
@@ -285,24 +285,24 @@ Soon, this section will be in sync with his page.<br>
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" width="70%"><tr><td>
 <table border="0" cellpadding="3" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Devices</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Devices</b></td>
+    <td><b>Status</b></td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>Canon BJC 80</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>Canon BJC 80</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP LaserJet 6MP</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP LaserJet 6MP</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP LaserJet 2100TN</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP LaserJet 2100TN</td>
+    <td>&nbsp;</td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP LaserJet 4100DN</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP LaserJet 4100DN</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 </td></tr></table>
@@ -314,12 +314,12 @@ Soon, this section will be in sync with his page.<br>
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" width="70%"><tr><td>
 <table border="0" cellpadding="3" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Devices</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Devices</b></td>
+    <td><b>Status</b></td>
   </tr>
   <tr bgcolor="#ffffe7">
-    <td><f2>HP CapShare 920</f2></td>
-    <td><f2>&nbsp;</f2></td>
+    <td>HP CapShare 920</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 </td></tr></table>

@@ -27,8 +27,8 @@ sub render_one() {
 				}
 				print <<"EOF";
   <tr bgcolor="#ffffe7">
-    <td><f2>$prettyurl$content</f2></td>
-    <td><f2><img src="$(ROOT)img/$status.gif" width="16" height="16"></f2></td>
+    <td>$prettyurl$content</td>
+    <td><img src="$(ROOT)img/$status.gif" width="16" height="16"></td>
   </tr>
 EOF
 

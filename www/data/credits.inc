@@ -1,37 +1,31 @@
 
 <h2>Credits</h2>
 
-<f2>
+<p>
 We want to thank you to all people which contributed on Linux-IrDA
 Project. If you know you contributed somehow and your name is not listed
 just send a mail to <webmaster>.
-</f2>
 
 <h3>Main developers</h3>
-<f2>
+<p>
 &nbsp;&nbsp;Dag Brattli<br>
 &nbsp;&nbsp;Jean Tourrilhes<br>
 &nbsp;&nbsp;Thomas Davis - retired <br>
 &nbsp;&nbsp;Takahide Higuchi - retired<br>
 
-
-</f2>
-
 <h3>Source code contributors</h3>
-<f2>
+<p>
 &nbsp;&nbsp;Shimizu Takuya<br>
 &nbsp;&nbsp;Benjamin Kong<br>
 &nbsp;&nbsp;Ryan Shillington<br>
 &nbsp;&nbsp;Izar Tarandach<br>
-</f2>
 
 <h3>Documentation</h3>
-<f2>
+<p>
 Werner Heuser<br>
-</f2>
 
 <h3>Testing, suggestions, flames</h3>
-<f2>
+<p>
 &nbsp;&nbsp;Ralf Zabka<br>
 &nbsp;&nbsp;Benny Amorsen<br>
 &nbsp;&nbsp;Lichen Wang<br>
@@ -74,5 +68,4 @@ Werner Heuser<br>
 &nbsp;&nbsp;Arthur Tyde<br>
 &nbsp;&nbsp;Bryan Abshier<br>
 &nbsp;&nbsp;Tollef Fog Heen<br>
-</f2>
 

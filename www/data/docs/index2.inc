@@ -1,7 +1,7 @@
 <br>
-<f2>
+<small>
 <navbar:render name="docs2menu" select="starting"><br>
-</f2>
+</small>
 
 <h2>Starting Linux-IrDA stack</h2>
 Most Linux distributions come with IrDA support by default. Following 
@@ -9,7 +9,39 @@ are instructions to configure IrDA and your device. If you don't find
 explanations for your distro, please send contact us on 
 <a href="http://lists.sourceforge.net/lists/listinfo/irda-users">Linux-IrDA mailing list</a>.
 
-<h3>Debian GNU/Linux 2.2 and 3.0</h3>
+<ul>
+ <li><b><a href="#suse">SuSE Linux 8.0 and 8.1</a></b>
+ <li><b><a href="#debian">Debian GNU/Linux 2.2 and 3.0</a></b>
+ <li><b><a href="#mandrake">Mandrake Linux 8.1 ... 9.0</a></b>
+ <li><b><a href="#redhat">RedHat Linux 7.1 ... 9.0</a></b>
+ <li><b><a href="#slackware">Slackware 8.0 and 8.1</a></b>
+</ul>
+
+<h3><a name="suse"></a>SuSE Linux 8.0 and 8.1</h3>
+<p>
+SuSE come with <b>irda-utils-0.9.13-494</b> and the relevant script
+to start IrDA is <tt>/etc/init.d/irda</tt> which is configured 
+by <tt>/etc/sysconfig/irda</tt>. You may configure IrDA from
+Yast2, although here are the variables which can be set:
+<ul>
+  <li><tt>IRDA_PORT</tt> - Here is what SuSE configuration file says:
+<blockquote><i>
+Currently the UART (SIR) mode is supported in the normal configuration. The
+variable IRDA_PORT sets the used serial port. Have a look at your BIOS-Setup,
+to find out which is correct.<br>
+<br>
+If you have a supported FIR chipset, specify the name of the corresponding
+kernel module in IRDA_PORT, e.g. IRDA_PORT="toshoboe". FIR must be enabled in
+the BIOS setup first. Sometimes you additionally have to disable the serial
+port, which would be used in SIR mode via 'setserial /dev/ttyS<x> uart none'
+</i></blockquote>
+</ul>
+
+<p>Please have a look at <a href="$(ROOT)smcinit/">smcinit</a> package
+if you have installed SuSE on a Toshiba laptop.
+
+
+<h3><a name="debian"></a>Debian GNU/Linux 2.2 and 3.0</h3>
 
 You at least must install the <tt>irda-common</tt> package. To have at hand the
 <b>irdadump</b>, then get and install <tt>irda-tools</tt> package. The easy way
@@ -50,15 +82,38 @@ Before you run the <tt>irda</tt> script you must configure the
 </ul>
 
 
-<h3>Mandrake Linux 8.1 and 8.2</h3>
+<h3><a name="mandrake"></a>Mandrake Linux 8.1 and 8.2</h3>
 
+<p>
 This section must be written.
 
-<h3>RedHat Linux 7.1 and 7.2</h3>
+<h3><a name="redhat"></a>RedHat Linux 7.1 ... 9.0</h3>
 
-This section must be written.
+<p>
+RedHat come with <b>irda-utils-0.9.14</b> (on RedHat 9.0 Shrike) 
+and the relevant script to start IrDA is <tt>/etc/rc.d/init.d/irda</tt> 
+which is configured 
+by <tt>/etc/sysconfig/irda</tt>. Here are the variables which can be set:
 
-<h3>Slackware 8.0 and 8.1</h3>
+<ul>
+  <li><tt>IRDA</tt> - Default <b>yes</b>. If it's <b>no</b> then 
+  IrDA subsystem will not start even when run at startup.
+  <li><tt>DEVICE</tt> - It's the device where Linux IrDA stack will
+  attach. For infrared dongles you should use the serial device where
+  dongle is attached, like <tt>/dev/ttyS1</tt>. For SIR/FIR IrDA controlers
+  found on-board on laptops you should put here <tt>irda0</tt>.
+  <li><tt>DONGLE</tt> - If the <tt>DEVICE</tt> tell that you use a 
+  dongle, then  here you put the type of dongle hardware: <tt>actisys</tt>,
+  ... etc. Read the <b>irattach</b> man page for complete listing.
+  For FIR drivers (i.e. when you have <tt>DEVICE=irda0</tt>) you 
+  must comment this variable.
+  <li><tt>DISCOVERY</tt> - Default <b>yes</b>. This will put Linux IrDA
+  stack in discovery mode. Note that on laptops this will drain additional 
+  power and may prevent a kernel intiated suspend (this last 
+  statement is not fully verified).
+</ul>
+
+<h3><a name="slackware"></a>Slackware 8.0 and 8.1</h3>
 
 The Slackware user have no IrDA support by default, except the one provided
 by kernel. You must grab the latest 
@@ -98,7 +153,7 @@ Here are <b>mistakes</b> I've seen user make:
   <tt>/dev/ircommX</tt>.
   <li>compiling the IrDA stack static (i.e. non module - it may work,
   but this is not what the developpers work with)
-  <li>compiling the IrDA stack without the IRDA_DEBUG option. This
+  <li>compiling the IrDA stack without the <tt>IRDA_DEBUG</tt> option. This
   option enable extra checks that prevent your kernel to crash.
   <li>mixing modules belonging to different versions of the IrDA stack
   <li>unclean IrDA source (failed patch)
@@ -106,7 +161,7 @@ Here are <b>mistakes</b> I've seen user make:
   <li>trying to load an IrDA module on a stack wich has this code
   compiled static (or loading module twice)
   <li>wrong version of modules tools (for kernel 2.4)
-  <li>failed to do depmod -a (usually automatic at reboot)
+  <li>failed to do <tt>depmod -a</tt> (usually automatic at reboot)
   <li>using a version of the kernel which is not used and recommended by
   developpers.
 </ul>

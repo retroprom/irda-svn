@@ -20,14 +20,14 @@
      <table cellspacing="0" cellpadding="0" border="0" width="640">
        <tr>
          <td background="$(ROOT)img/part9.png" width="30"><px width="30" height="1"></td>
-         <td bgcolor="#ffe496" width="508"><f1>
+         <td bgcolor="#ffe496" width="508"><small>
            Welcome to the Linux-IrDA project. The overall goal of this project is to 
            make an implementation of the 
            <a href="http://www.irda.org/">IrDA</a><sup><font size="-2">TM</font></sup> 
            standards specifications for the Linux kernel. The code is licensed under 
            the GNU Public licence (GPL) and is now included in Linux 2.2.x and 
            2.4.x kernel series.<br>
-         </f1></td>
+         </small></td>
          <td background="$(ROOT)img/part12.jpg" width="304"><px width="304" height="110"></td>
        </tr>
      </table> 
@@ -42,14 +42,14 @@
      <table cellspacing="0" cellpadding="0" border="0" width="640">
        <tr>
          <td background="$(ROOT)img/part9.png" width="30"><px width="30" height="1"></td>
-         <td bgcolor="#ffe496" width="508"><f1>
+         <td bgcolor="#ffe496" width="508"><small>
            IrDA<sup><font size="-2">TM</font></sup> (Infrared Data Association) 
            is an industry standard for infrared wireless communication. 
            Most laptops sold today are equipped with an IrDA compliant infrared 
            transceiver, which enables you to communicate with devices such as 
            printers, modems, fax, LAN, and other laptops. 
            Speeds range from 2400bps-4Mbps.
-         </f1></td>
+         </small></td>
          <td background="$(ROOT)img/part10.png" width="102"><px width="102" height="1"></td>
        </tr>
      </table> 

@@ -1,10 +1,11 @@
 <br>
-<f2>
+<small>
 <navbar:render name="docs2menu" select="advanced"><br>
-</f2>
+</small>
 
 <h2>Advanced Linux-IrDA</h2>
 
+<p>
 This tutorial was written by Jean Tourrilhes and adapted by me, Claudiu
 Costin. Currently any major Linux distribution have already IrDA support,
 tools to manage it and some utilities to communicate with various compatible
@@ -16,6 +17,7 @@ to Linux-IrDA project in general.
 
 <h3>Understanding IrDA</h3>
 
+<p>
 A lot of IrDA novices mix up the low level and high level of the IrDA
 stack. A few words...
 
@@ -108,7 +110,7 @@ Laptop in SIR mode and Serial dongle.
 
 
 <h4>Serial dongle</h4>
-
+<p>
 The dongle I use is the Actisys 220L+, and the dongle driver is called
 <u>actisys</u> (see list above). The setup for other dongles should be
 very similar. I'm also using the first serial port in this example
@@ -131,7 +133,7 @@ very similar. I'm also using the first serial port in this example
 Note: all the modern ESI dongles work better with the <u>litelink</u> driver.
 
 <h4>Laptop port in SIR mode</h4>
-
+<p>
 SIR (Serial Infrared) is not fast but always work and is easy to
 set-up, so it's a safe bet. It will work <b>only if the BIOS is set to
 SIR mode</b>, so don't bother otherwise.
@@ -152,7 +154,7 @@ IrDA port...
 
 
 <h4>HP Omnibook 6000 in FIR mode</h4>
-
+<p>
 It seems that each laptop has its quirk when it come to FIR mode. I've
 managed to get my OB6000 to work. Other laptops
 will be different (different driver, different settings).
@@ -174,7 +176,7 @@ options nsc-ircc dongle_id=0x08</pre>
 The NSC driver gives me some pretty good performance.
 
 <h4>Other laptops in FIR mode</h4>
-
+<p>
 There is <b>different FIR hardwares</b> included in the various
 laptops. Linux-IrDA support some of them (not all) in various degrees
 (from good to bad). Moreover, it seems that each laptop has its quirk,
@@ -188,7 +190,7 @@ functional (if you set the proper <i>dongle_id</i>, which is either
 most problematic.
 
 <h4>USB FIR dongles</h4>
-
+<p>
 This driver is included in recent kernel. It's not as efficient as
 other FIR hardware, but at least is supported and is relatively easy
 to get working. Also, all the current products are based on the same

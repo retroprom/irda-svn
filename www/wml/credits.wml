@@ -27,7 +27,7 @@
    <td valign="top" width="100" bgcolor="#ffe496">
      <table cellspacing="0" cellpadding="0" border="0">
        <tr>
-         <td><img src="$(ROOT)img/item-<get-var selected />.jpg" width="100" height="110"></td>
+         <td><img src="$(ROOT)img/item-<get-var selected />.png" width="100" height="110"></td>
        </tr>
        <tr>
          <td bgcolor="#ffe496"><px width="100" height="20"></td>

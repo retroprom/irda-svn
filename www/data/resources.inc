@@ -1,19 +1,19 @@
 
 <h2>Resources</h2>
 
-<f2>
+<p>
 Here is a list of all the IrDA resources I could find. Please
 send me more links.
-<br>
+<p>
 If your product is supported by Linux-IrDA, I hope that you will visit
 <a href="http://www.linuxjournal.com/cool.html">"Tell the World You
 Support Linux"</a> homepage and register ($1.00), so that you can show
-this really cool logo along with your products.<br>
-<br>
+this really cool logo along with your products.
+<p>
 Next pages from this sections will guide you on Internet places where you can find
 companies which support IrDA, chipsets, IrDA dongles and adapters and, of course,
-devices which feature IrDA conectivity.<br>
-<br>
+devices which feature IrDA conectivity.
+<p>
 Werner Heuser, Linux-IrDA HOWTO maintainer have a large collection of informations
 about IrDA devices and Linux on laptops documentations. Because there's no laptop
 today without IrDA, please take a look before you buy one and want to run IrDA
@@ -21,10 +21,8 @@ applications. Sad, but true, some models still lack support for on-board
 infrared chipsets or are partialy working. Please visit TuxMobil website at
 <a href="http://tuxmobil.org/">http://tuxmobil.org/</a>.
 
-</f2>
-
 <h2>IrDA Links</h2>
-<f2>
+<p>
 <ul>
 
 <li>The <a href="http://www.irda.org/">IrDA organization</a>, with on-line specs
@@ -51,20 +49,17 @@ enabled cell phone</b>
 have some instructions on how to connect a
 <b>WinCE device to Linux</b>
 
-
 <li><a href="http://gnokii.org/">Gnokii</a>, a package to communicate
 with your cellular phone over IrDA and over special made cables.
 
-
 </ul>
-</f2>
 
 
 
 <h2>Related Links</h2>
-<f2>
-<ul>
 
+<p>
+<ul>
 
 <li>The <a href="http://sourceforge.net/projects/openobex/">OpenObex
 web page</a>, where you will find the latest version of the Obex code.
@@ -83,6 +78,4 @@ cable. Can be used to browse some cellular phones.
 <li>Linux kernel source <a href="http://www.kernel.org/">archive</a>
 (the latest IrDA stack is in the 2.4.X kernels).
 
-
 </ul>
-</f2>

@@ -1,12 +1,10 @@
 <br>
-<f2>
+<small>
 <navbar:render name="docs2menu" select="comm"><br>
-</f2>
+</small>
 
 <h2>Making communications</h2>
-<f2>
 
+<p>
 UNDER CONSTRUCTION!
-
-</f2>
 

@@ -28,7 +28,7 @@
    <td valign="top" width="100" bgcolor="#ffe496">
      <table cellspacing="0" cellpadding="0" border="0">
        <tr>
-         <td><img src="$(ROOT)img/item-<get-var selected />.jpg" width="100" height="110"></td>
+         <td><img src="$(ROOT)img/item-<get-var selected />.png" width="100" height="110"></td>
        </tr>
        <tr>
          <td bgcolor="#ffe496"><px width="100" height="20"></td>
@@ -57,28 +57,26 @@
 
 <h2>Chipsets</h2>
 
-<f2>
+<p>
 Here is list of IrDA chipsets and their functional status relative to
 Linux kernel. Please send more links or info about new manufactured 
 chipsets to have acurate listing. Also if you're a Linux-IrDA developer
 or contributor, inform me when the information presented here is
-outdated.<br>
-<br>
-</f2>
+outdated.
 
 <table border="0" cellpadding="0" cellspacing="0" bgcolor="#777777" width="90%" align="center"><tr><td>
 <table border="0" cellpadding="2" cellspacing="1" width="100%">
   <tr bgcolor="#ffffe7">
-    <td><f2><b>Chipset</b></f2></td>
-    <td><f2><b>Status</b></f2></td>
+    <td><b>Chipset</b></td>
+    <td><b>Status</b></td>
   </tr>
 
 <perl>&render_chipsets();</perl>
 
 </table>
 </td></tr></table>
-<f2>
-<br><br>
+
+<p>
 <b>Legend:</b><br>
 &nbsp;&nbsp;<img src="$(ROOT)img/yes.gif" width="16" height="16"> - 
 good or satisfactory support exist for that chipset
@@ -91,8 +89,6 @@ there's work in progress for supporting the chipset in Linux-IrDA
 <br>
 &nbsp;&nbsp;<img src="$(ROOT)img/unk.gif" width="16" height="16"> - 
 nothing clear or known about chipset support in Linux kernel
-<br>
-</f2>
 
 
 

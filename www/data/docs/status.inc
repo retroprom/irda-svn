@@ -1,8 +1,8 @@
 
 <h2>Linux-IrDA Current Status [August 2002]</h2>
 
-<f2>
-Here is what Jean Tourrilhes say about Linux-IrDA current status:<br>
+<p>
+Here is what Jean Tourrilhes say about Linux-IrDA current status:
 <ul>
 <li>State of the art is 2.5.13, all versions before have known
 bugs. The latest essential update was in kernel 2.4.16, which
@@ -46,11 +46,11 @@ latency. Lastly, it seems that the TTY layer is becoming a bottleneck.
 
 </ul>
 
-</f2>
 
 <h2>Pending Patches</h2>
-<f2>
-Linux-IrDA patches pending for <b>2.4.20</b>:<br>
+
+<p>
+Linux-IrDA patches pending for <b>2.4.20</b>:
 
 <ul>
 
@@ -89,10 +89,9 @@ contributed by Felix Tang, ActiSys 200L dongle driver contributed by
 Shimizu Takuja (patch from Gerhard Bertelsmann) and MA600 dongle
 driver contributed by Leung.
 
-
 </ul>
 
-Linux-IrDA patches pending for <b>2.4.21</b>:<br>
+<p>Linux-IrDA patches pending for <b>2.4.21</b>:
 
 <ul>
 <li><a href="http://irda.sourceforge.net/ftp/patches/2.5.x/ir258_flow_sched_lap_lmp-6.diff">Socket scheduler</a> :
@@ -138,7 +137,7 @@ failure. Found by the Stanford checker.
 </ul>
 
 
-Other Linux-IrDA patches included in <b>2.5.13</b> and pending <b>for 2.4.22</b>:<br>
+<p>Other Linux-IrDA patches included in <b>2.5.13</b> and pending <b>for 2.4.22</b>:
 
 <ul>
 
@@ -154,7 +153,7 @@ kernel 2.5.10 and later. Patch from Kai Germaschews.
 </ul>
 
 
-Other Linux-IrDA patches included in <b>2.5.16</b> and pending <b>for 2.4.22</b>:<br>
+<p>Other Linux-IrDA patches included in <b>2.5.16</b> and pending <b>for 2.4.22</b>:
 
 <ul>
 
@@ -171,8 +170,7 @@ cases. Patch from Christoph Bartelmus.
 </ul>
 
 
-
-Linux-IrDA patches pending for <b>2.5.24</b> and <b>2.4.22</b>:<br>
+<p>Linux-IrDA patches pending for <b>2.5.24</b> and <b>2.4.22</b>:
 
 <ul>
 
@@ -195,7 +193,7 @@ fixes bugs introduced in 2.5.13 and 2.5.16. <i>new version for
 </ul>
 
 
-Linux-IrDA patches pending for <b>2.5.30</b> and <b>2.4.22</b>:<br>
+<p>Linux-IrDA patches pending for <b>2.5.30</b> and <b>2.4.22</b>:
 
 <ul>
 <li><a href="http://irda.sourceforge.net/ftp/patches/2.5.x/ir252_hashbin_fixes.diff">HashBins fixes</a>&nbsp;: fix
@@ -231,5 +229,3 @@ Remove compilation warning. Patch from "sandeen".
 
 </ul>
 
-
-</f2>

@@ -1,7 +1,7 @@
 
 <h2>Companies</h2>
 
-<f2>
+<p>
 Below is the list with companies wich offer or develop IrDA devices,
 chipsets and many more:<br>
 <br>
@@ -49,5 +49,4 @@ chipsets and many more:<br>
 &nbsp; <a href="http://www.toshiba.com">Toshiba</a><br>
 &nbsp; <a href="http://www.vishay.de/">Vishay</a><br>
 &nbsp; <a href="http://www.winbond.com/">Winbond</a><br>
-</f2>
 
