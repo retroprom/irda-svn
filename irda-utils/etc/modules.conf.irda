@@ -1,0 +1,18 @@
+# IrDA over a normal serial port, or a serial port compatible IrDA port
+alias tty-ldisc-11 irtty
+alias irlan0 irlan
+# IrCOMM (for printing, PPP, Minicom etc)
+alias char-major-161 ircomm-tty
+# To be able to attach some dongles
+alias irda-dongle-0 tekram
+alias irda-dongle-1 esi
+alias irda-dongle-2 actisys
+alias irda-dongle-3 actisys
+alias irda-dongle-4 girbil
+alias irda-dongle-5 litelink
+alias irda-dongle-6 airport
+alias irda-dongle-7 old_belkin
+# To use the NSC driver on a Thinkpad laptop
+options nsc-ircc dongle_id=0x09
+#alias irda0 nsc-ircc
+#alias irda0 smc-ircc
