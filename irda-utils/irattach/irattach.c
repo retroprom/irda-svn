@@ -50,21 +50,22 @@
 #endif
 
 /* External prototypes */
-extern void fork_now(void);
+extern void fork_now(int ttyfd);
 extern int set_sysctl_param(char *name, char *value);
 extern int execute(char *msg, char *cmd);
 /* Internal prototypes */
 
-#define VERSION "0.9.16 (10.10.2002) Dag Brattli/Jean Tourrilhes"
+#define VERSION "0.9.16 (18.8.2003) Dag Brattli/Jean Tourrilhes"
 
 extern char *optarg;
 extern int optind;
 
+static int devfd = -1;		/* File descriptor for the tty device */
+static int fdflags = -1;	/* Current file descriptor flags */
 static int initfdflags = -1;	/* Initial file descriptor flags */
-static int initdisc = -1;
-static int devfd = -1;
-static struct termios termsave;
-static int initfdsave = -1;
+static int initdisc = -1;	/* Initial line discipline */
+static struct termios termsave;	/* Saved tty termios */
+static int termvalid = -1;	/* If termsave is valid */
 
 /* Default path for pid file */
 char *pidfile = "/var/run/irattach.pid";
@@ -196,19 +197,21 @@ void cleanup(int signo)
 
 	/* Reset the fd termios struct ++ */
 	if (devfd != -1) {
-		initfdflags &= ~O_NONBLOCK;
+		fdflags &= ~O_NONBLOCK;
+		if (fcntl (devfd, F_SETFL, fdflags) != 0) {
+			syslog (LOG_ERR, "fcntl: fdflags: %m");
+		}
+		if (initdisc != -1)
+			if (ioctl(devfd, TIOCSETD, &initdisc) < 0){
+				fprintf(stderr, "Oups ! Can't set back original link discipline...\n");
+				syslog(LOG_ERR, "ioctl: set_inidisc: %m");
+			}
+		if (termvalid != -1)
+			if (tcsetattr(devfd, TCSANOW, &termsave) != 0) {
+				syslog (LOG_ERR, "tcsetattr: %m");
+			}
 		if (fcntl (devfd, F_SETFL, initfdflags) != 0) {
 			syslog (LOG_ERR, "fcntl: initfdflags: %m");
-		}
-		if (ioctl(devfd, TIOCSETD, &initdisc) < 0){
-			fprintf(stderr, "Oups ! Can't set back original link discipline...\n");
-			syslog(LOG_ERR, "ioctl: set_inidisc: %m");
-		}
-		if (tcsetattr(devfd, TCSANOW, &termsave) != 0) {
-			syslog (LOG_ERR, "tcsetattr: %m");
-		}
-		if (fcntl (devfd, F_SETFL, initfdsave) != 0) {
-			syslog (LOG_ERR, "fcntl: initfdsave: %m");
 		}
 		close(devfd);
 		devfd = -1;
@@ -482,6 +485,7 @@ static void init_irda_ldisc(int ttyfd)
 	}
 	/* Save the original values */
 	memcpy(&termsave, &tios, sizeof(struct termios));
+	termvalid = 0;
 
 	tty_configure(&tios);
 	
@@ -492,42 +496,92 @@ static void init_irda_ldisc(int ttyfd)
 	}
 }
 
-static void start_tty(char *dev) 
+/*
+ * Function start_tty(ttyfd)
+ *
+ *    Set up the serial device to be the irda interface.
+ *
+ * This needs to be called after the fork.
+ */
+static void start_tty(int ttyfd) 
 {
-	/*
-	 * Open the serial device and set it up to be the irda interface.
-	 */
-	if ((devfd = open(dev, O_NONBLOCK | O_RDWR, 0)) < 0) {
-		syslog(LOG_ERR, "Failed to open %s: %m", dev);
-		clean_exit(-1);
-	}
-	if ((initfdflags = fcntl(devfd, F_GETFL)) == -1) {
-		syslog(LOG_ERR, "Couldn't get device fd flags: %m");
-		clean_exit(-1);
-	}
-	
-	/* Save old flags */
-	initfdsave = initfdflags;
+	int cloexec;
 
-	initfdflags &= ~O_NONBLOCK;
-	if (fcntl(devfd, F_SETFL, initfdflags) == -1) {
+	/* Set new flags -> blocking mode while we configure */
+	fdflags &= ~O_NONBLOCK;
+	if (fcntl(ttyfd, F_SETFL, fdflags) == -1) {
 		syslog(LOG_WARNING, "Couldn't set device fd flags: %m");
 	}
 		
-	/* Set up the serial device as a irda interface */	
-	init_irda_ldisc(devfd);
-	establish_irda(devfd);
+	/* We need to make sure the devfd/ttyfd will not be inherited by the
+	 * shells which get vfork'ed when we use popen(3) to execute commands
+	 * like sysctl and modprobe on behalf of irattach. In the daemon mode
+	 * we got most likely fd=0 which would be reused for stdin by /bin/sh
+	 * otherwise!
+	 * F_SETFD belongs to the fd, not file: no need to save and restore
+	 * later.
+	 * Martin
+	 */
+	if ((cloexec = fcntl(devfd, F_GETFD)) == -1) {
+		syslog(LOG_ERR,
+		       "Couldn't get device fd close-on-exec flag: %m");
+		clean_exit(-1);
+	}
+	cloexec |= FD_CLOEXEC;
+	if (fcntl(devfd, F_SETFD, cloexec) == -1) {
+		syslog(LOG_ERR,
+		       "Couldn't set device fd close-on-exec flag: %m");
+		clean_exit(-1);
+	}
 
-	sleep(1);  /* give it time to set up its terminal */
+	/* Set up the serial device as a irda interface */	
+	init_irda_ldisc(ttyfd);
+	establish_irda(ttyfd);
+
+	/* Give it time to set up its terminal */
+	sleep(1);
 	
 	/*
 	 *  Set device for non-blocking reads.
 	 */
-	if (fcntl(devfd, F_SETFL, initfdflags | O_NONBLOCK) == -1) {
+	if (fcntl(ttyfd, F_SETFL, fdflags | O_NONBLOCK) == -1) {
 		syslog(LOG_ERR, 
 		       "Couldn't set device to non-blocking mode: %m");
 		clean_exit(-1);
 	}
+}
+
+/*
+ * Function open_tty(ttyfd)
+ *
+ *    Open the desired tty, save its state.
+ *
+ * This needs to be called before the fork.
+ */
+static int open_tty(char *dev) 
+{
+	int ttyfd;
+
+	/* Open the serial device */
+	ttyfd = open(dev, O_NONBLOCK | O_RDWR, 0);
+	if (ttyfd < 0) {
+		fprintf(stderr, "Failed to open device %s: %s\n",
+			dev, strerror(errno));
+		exit(-1);
+	}
+
+	/* Save old flags
+	 * Need to happen first, because we need to restore them when leaving
+	 * via clean_exit() */
+	if ((fdflags = fcntl(ttyfd, F_GETFL)) == -1) {
+		fprintf(stderr, "Couldn't get device %s flags: %s\n",
+			dev, strerror(errno));
+		close(ttyfd);
+		exit(-1);
+	}
+	initfdflags = fdflags;
+
+	return(ttyfd);
 }
 
 /************************ DONGLE MANAGEMENT ************************/
@@ -648,7 +702,11 @@ int main(int argc, char *argv[])
 
 	/* Check if the device is a tty */
 	if(strncmp("/dev", device, 4) == 0) {
+		/* We are managing a tty ! */
 		tty = 1;
+
+		/* Create tty channel and make it exist */
+		devfd = open_tty(device);
 	} else {
 		/* Check for a irda device name */
 		if((strncmp("irda", device, 4) == 0) &&
@@ -668,7 +726,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Go as a background daemon */
-	fork_now();
+	fork_now(devfd);
 
 	/* --- Deamon mode --- */
 	/* We can no longer print out directly to the terminal, we
@@ -686,8 +744,8 @@ int main(int argc, char *argv[])
 	/* If device is a tty */
 	/* We may want to move that before the fork(), except for the sleep */
 	if (tty) {
-		/* Create tty channel */
-		start_tty(device);
+		/* Setup tty channel */
+		start_tty(devfd);
 
 		/* Get device name corresponding to the tty */
 		if (ioctl(devfd, IRTTY_IOCGNAME, &info) < 0) {

@@ -1,5 +1,5 @@
 /*********************************************************************
- *                
+ *
  * Filename:      irdadump.c
  * Version:       0.6.1
  * Description:   irdadump sniffs IrDA frames, and is inspired by tcpdump
@@ -8,18 +8,19 @@
  * Created at:    Sun Oct  4 20:33:05 1998
  * Modified at:   Wed Jan 19 11:03:32 2000
  * Modified by:   Dag Brattli <dagb@cs.uit.no>
- * 
+ *
  *     Copyright (c) 1998-2000 Dag Brattli, All Rights Reserved.
- *      
- *     This program is free software; you can redistribute it and/or 
- *     modify it under the terms of the GNU General Public License as 
- *     published by the Free Software Foundation; either version 2 of 
+ *     Copyright (c) 2002-2003 Jean Tourrilhes, All Rights Reserved.
+ *
+ *     This program is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU General Public License as
+ *     published by the Free Software Foundation; either version 2 of
  *     the License, or (at your option) any later version.
- *  
+ *
  *     Neither Dag Brattli nor University of Tromsø admit liability nor
- *     provide warranty for any of this software. This material is 
+ *     provide warranty for any of this software. This material is
  *     provided "AS-IS" and at no charge.
- *     
+ *
  ********************************************************************/
 
 #include <sys/socket.h>
@@ -41,6 +42,7 @@
 #include <stdlib.h>		/* exit */
 #include <irda.h>
 
+#include "capture.h"
 #include "irdadump.h"
 
 int config_print_diff = 0;
@@ -52,6 +54,7 @@ int config_snaplen = 32;
 int config_dump_bytes = 0;
 int config_snapcols = 16;
 int config_force_ttp = 0;
+int config_capturefile = -1;
 
 int self_nr = 0;
 int self_ns = 0;
@@ -81,13 +84,13 @@ int conn_cache = -1;
 inline void print_time(const struct timeval *timev, GString *str)
 {
         int s;
-	
+
 	s = (timev->tv_sec) % 86400;
 	/* Modulo is not a proper modulo for negative ints */
 	if(s < 0)
 		s += 86400;
-	g_string_sprintfa(str, "%02d:%02d:%02d.%06u ", 
-			  s / 3600, (s % 3600) / 60, 
+	g_string_sprintfa(str, "%02d:%02d:%02d.%06u ",
+			  s / 3600, (s % 3600) / 60,
 			  s % 60, (u_int32_t) timev->tv_usec);
 }
 
@@ -97,28 +100,28 @@ inline void print_time(const struct timeval *timev, GString *str)
  *    Print the difference in time between this frame and the previous one
  *
  */
-inline void print_diff_time(struct timeval *timev, struct timeval *prev_timev, 
+inline void print_diff_time(struct timeval *timev, struct timeval *prev_timev,
 			    GString *str)
 {
 	float diff;
-	
+
 	if (prev_timev->tv_usec > timev->tv_usec) {
 		timev->tv_usec += 1000000;
 		timev->tv_sec--;
 	}
 	prev_timev->tv_usec = timev->tv_usec - prev_timev->tv_usec;
 	prev_timev->tv_sec  = timev->tv_sec - prev_timev->tv_sec;
-	
+
 	diff = ((float) prev_timev->tv_sec * 1000000 + prev_timev->tv_usec)
 		/ 1000.0;
-	
+
 	g_string_sprintfa(str, "(%07.2f ms) ", diff);
 }
 
 /*
  * Function find_connection (slsap_sel, dlsap_sel)
  *
- *    
+ *
  *
  */
 int find_connection(guint8 slsap_sel, guint8 dlsap_sel)
@@ -131,7 +134,7 @@ int find_connection(guint8 slsap_sel, guint8 dlsap_sel)
 		    (conn[conn_cache].dlsap_sel == dlsap_sel))
 			return conn_cache;
 	}
-	
+
 	/* Just have to do linear search then */
 	for (i=0;i<MAX_CONNECTIONS;i++) {
 		if ((conn[i].slsap_sel == slsap_sel) &&
@@ -150,7 +153,7 @@ int find_connection(guint8 slsap_sel, guint8 dlsap_sel)
 int find_free_connection(void)
 {
 	gint i;
-	
+
 	for (i=0;i<MAX_CONNECTIONS;i++) {
 		if (!conn[i].valid)
 			return i;
@@ -167,7 +170,7 @@ int find_free_connection(void)
 inline void garbage_connection(guint8 caddr)
 {
 	gint i;
-	
+
 	for (i=0;i<MAX_CONNECTIONS;i++) {
 		if (conn[i].caddr == caddr)
 			conn[i].valid = 0;
@@ -182,7 +185,7 @@ static inline guint bytes_to_uint(unsigned char *buf)
 }
 
 guint32 min_turn_times[]  = { 10000, 5000, 1000, 500, 100, 50, 10, 0 }; /* us */
-guint32 baud_rates[]      = { 2400, 9600, 19200, 38400, 57600, 115200, 576000, 
+guint32 baud_rates[]      = { 2400, 9600, 19200, 38400, 57600, 115200, 576000,
 			      1152000, 4000000, 16000000 };        /* bps */
 guint32 data_sizes[]      = { 64, 128, 256, 512, 1024, 2048 };     /* bytes */
 guint32 add_bofs[]        = { 48, 24, 12, 5, 3, 2, 1, 0 };         /* bytes */
@@ -196,7 +199,7 @@ guint32 window_sizes[]    = { 1, 2, 3, 4, 5, 6, 7, 0 };            /* frames */
  *    Returns value to index in array, easy!
  *
  */
-static inline guint32 index_value(int bit_index, guint32 *array) 
+static inline guint32 index_value(int bit_index, guint32 *array)
 {
 	return array[bit_index];
 }
@@ -207,11 +210,11 @@ static inline guint32 index_value(int bit_index, guint32 *array)
  *    Returns index to most significant bit (MSB) in word
  *
  */
-int msb_index (guint16 word) 
+int msb_index (guint16 word)
 {
 	guint16 msb = 0x8000;
 	int bit_index = 15;   /* Current MSB */
-	
+
 	if (word == 0) {
 		fprintf(stderr, "Detected buggy peer, adjust null PV to 0x1!\n");
 		/* The only safe choice (we don't know the array size) */
@@ -226,7 +229,7 @@ int msb_index (guint16 word)
 	return bit_index;
 }
 
-static inline guint32 byte_value(guint16 byte, guint32 *array) 
+static inline guint32 byte_value(guint16 byte, guint32 *array)
 {
 	int bit_index;
 
@@ -246,7 +249,7 @@ void parse_irlap_params(guint8 clen, GNetBuf *buf, GString *str)
 	while (n < clen) {
 		pi = buf->data[n] & 0x7f; /* Remove critical bit */
 		pl = buf->data[n+1];
-		
+
 		switch (pi) {
 		case PI_BAUD_RATE:
 			pv_byte = buf->data[n+2];
@@ -316,11 +319,11 @@ inline void parse_hints(guint8 *hint, GString *str)
 		g_string_append(str, "Fax ");
 	if (hint[0] & HINT_LAN)
 		g_string_append(str, "LAN Access ");
-	
+
 	if (hint[1] & HINT_TELEPHONY)
 		g_string_append(str, "Telephony ");
 	if (hint[1] & HINT_FILE_SERVER)
-		g_string_append(str, "File Server ");       
+		g_string_append(str, "File Server ");
 	if (hint[1] & HINT_COMM)
 		g_string_append(str, "IrCOMM ");
 	if (hint[1] & HINT_OBEX)
@@ -334,7 +337,7 @@ inline void parse_hints(guint8 *hint, GString *str)
  *    Exchange station identification frame
  *
  */
-inline void parse_xid_frame(guint8 command, guint8 pf, int type, 
+inline void parse_xid_frame(guint8 command, guint8 pf, int type,
 			    GNetBuf *buf, GString *str)
 {
 	struct xid_frame *frame = (struct xid_frame *) buf->data;
@@ -342,15 +345,15 @@ inline void parse_xid_frame(guint8 command, guint8 pf, int type,
 	guint32 saddr, daddr;
 	char *info = NULL;
 	guint8 hint[2];
-	
+
 	/* Kill "unused" warning */
 	pf = pf;
 
 	hint[0] = hint[1] = 0;
-	
+
 	saddr = GINT32_FROM_LE(frame->saddr);
 	daddr = GINT32_FROM_LE(frame->daddr);
-	
+
 	switch(frame->flags) {
 	case 0x00:
 		S = 1;
@@ -367,12 +370,12 @@ inline void parse_xid_frame(guint8 command, guint8 pf, int type,
 	default:
 		S = 0;
 	}
-	
+
 	s = frame->slotnr;
-	
-	/* 
-	 * The last of the discovery command frames, and response frames 
-	 * contains info 
+
+	/*
+	 * The last of the discovery command frames, and response frames
+	 * contains info
 	 */
 	if ((s == 0xff) || (!command)) {
 		hint[0] = frame->discovery_info[0];
@@ -381,26 +384,26 @@ inline void parse_xid_frame(guint8 command, guint8 pf, int type,
 			info = (char *) frame->discovery_info+3;
 		} else
 			info = (char *) frame->discovery_info+2;
-		
+
 		/* Terminate string */
 		buf->data[buf->len] = '\0';
 	}
 	if (type)
-		g_string_sprintfa(str, "xid:%s %08x > %08x S=%d ", 
+		g_string_sprintfa(str, "xid:%s %08x > %08x S=%d ",
 				  command?"cmd":"rsp", saddr, daddr, S);
 	else
-		g_string_sprintfa(str, "xid:%s %08x < %08x S=%d ", 
+		g_string_sprintfa(str, "xid:%s %08x < %08x S=%d ",
 				  command?"cmd":"rsp", daddr, saddr, S);
-	
+
 	/* Printing a * instead of 255 makes things more aligned */
 	if (s == 0xff)
 		g_string_append(str, "s=* ");
 	else
 		g_string_sprintfa(str, "s=%d ", s);
-	
+
 	/* Print info if any */
 	if (info) {
-		g_string_sprintfa(str, "%s hint=%02x%02x ", info, hint[0], 
+		g_string_sprintfa(str, "%s hint=%02x%02x ", info, hint[0],
 				  hint[1]);
 		parse_hints(hint, str);
 	}
@@ -412,7 +415,7 @@ inline void parse_xid_frame(guint8 command, guint8 pf, int type,
  *    Information frames
  *
  */
-inline void parse_i_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
+inline void parse_i_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 			  GNetBuf *buf, GString *str)
 {
 	int nr, ns;
@@ -423,10 +426,10 @@ inline void parse_i_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	/* Remove IrLAP header */
 	g_netbuf_pull(buf, 2);
 
-	g_string_sprintfa(str, "i:%s  %s ca=%02x pf=%d nr=%d ns=%d ", 
-			  cmd ? "cmd" : "rsp", 
+	g_string_sprintfa(str, "i:%s  %s ca=%02x pf=%d nr=%d ns=%d ",
+			  cmd ? "cmd" : "rsp",
 			  type ? ">" : "<", caddr, pf, nr, ns);
-	
+
 	/* Check if we should print IrLMP information */
 	if (config_print_irlmp)
 		parse_irlmp(buf, str, caddr, type, cmd);
@@ -436,23 +439,23 @@ inline void parse_i_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 		if (type) {
 			self_nr = nr;
 			if (self_nr != ((peer_ns + 1) % 8)) {
-				g_string_sprintfa(str, 
+				g_string_sprintfa(str,
 						  "** %d frame(s) lost ** ",
-						  (peer_ns + 1 > self_nr) ? 
-						  peer_ns + 1 - self_nr : 
+						  (peer_ns + 1 > self_nr) ?
+						  peer_ns + 1 - self_nr :
 						  peer_ns + 9 - self_nr);
 			}
 			if (ns != ((self_ns + 1) % 8)) {
 				g_string_append(str, "** retransmit ** ");
 			}
-			self_ns = ns;		
+			self_ns = ns;
 		} else {
 			peer_nr = nr;
 			if (peer_nr != ((self_ns + 1) % 8)) {
-				g_string_sprintfa(str, 
+				g_string_sprintfa(str,
 						  "** %d frame(s) lost ** ",
-						  (self_ns + 1 > peer_nr) ? 
-						  self_ns + 1 - peer_nr : 
+						  (self_ns + 1 > peer_nr) ?
+						  self_ns + 1 - peer_nr :
 						  self_ns + 9 - peer_nr);
 			}
 			if (ns != ((peer_ns + 1) % 8)) {
@@ -529,7 +532,7 @@ inline void parse_rr_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 			if (self_nr != ((peer_ns + 1) % 8)) {
 				g_string_sprintfa(str, 
 						  "** %d frame(s) lost ** ",
-						  (peer_ns + 1 > self_nr) ? 
+						  (peer_ns + 1 > self_nr) ?
 						  peer_ns + 1 - self_nr : 
 						  peer_ns + 9 - self_nr);
 			}
@@ -560,7 +563,7 @@ inline void parse_rnr_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	nr = buf->data[1] >> 5;          /* Next to receive */
 
 	g_string_sprintfa(str, "rnr:%s %s ca=%02x pf=%d nr=%d ", 
-			  cmd ? "cmd" : "rsp", type ? ">" : "<", caddr, pf, 
+			  cmd ? "cmd" : "rsp", type ? ">" : "<", caddr, pf,
 			  nr);
 }
 
@@ -577,7 +580,7 @@ inline void parse_rej_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 
 	nr = buf->data[1] >> 5;          /* Next to receive */
 
-	g_string_sprintfa(str, "rej:%s %s ca=%02x pf=%d nr=%d ", 
+	g_string_sprintfa(str, "rej:%s %s ca=%02x pf=%d nr=%d ",
 			  cmd ? "cmd" : "rsp", type ? ">" : "<", caddr, pf, 
 			  nr);
 }
@@ -606,7 +609,7 @@ inline void parse_srej_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
  *    Unnumbered acknowledgement frame
  *
  */
-inline void parse_ua_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
+inline void parse_ua_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 			   GNetBuf *buf, GString *str)
 {
 	struct ua_frame *frame = (struct ua_frame *) buf->data;
@@ -655,7 +658,7 @@ inline void parse_disc_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
  *    Disconnected mode frame
  *
  */
-inline void parse_dm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
+inline void parse_dm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 			   GNetBuf *buf, GString *str)
 {
 	/* Kill "unused" warning */
@@ -678,7 +681,7 @@ inline void parse_rd_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	buf = buf;
 
 	g_string_sprintfa(str, "rd:%s %s ca=%#02x pf=%d ", cmd?"cmd":"rsp", 
-			 type ? ">" : "<", caddr, pf);	
+			 type ? ">" : "<", caddr, pf);
 }
 
 /*
@@ -698,7 +701,7 @@ inline void parse_test_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 
 	g_string_sprintfa(str, "test:%s ca=%#02x pf=%d %08x %s %08x ", 
 			  cmd?"cmd":"rsp", caddr, pf, saddr, type ? ">" : "<", 
-			  daddr);	
+			  daddr);
 }
 
 /*
@@ -707,7 +710,7 @@ inline void parse_test_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
  *    Set normal response mode frame
  *
  */
-inline void parse_snrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
+inline void parse_snrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 			     GNetBuf *buf, GString *str)
 {
 	struct snrm_frame *frame = (struct snrm_frame *) buf->data;
@@ -727,7 +730,7 @@ inline void parse_snrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 				 caddr, pf, saddr, daddr, new_caddr);
 	else
 	       g_string_sprintfa(str, "snrm:%s ca=%02x pf=%d %08x < "
-				 "%08x new-ca=%02x ", cmd ? "cmd" : "rsp", 
+				 "%08x new-ca=%02x ", cmd ? "cmd" : "rsp",
 				 caddr, pf, daddr, saddr, new_caddr);
 	/* Remove IrLAP header */
 	g_netbuf_pull(buf, sizeof(struct snrm_frame));
@@ -744,7 +747,7 @@ inline void parse_snrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
  *    Request normal response mode
  *
  */
-inline void parse_rnrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type, 
+inline void parse_rnrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 			     GNetBuf *buf, GString *str)
 {
 	gint32 saddr, daddr;
@@ -753,7 +756,7 @@ inline void parse_rnrm_frame(guint8 caddr, guint8 cmd, guint8 pf, int type,
 	saddr = GINT32_FROM_LE(frame->saddr);
 	daddr = GINT32_FROM_LE(frame->daddr);
 
-	g_string_sprintfa(str, "snrm:%s ca=%02x pf=%d %08x %s %08x ", 
+	g_string_sprintfa(str, "snrm:%s ca=%02x pf=%d %08x %s %08x ",
 			  cmd?"cmd":"rsp", caddr, pf, saddr, type?">":"<", 
 			  daddr);
 }
@@ -811,7 +814,7 @@ inline void parse_irda_frame(int type, GNetBuf *buf, GString *str)
 			break;
 		default:
 			g_string_sprintfa(str,
-					  "Unknown S frame %02x received!\n", 
+					  "Unknown S frame %02x received!\n",
 					  ctrl);
 			break;
 		}
@@ -864,7 +867,7 @@ inline void parse_irda_frame(int type, GNetBuf *buf, GString *str)
 /*
  * Function irdadump_init ()
  *
- *    
+ *
  *
  */
 int irdadump_init(char *ifdev)
@@ -873,16 +876,24 @@ int irdadump_init(char *ifdev)
 
 	memset(&last_ias, 0, sizeof(struct ias_query));
 	memset(&conn, 0, sizeof(struct lsap_state));
-	
+
 	curr_time = &time1;
 	prev_time = &time2;
 
 	/* Get time, so the first time diff is right */
 	gettimeofday(prev_time, (struct timezone*) 0);
 
-        /* 
-	 * Create socket, we must use SOCK_DGRAM to get the link level header 
-	 * that we are interested in 
+#if 0
+	/* Initialise capture file as needed */
+	if (config_capturefile >= 0) {
+		if(capture_init(config_capturefile) < 0)
+			return -1;
+	}
+#endif
+
+        /*
+	 * Create socket, we must use SOCK_DGRAM to get the link level header
+	 * that we are interested in
 	 */
 	fd = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ALL));
 	if (fd < 0) {
@@ -906,18 +917,18 @@ int irdadump_init(char *ifdev)
 /*
  * Function irdadump_loop ()
  *
- *    
+ *
  *
  */
-int irdadump_loop(GString *str) 
+int irdadump_loop(GString *str)
 {
 	int len;
 
 	fromlen = sizeof(struct sockaddr_ll);
-	
+
 	g_netbuf_recycle(frame_buf);
-	
-	len = recvfrom(fd, frame_buf->data, MAX_FRAME_SIZE, 0, 
+
+	len = recvfrom(fd, frame_buf->data, MAX_FRAME_SIZE, 0,
 		       (struct sockaddr *) &from, &fromlen);
 	if (len < 0) {
 		g_message("recvfrom");
@@ -948,12 +959,13 @@ int irdadump_loop(GString *str)
 
 	if (config_print_diff) {
 		print_diff_time(curr_time, prev_time, str);
-		
+
 		/* Swap */
 		tmp_time = prev_time;
 		prev_time = curr_time;
 		curr_time = tmp_time;
 	}
+
 	/* Full decoding of Frame */
 	if (config_print_irlap)
 		parse_irda_frame(from.sll_pkttype, frame_buf, str);
@@ -966,14 +978,14 @@ int irdadump_loop(GString *str)
 
 		g_string_append(str, "\n\t");
 		maxlen = (len < config_snaplen) ? len : config_snaplen;
-		
+
 		for (i=0;i<maxlen;i++)
 			g_string_sprintfa(str, "%02x", frame_buf->head[i]);
 		g_string_append(str, "\n\t");
-		
+
 		for (i=0;i<maxlen;i++) {
 			c = frame_buf->head[i];
-			if (c < 32 || c > 126) 
+			if (c < 32 || c > 126)
 				c='.';
 			g_string_sprintfa(str, " %c", c);
 		}
@@ -982,12 +994,27 @@ int irdadump_loop(GString *str)
 		int i, maxlen;
 
 		maxlen = (len < config_snaplen) ? len : config_snaplen;
-		
+
 		for (i=0;i<maxlen;i++) {
 			if((i % config_snapcols) == 0)
 				g_string_append(str, "\n\t");
 			g_string_sprintfa(str, "%02x ", frame_buf->head[i]);
 		}
 	}
+#if 0
+	/* This stuff is just a gross hack, so it's currently disabled
+	 * until done right. Let's just say that subverting the ATM
+	 * capture type is not the way to go !
+	 * Jean II */
+
+	/* Dump packet into cature file */
+	if (config_capturefile >= 0) {
+		capture_dump(config_capturefile,
+			     frame_buf,
+			     len,
+			     &from,
+			     curr_time);
+	}
+#endif
 	return 0;
 }

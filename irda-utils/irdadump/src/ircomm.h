@@ -61,4 +61,9 @@
 #define IRCOMM_CENTRONICS       0x08
 #define IRCOMM_VALID_SERVICES	0x0F
 
+/* Port type (details) */
+#define IRCOMM_SERIAL           0x01
+#define IRCOMM_PARALLEL         0x02
+#define IRCOMM_VALID_PORT_TYPES	0x03
+
 #endif

@@ -1,3 +1,8 @@
+2003-08-18  Jean II
+	* Move start_tty before fork to get error messages on console
+	* Don't restore disc/termio in cleanup if invalid
+	* Set FD_CLOEXEC on ttyfd so that popen does not inherit it (Martin)
+
 2002-07-18  Jean II
 	* Fix "irattach -h/-v" (thanks to Werner Heuser for spotting this)
 

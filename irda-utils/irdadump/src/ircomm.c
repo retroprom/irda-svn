@@ -20,19 +20,19 @@
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *     GNU General Public License for more details.
- * 
- *     You should have received a copy of the GNU General Public License 
- *     along with this program; if not, write to the Free Software 
- *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program; if not, write to the Free Software
+ *     Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  *     MA 02111-1307 USA
- *     
+ *
  ********************************************************************/
 
 #include "irdadump.h"
 #include "ircomm.h"
 
 #if 0
-static char *ircomm_service_type[] = 
+static char *ircomm_service_type[] =
 {
 	"N/A",
 	"THREE_WIRE_RAW",
@@ -44,13 +44,13 @@ static char *ircomm_service_type[] =
 	"N/A",
 	"CENTRONICS"
 };
-#endif
 
-static char *ircomm_port_type[] = 
+static char *ircomm_port_type[] =
 {
 	"SERIAL",
 	"PARALLEL"
 };
+#endif
 
 static inline guint bytes_to_uint(unsigned char *buf)
 {
@@ -68,7 +68,7 @@ void parse_ircomm_params(guint8 clen, GNetBuf *buf, GString *str)
 	while (n < clen) {
 		pi = buf->data[n] & 0x7f; /* Remove critical bit */
 		pl = buf->data[n+1];
-		
+
 		switch (pi) {
 		case SERVICE_TYPE:
 			pv_byte = buf->data[n+2];
@@ -86,8 +86,13 @@ void parse_ircomm_params(guint8 clen, GNetBuf *buf, GString *str)
 			break;
 		case PORT_TYPE:
 			pv_byte = buf->data[n+2];
-			g_string_sprintfa(str, "Port Type=%s ",
-					  ircomm_port_type[pv_byte]);
+			g_string_sprintfa(str, "Port Type=");
+			if (pv_byte & IRCOMM_SERIAL)
+				g_string_sprintfa(str, "SERIAL ");
+			if (pv_byte & IRCOMM_PARALLEL)
+				g_string_sprintfa(str, "PARALLEL ");
+			if (!(pv_byte & IRCOMM_VALID_PORT_TYPES))
+				g_string_sprintfa(str, "N/A ");
 			break;
 		case DATA_RATE:
 			pv_byte = bytes_to_uint(&(buf->data[n+2]));

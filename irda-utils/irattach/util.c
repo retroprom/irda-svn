@@ -154,7 +154,7 @@ void write_pid(void)
     }
 }
 
-void fork_now(void)
+void fork_now(int ttyfd)
 {
 	int ret;
 	int i;
@@ -172,9 +172,10 @@ void fork_now(void)
 		exit(0);
 	}
 
-	/* Close all open inherited files! */
-	for (i=0;i<64;i++)
-		close(i);
+	/* Close all open inherited files! Except for ttyfd! */
+	for (i = 0; i < 64; i++)
+		if(i != ttyfd)
+			close(i);
 
 	write_pid();
 } 
