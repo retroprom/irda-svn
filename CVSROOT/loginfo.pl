@@ -323,7 +323,7 @@ $scriptysilent = 0;
 
 if( $silentcommit ) {
    if ($author eq 'www' || $module =~ '^scripts' || $module =~ '^CVSROOT') {
-     $recipient = "claudiuc\@kde.org";
+     $recipient = "dc2rpt\@gmx.de";
      $from = "CVS silently by ";
      $scriptysilent = 1;
    } else {
@@ -369,7 +369,7 @@ $commit_dirs = "\nX-Commit-Directories: " . substr($commit_list, 0, 512) if (len
 
 my $blame = "$author <irda-cvs\@lists.sourceforge.net>";
 if ($author eq 'www') {
-  $blame = "Claudiu Costin <claudiuc\@i18n.kde.org>";
+  $blame = "Thomas - DC2RPT <dc2rpt\@gmx.de>";
 } else {
   open(INFO, "/usr/bin/cvs -fn co -p common/accounts 2>/dev/null |");
   my @info = grep /^$author\s*(.*)\s+\S+\s*$/, <INFO>;
