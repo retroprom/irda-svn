@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
 				dongle = IRDA_MCP2120_DONGLE;
 			else if (strcmp(optarg, "act200l") == 0)
 				dongle = IRDA_ACT200L_DONGLE;
+			else if (strcmp(optarg, "ma600") == 0)
+				dongle = IRDA_MA600_DONGLE;
 			
 			if (dongle == -1) {
 				printf("Sorry, dongle not supported yet!\n");

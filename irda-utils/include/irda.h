@@ -71,6 +71,7 @@ typedef enum {
 	IRDA_EP7211_IR           = 8,
 	IRDA_MCP2120_DONGLE      = 9,
 	IRDA_ACT200L_DONGLE      = 10,
+	IRDA_MA600_DONGLE        = 11,
 } IRDA_DONGLE;
 
 /* Protocol types to be used for SOCK_DGRAM */
