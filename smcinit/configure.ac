@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(smcinit, 0.5, irda-users@lists.sf.net)
+AC_INIT(smcinit, 0.5cvs, irda-users@lists.sf.net)
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADER([config.h])
 
@@ -19,6 +19,7 @@ AC_CHECK_LIB([pci], [pci_alloc])
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h string.h syslog.h unistd.h])
 AC_CHECK_HEADERS([sys/io.h sys/types.h])
+AC_CHECK_HEADERS([asm/ioctls.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.

@@ -31,6 +31,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdio.h>
+#include <fcntl.h>
+#include <termios.h>
 #include <sys/io.h>
 #include <sys/types.h>
 #include <errno.h>
@@ -39,7 +42,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pci/pci.h>
+#include <linux/limits.h>
+
 #include "config.h"
+
+#ifdef HAVE_ASM_IOCTLS_H
+#include <asm/ioctls.h>
+#endif
+
+#include <linux/serial.h>
+
 
 /*
  * (*) 
@@ -125,6 +137,7 @@ struct option options[] = {
 	{"firio",   required_argument, NULL, 'f'},
 	{"firirq",  required_argument, NULL, 'i'},
 	{"firdma",  required_argument, NULL, 'd'},
+	{"tty",  required_argument, NULL, 't'},
 	{NULL, 0, NULL, 0}
 };
 
@@ -136,10 +149,11 @@ static char *options_explications[] = {
 	"\t\tset the FIR I/O port",
 	"\t\tset the FIR IRQ line",
 	"\t\tset the FIR DMA channel",
+	"\t\tspecify the serial tty to unbind from serial driver",
 	NULL
 };
 
-static char *short_options = "Vhvs:f:i:d:";
+static char *short_options = "Vhvs:f:i:d:t:";
 
 
 void
@@ -192,6 +206,60 @@ void die(const char *message)
 	fprintf(stderr, "%s: %s\n", PROGNAME, message);
 	exit(1);
 }
+
+/*
+ * Shamelessly taken from setserial.c by Ty T'so
+ *
+ * Unbind the specified device from kernel stock serial driver.
+ */
+int unbind_from_serial(char *device)
+{
+	int fd;
+	struct serial_struct old_serinfo, new_serinfo;
+
+	if ((fd = open(device, O_RDWR|O_NONBLOCK)) < 0) {
+		if (/*verbosity==0 && */errno==ENOENT)
+			exit(201);
+		perror(device);
+		exit(201);
+	}
+	if (ioctl(fd, TIOCGSERIAL, &old_serinfo) < 0) {
+		perror("Cannot get serial info");
+		exit(1);
+	}
+	new_serinfo = old_serinfo;
+	new_serinfo.type = PORT_UNKNOWN;
+
+	if (ioctl(fd, TIOCSSERIAL, &new_serinfo) < 0) {
+		perror("Cannot set serial info");
+		exit(1);
+	}
+	close(fd);
+
+	return 0;
+}
+		 
+static struct pci_dev *find_pci_device(struct pci_access *access, struct pci_filter *filter)
+{
+	struct pci_dev *dev;
+
+	DEBUG("scanning PCI busses");
+	pci_scan_bus(access);
+
+	DEBUG("looking for PCI device");
+	for (dev = access->devices; dev; dev = dev->next) {
+		if (pci_filter_match(filter, dev)) {
+			DEBUG("device found");
+			DEBUG_VAL("bus", dev->bus);
+			DEBUG_VAL("dev", dev->dev);
+			DEBUG_VAL("func", dev->func);
+			return dev;
+		}
+	}
+	return NULL;
+}
+
+
 
 int set_smc(int * smc_base, int sir_io, int fir_io, int fir_irq, int fir_dma, int verbose)
 {
@@ -408,7 +476,11 @@ int main(int argc, char **argv)
 	const char *nptr;
 	char *endptr;
 	int smc_base;
+	char tty_device[PATH_MAX];
 
+
+	tty_device[0]='\0';
+	tty_device[PATH_MAX-1]='\0';
 
 	while ((opt =
 		getopt_long(argc, argv, short_options, options,
@@ -428,6 +500,13 @@ int main(int argc, char **argv)
 			verbose = 1;
 			break;
 
+		case 't':
+			nptr = optarg;
+			strncpy(tty_device, nptr, PATH_MAX);
+			/*if (! strncmp(tty_device, "/dev/tty", 8) ) {
+				die("Specified device not a path to a device");
+			}*/
+			break;
 		case 's':
 			nptr = optarg;
 			endptr = NULL;
@@ -472,7 +551,11 @@ int main(int argc, char **argv)
 		print_settings(sir_io, fir_io, fir_irq, fir_dma);
 	}
 
-	ret_val = set_smc(&smc_base, sir_io, fir_io, fir_irq, fir_dma, verbose);
+	if (*tty_device) {
+		ret_val = unbind_from_serial(tty_device);
+		/* ret_val should always be 0 set_serial exits on error */
+	}
+	ret_val += set_smc(&smc_base, sir_io, fir_io, fir_irq, fir_dma, verbose);
 
 	return ret_val;
 }				// end main

@@ -33,19 +33,24 @@ Show a little help on options and exit
 .B -v, --verbose
 Increase the details about actions performed
 .TP
-.B -s, --sirio IO
+.B -t, --tty=device
+If specified, the serial \fBdevice\fR will be unbound from the kernel stock serial driver.
+It is there to replace an external call to \fBsetserial(1)\fR to unset the UART of the device.
+There is no default value.
+.TP
+.B -s, --sirio=IO
 Set the SIR (serial infrared) I/O port address to \fBIO\fR. Default
 value is \fI0x3f8\fR.
 .TP
-.B -f, --firio IO
+.B -f, --firio=IO
 Set the FIR (fast infrared) I/O port address to \fBIO\fR. Default
 value is \fI0x130\fR.
 .TP
-.B -i, --firirq IRQ
+.B -i, --firirq=IRQ
 Set the FIR (fast infrared) IRQ line to \fBIRQ\fR. Default
 value is \fI3\fR.
 .TP
-.B -d, --firdma DMA
+.B -d, --firdma=DMA
 Set the FIR (fast infrared) DMA channel to \fBDMA\fR. Default
 value is \fI3\fR.
 
