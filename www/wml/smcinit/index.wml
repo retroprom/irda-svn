@@ -128,6 +128,9 @@ foreach my $line(@lines) {
 </table>
 </td></tr></table>
 
+<p><b>Legend:</b><br>
+&nbsp; &nbsp; * = Compiled-in values; in this case, you don't need parameters
+
 <p><b>Jose Manuel Marino Marino</b> hacked the old tosh5100-smcinit.c by Rob Miller and
 made the <b>tosh2450-smcinit.c</b>. This enable Toshiba Satellite 2450 too
 for Linux IrDA. The utility is included in SMCINIT 0.4-1, but no integration
@@ -135,9 +138,19 @@ yet to run it automatically at boot. You may do that by manually add it
 on original <tt>smcinit</tt> init script in your favorite Linux distribution.
 
 <p><b>Victor Meghesan</b> hacked a bit the <b>tosh5100-smcinit.c</b>, changed
-PCI and bus ID for Intel PCI-ISA bridge on HP ???? laptop, device ID as seen on
-<b>dmesg</b> command output and <i>voila</i>, the
-Linux-IrDA work even on Hewlett Packard portables!
+PCI and bus ID for Intel PCI-ISA bridge on HP-Compaq "nc6000" (series PP2090) laptop,
+device ID as seen on <b>dmesg</b> command output and <i>voila</i>, the
+Linux-IrDA work even on Hewlett Packard portables! The SMSC resources which
+may be used with <b>smcinit</b> from 0.4-1 release are:
+<pre>
+SIR I/O = 0x3E8
+FIR I/O = 0x130
+FIR IRQ = 7
+FIR DMA = 3
+</pre>
+The PCI-ISA Brigde is <b>82801LPC</b> with bus ID <tt>00:1f.0</tt>
+and device+vendor ID <tt>8086:24CC</tt>. The <b>LPC47N227</b> SMSC super I/O chip have
+<tt>device_id=0x5A</tt> (most important for hack) and <tt>base_address=0x4e</tt>.
 
 <a name="download"></a><h2>Download</h2>
 
