@@ -1,10 +1,10 @@
 Name: irda-utils
 Summary: IrDA Utilities
-Version: 0.9.9
+Version: 0.9.13
 Release: 1
-Source: http://www.cs.uit.no/linux-irda/irda-utils/%{name}-%{version}.tar.gz
+Source: ftp://irda.sourceforge.net/pub/irda/irda-utils/
 Group: Applications/Networking
-URL: http://www.cs.uit.no/linux-irda/
+URL: http://irda.sourceforge.net/
 BuildRoot: /var/tmp/%{name}-buildroot
 Copyright: GPL
 Prefix: /usr
@@ -55,7 +55,6 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/file.list.%{name}
 %doc irdaping/README.irdaping
 %doc irkbd/README.irkbd
 %doc tekram/README.tekram
-/usr/sbin/irmanager
 /usr/sbin/irattach
 /usr/sbin/irdaping
 /usr/sbin/dongle_attach
@@ -63,14 +62,16 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/file.list.%{name}
 /usr/bin/irdadump
 /usr/bin/irpsion5
 /usr/bin/irkbd
-%dir /etc/irda
-%config /etc/irda/network
-%config /etc/irda/network.orig
-%config /etc/irda/network.redhat
-%config /etc/irda/network.opts
-%config /etc/irda/drivers
+%config /etc/rc.d/init.d/irda
+%config /etc/sysconfig/irda
+%config /etc/sysconfig/network-scripts/ifcfg-irlan0
 
 %changelog
+* Sun Nov 19 2000 Dag Brattli <dag@brattli.net>
+- 0.9.13
+- Changed config scripts (now that irmanager is gone)
+- Removed irmanager (not needed anymore)
+
 * Wed Jan 19 2000 Ian Soboroff <ian@cs.umbc.edu>
 - 0.9.8
 - Added findchip to package
