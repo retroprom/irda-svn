@@ -1,0 +1,9 @@
+*.o
+*.bak
+*~
+smcinitsuse.spec
+smcinitredhat.spec
+tosh1800-smcinit
+tosh5100-smcinit
+smcinit.lsm
+config.h
