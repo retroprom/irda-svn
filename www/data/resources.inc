@@ -18,8 +18,8 @@ Werner Heuser, Linux-IrDA HOWTO maintainer have a large collection of informatio
 about IrDA devices and Linux on laptops documentations. Because there's no laptop
 today without IrDA, please take a look before you buy one and want to run IrDA
 applications. Sad, but true, some models still lack support for on-board
-infrared chipsets or are partialy working. Please visit Mobilix website at
-<a href="http://mobilix.org/">http://mobilix.org/</a>.
+infrared chipsets or are partialy working. Please visit TuxMobil website at
+<a href="http://tuxmobil.org/">http://tuxmobil.org/</a>.
 
 </f2>
 

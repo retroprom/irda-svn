@@ -53,9 +53,9 @@ status: currently he have little time to spend on Linux IrDA<br>
 
 <h3>Documentation</h3>
 <b>Werner Heuser</b> - author and maintainer of Linux-Infrared HOWTO<br>
-email: <a href="mailto:wehe@mobilix.org">wehe@mobilix.org</a><br>
-status: maintain IrDA HOWTO and also his <a href="http://www.mobilix.org">Mobilix</a>
-website and <a href="http://mobilix.org/howtos.html">Linux-Laptop Guide</a><br>
+email: <a href="mailto:wehe@tuxmobil.org">wehe@tuxmobil.org</a><br>
+status: maintain IrDA HOWTO and also his <a href="http://www.tuxmobil.org">TuxMobil</a>
+website and <a href="http://tuxmobil.org/howtos.html">Linux-Laptop Guide</a><br>
 
 <h3>Website</h3>
 <b>Claudiu Costin</b> - maintainer of Linux-IrDA web site<br>

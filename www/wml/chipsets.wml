@@ -59,10 +59,10 @@
 
 <f2>
 Here is list of IrDA chipsets and their functional status relative to
-Linux kernel. All the stuff marked with (<yes>)
-are supported by Linux-IrDA. These with (<gear>) sign are still in development.
-Please send more links or info about new manufactured chipsets to have acurate
-listing.<br>
+Linux kernel. Please send more links or info about new manufactured 
+chipsets to have acurate listing. Also if you're a Linux-IrDA developer
+or contributor, inform me when the information presented here is
+outdated.<br>
 <br>
 </f2>
 
@@ -77,6 +77,24 @@ listing.<br>
 
 </table>
 </td></tr></table>
+<f2>
+<br><br>
+<b>Legend:</b><br>
+&nbsp;&nbsp;<img src="$(ROOT)img/yes.gif" width="16" height="16"> - 
+good or satisfactory support exist for that chipset
+<br>
+&nbsp;&nbsp;<img src="$(ROOT)img/no.gif" width="16" height="16"> - 
+currently nobody work to make a driver for that chipset
+<br>
+&nbsp;&nbsp;<img src="$(ROOT)img/work.gif" width="16" height="16"> - 
+there's work in progress for supporting the chipset in Linux-IrDA
+<br>
+&nbsp;&nbsp;<img src="$(ROOT)img/unk.gif" width="16" height="16"> - 
+nothing clear or known about chipset support in Linux kernel
+<br>
+</f2>
+
+
 
    </td>     
    <td background="$(ROOT)img/i4.png" width="16"><px width="16" height="1"></td>

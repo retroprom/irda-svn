@@ -9,7 +9,7 @@ Please send more links or info about new manufactured chipsets to have acurate
 listing.<br>
 <br>
 <b>Notice:</b> Werner Heuser have more up to date page at
-<a href="http://mobilix.org/ir_misc.html">http://mobilix.org/ir_misc.html</a>
+<a href="http://tuxmobil.org/ir_misc.html">http://tuxmobil.org/ir_misc.html</a>
 with devices working with Linux-IrDA.
 Soon, this section will be in sync with his page.<br>
 </f2>
