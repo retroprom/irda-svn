@@ -1,0 +1,102 @@
+
+
+      Linux-IrDA web site 
+      ===================
+  
+  
+  Introduction
+  ------------
+  
+  The Linux-IrDA website make extensive use of Website Meta Language
+  written by Ralf S. Engelschall and Denis Barbier. To ease more 
+  the dependencies between various files used at site generation,
+  Makefile are used as well.
+  
+  The graphics have been made using Gimp and the XCF source file can
+  be found at http://irda.sourceforge.net/ftp/website/
+  
+  
+  Directory structure
+  -------------------
+  
+  Top level directories:
+  
+  common  - common files, menus, layouts used for all web pages
+  data    - content for web pages: news, lists etc.
+  html    - where the generated HTML pages goes and image files
+            are stored
+  wml     - place for WML files; here is a tree of subdirectories 
+            which followed be the "html" directory
+  
+  
+  Control files
+  -------------
+  
+  There are two types: "Makefile"s and ".wmlrc"
+  
+  The toplevel "Makefile" contain lot of targets. You don't have any
+  reason to tweak here. "Makefile.cfg" have some variables, just to
+  not be forced to change the "Makefile".
+  
+  The real work "Makefile" is in "wml/Makefile". 
+  
+  In the HTML_WML_FILES you put any new WML files you add. If you've made
+  a new subdirectory, then add it in the variable WWWDIRS. Don't miss to
+  add dependecies somewhere to bottom of Makefile. Look arround to see
+  examples and figure out.
+  
+  The toplevel ".wmlrc" control general WML includes searching. The ".wmlrc"s
+  from "wml" subdirectories control ROOT variable to allow correct 
+  relative HTML links calculation.
+  
+  
+  WML site itself
+  ---------------
+  
+  In the "common" subdirectory are the files:
+
+  chipsets.pl  - a Perl script used in WML step 3 to generate a nice
+                 HTML listing from "data/chipsets/chipsets.data" file.
+  layout1.inc  - the template for splash HTML page of this site.
+  layout2.inc  - the HTML template for any other page from this site.
+  menu.inc     - contain the definition of main menu (both graphical
+                 and the text one), and any other submenus (graphical
+                 or text)
+  news.pl      - a Perl script used in WML step 3 to generate a the news
+                 list in introduction page and full news listing in 
+                 the News section, using "data/news/news1.data" file.
+  post-h.inc   - the bottom of HTML pages, containg usually the closing
+                 part of <body> tag.
+  pre-h.inc    - the top of HTML pages; usually the HEAD part and start
+                 of <body> tag.
+  tags.inc     - list of all our defined tags which made WML so nice tools;
+                 also have includes of WML tag definitions
+
+
+  Various scripts
+  ---------------
+  
+  "gimp-irda.pl" is Perl Gimp script used by me to automatically generate
+  images for submenus. Instead of making tedious hours with Gimp, just
+  write the menu names separated by commas.
+  
+  "sync-wwwirda" is used by me to make a sync between local HTML site 
+  and SourceForge hosted one. That way I can be sure the traffic for
+  syncing is low and I don't mis any new file
+  
+  Same apply for "sync-ftpirda". Before running it for first time, 
+  please download the  *all* FTP area on your HDD. 
+   
+    WARNING: It will erase remotely any files you don't have locally!
+             You have been warned.
+  
+  The "sync-wwwirda" and "sync-ftpirda" should be modified according to
+  your SF.NET account. Note that from my accound I've made symlinks to
+  "irda" project HTTP space.
+  
+
+
+  Claudiu Costin, claudiuc@kde.org
+  April 18, 2004
+
+  

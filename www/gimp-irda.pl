@@ -4,8 +4,6 @@
 use Gimp ":auto";
 use Gimp::Fu;
 
-#@wordlist=("Informatii","Internationalizare","Download","Documentatii","Despre LKR");
-
 sub webmenu() {
   my ($words, $indent, $file, $stdcolor, $selcolor, $ovrcolor, $width, $height) =@_;
   
@@ -18,8 +16,8 @@ sub webmenu() {
 
   $fontsize=12;
   $x=$indent;
-  $baseline0=$height-5; # linia de baza ptr font
-  $baseline1=$height-3; # linia de baza ptr. dunga albastra
+  $baseline0=$height-5; # base line for font
+  $baseline1=$height-3; # base line for blue stripe
   
   $nr=0;
   foreach $word  (@wordlist) 
@@ -30,17 +28,17 @@ sub webmenu() {
   $img=gimp_image_new($width,$height,RGB);
   gimp_undo_push_group_start($img);
 
-  $lay_back=gimp_layer_new($img,$width,$height,RGB,"Fundal",100,NORMAL_MODE);
+  $lay_back=gimp_layer_new($img,$width,$height,RGB,"Background",100,NORMAL_MODE);
   gimp_image_add_layer($img,$lay_back,-1);
   $dr_back=gimp_image_active_drawable($img);
   gimp_palette_set_background("#ffe496");
   gimp_drawable_fill($dr_back,BG_IMAGE_FILL);
-  # fac linia albastra
+  # build blue line
   #gimp_rect_select($img,$x,$baseline1-1,$width-10-$x,1,REPLACE,0,0);
   #gimp_palette_set_background("#2222ee");
   #gimp_edit_fill($dr_back,BG_IMAGE_FILL);
   
-  # scriu textul
+  # draw the text
   gimp_palette_set_foreground($color);
   $lay_text=gimp_text($img,-1,0,0,$word,-1,1,$fontsize,PIXELS,
              "monotype","arial","bold","r","*","*","iso8859","1");
@@ -50,7 +48,7 @@ sub webmenu() {
   $y=$baseline0-$dr_h;
   gimp_layer_set_offsets($lay_text,$x,$y);
 
-  # trintesc umbra
+  # put the shadow
   gimp_layer_add_alpha($dr_text);
   gimp_selection_layer_alpha($dr_text);
   my($sel_stat,$sel_x1,$sel_y1,$sel_x2,$sel_y2) = gimp_selection_bounds($img);
@@ -60,7 +58,7 @@ sub webmenu() {
   #$shadow_y=$shadow_y-$shadow_blur;
   
   $lay_shadow=gimp_layer_new($img,$shadow_w,$shadow_h,RGBA_IMAGE,
-              "Umbra text",$shadow_opac,NORMAL_MODE);
+              "Text Shadow",$shadow_opac,NORMAL_MODE);
   gimp_image_add_layer($img,$lay_shadow,-1);
   gimp_layer_set_offsets($lay_shadow,$x,$y);
   gimp_drawable_fill($lay_shadow,TRANS_IMAGE_FILL);
@@ -77,7 +75,7 @@ sub webmenu() {
 
   
 
-  # linii de ghidare
+  # guide lines
   #$hguide0 = gimp_image_add_hguide($img,$baseline0);
   #$hguide1 = gimp_image_add_hguide($img,$baseline1);
   #$vguide0 = gimp_image_add_vguide($img,$x);
@@ -107,22 +105,22 @@ sub webmenu() {
 
 register 
   "webmenu",
-  "Meniuri web",
-  "Creeaza butoane web cu hover",
+  "Web Menus",
+  "Make buttons",
   "Claudiu Costin",
   "Claudiu Costin (c)",
   "2001-09-05",
   "<Toolbox>/Xtns/Perl-Fu/Claudiu/Web Menu",
   "*",
   [
-   [PF_STRING, "meniuri", "Lista de itemi de meniuri (cuvinte separate de virgule)", ""],
-   [PF_INT, "identare", "Indentarea textului fata de marginea imaginii", 10],
-   [PF_STRING, "fisier", "Numele de baza al fisierelor generate", "menu"],
-   [PF_COLOR, "standard", "Culoarea normala a meniului", "#000000" ],
-   [PF_COLOR, "selectat", "Culoarea cind meniul este selectat", "#fb2020" ],
-   [PF_COLOR, "deasupra", "Culoarea cind mouse-ul trece deasupra meniului", "#2066ff" ],
-   [PF_INT, "lungime", "Lungime meniului", 100 ],
-   [PF_INT, "inaltime", "Inaltimea meniului", 18 ],
+   [PF_STRING, "menus", "Menu items list (words separated by commas)", ""],
+   [PF_INT, "identation", "Text indentation", 10],
+   [PF_STRING, "filename", "File base name for generated files", "menu"],
+   [PF_COLOR, "normal", "Menu normal color", "#000000" ],
+   [PF_COLOR, "selected", "Menu selected color", "#fb2020" ],
+   [PF_COLOR, "hover", "Menu hover color", "#2066ff" ],
+   [PF_INT, "width", "Menu width", 100 ],
+   [PF_INT, "height", "Menu height", 18 ],
   ],
   \&webmenu;
 

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export RSYNC_RSH="ssh"
+rsync -zrlt --delete -P  --delete -r wwwirda-ftp/ claudiuc@lkr.sourceforge.net:~/irda/httpd/htdocs/ftp/
+
