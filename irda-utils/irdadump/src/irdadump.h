@@ -229,13 +229,23 @@ void parse_ircomm_lmp(GNetBuf *buf, GString *str);
 void parse_ircomm_ttp(GNetBuf *buf, GString *str);
 int find_connection(guint8 slsap_sel, guint8 dlsap_sel);
 int find_free_connection(void);
+void parse_irlap_frame(int type, GNetBuf *buf, GString *str);
+int irlap_init(void);
+int irdadump_init(char *ifdev);
+int irdadump_loop(GString *str);
 
+/* Configuration options */
 extern int config_print_diff;
 extern int config_print_irlap;
 extern int config_dump_frame;
+extern int config_print_irlap;
+extern int config_print_irlmp;
+extern int config_print_lost_frames;
 extern int config_snaplen;
 extern int config_dump_bytes;
 extern int config_snapcols;
 extern int config_force_ttp;
+extern int config_capturewrite;
+extern int config_captureread;
 
 #endif /* IRDADUMP_H */

@@ -38,23 +38,10 @@
 
 #include <glib.h>
 
-extern int irdadump_init(char *);
-extern int irdadump_loop(GString *);
+#include <irdadump.h>
+#include <capture.h>
 
-extern int capture_open(char *);
-extern void capture_close();
-
-extern int config_print_diff;
-extern int config_print_irlap;
-extern int config_dump_frame;
-extern int config_snaplen;
-extern int config_dump_bytes;
-extern int config_snapcols;
-extern int config_force_ttp;
-extern int config_force_obex;
-extern int config_capturefile;
-
-#define VERSION "0.9.16 (17.7.2003) Dag Brattli/Jean Tourrilhes"
+#define VERSION "0.9.17 (21.11.2003) Dag Brattli/Jean Tourrilhes"
 
 int packets = 0;
 
@@ -69,10 +56,10 @@ void cleanup(int signo)
 
 	printf("%d packets received by filter\n", packets);
 
-#if 0
-	if (config_capturefile >= 0)
-		capture_close(config_capturefile);
-#endif
+	if (config_capturewrite >= 0)
+		capwrite_close(config_capturewrite);
+	if (config_captureread >= 0)
+		capread_close(config_captureread);
 
 	exit(0);
 }
@@ -81,12 +68,11 @@ int main(int argc, char *argv[])
 {
 	GString *line;
 	char *ifdev = NULL;
-#if 0
-	char *capfilename = NULL;
-#endif
+	char *writefilename = NULL;
+	char *readfilename = NULL;
 	int fd, c;
 
-	while ((c = getopt(argc, argv, "bc:df:i:lps:tvx?")) != -1) {
+	while ((c = getopt(argc, argv, "bc:di:lpr:s:tvw:x?")) != -1) {
 		switch (c) {
 		case 'b': /* Dumb bytes */
 			config_dump_bytes = 1;
@@ -102,14 +88,6 @@ int main(int argc, char *argv[])
 		case 'd': /* Print diffs */
 			config_print_diff = 1;
 			break;
-#if 0
-			/* This option will most likely get rewritten
-			 * differently. It may also change selector
-			 * to "-w". Jean II */
-		case 'f': /* Write libpcap log file - J.K. */
-			capfilename = (char *) strdup(optarg);
-			break;
-#endif
 		case 'i': /* Interface */
 			ifdev = (char *) strdup(optarg);
 			printf("Using interface: %s\n", ifdev);
@@ -121,6 +99,9 @@ int main(int argc, char *argv[])
 			   * are garbage... Combine with -b or -x to
 			   * get only bytes display. */
 			config_print_irlap = 0;
+			break;
+		case 'r': /* Read libpcap log file - JeanII */
+			readfilename = (char *) strdup(optarg);
 			break;
 		case 's': /* set snaplen for printing */
  			c = atoi(optarg);
@@ -135,6 +116,9 @@ int main(int argc, char *argv[])
  		case 'v': /* version */
 			printf("Version: %s\n", VERSION);
 			exit(0);
+		case 'w': /* Write libpcap log file - J.K. */
+			writefilename = (char *) strdup(optarg);
+			break;
 		case 'x': /* Dump frame (byte + ascii) */
 			config_dump_frame = 1;
 			break;
@@ -149,9 +133,8 @@ int main(int argc, char *argv[])
 			fprintf(stderr,"\t-c <n>\tSet number of colums for -b\n");
 			fprintf(stderr,"\t-p <n>\tDisable parsing/decoding\n");
 			fprintf(stderr,"\t-i device\tIrDA port to listen on\n");
-#if 0
-			fprintf(stderr,"\t-f log\tWrites out capture file (processable with Ethereal)\n");
-#endif
+			fprintf(stderr,"\t-w log\tWrites out raw capture file\n");
+			fprintf(stderr,"\t-r log\tRead from raw capture file\n");
  			exit(1);
 		default:
 			break;
@@ -161,14 +144,24 @@ int main(int argc, char *argv[])
 	signal(SIGINT, cleanup);
 	signal(SIGHUP, cleanup);
 
-#if 0
-	/* Open the capture file. Maybe should go in irdadump_init ? */
-	if(capfilename != NULL) {
-		config_capturefile = capture_open(capfilename);
-		if(config_capturefile < 0)
-			return config_capturefile;
+	/* Open the capture file for writing. */
+	if(writefilename != NULL) {
+		config_capturewrite = capwrite_open(writefilename);
+		if(config_capturewrite < 0)
+			return config_capturewrite;
+		if(capwrite_init(config_capturewrite) < 0)
+			return -1;
 	}
-#endif
+	/* Open the capture file for reading. */
+	if(readfilename != NULL) {
+		config_captureread = capread_open(readfilename);
+		if(config_captureread < 0) {
+			return config_captureread;
+		}
+		if(capread_check(config_captureread) < 0) {
+			return -1;
+		}
+	}
 
 	/* Initialise socket to IrDA stack */
 	fd = irdadump_init(ifdev);

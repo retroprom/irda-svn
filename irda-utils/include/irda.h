@@ -2,19 +2,20 @@
  *                
  * Filename:      irda.h
  * Version:       1.0
- * Description:   IrDA header file to be used by IrDA applications
- * Status:        Experimental.
+ * Description:   IrDA header file to be used by any IrDA applications
+ * Status:        Stable.
  * Author:        Dag Brattli <dagb@cs.uit.no>
  * Created at:    Mon Mar  8 14:06:12 1999
  * Modified at:   Sat Dec 25 16:07:54 1999
  * Modified by:   Dag Brattli <dagb@cs.uit.no>
  * 
  *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.
+ *     Copyright (c) 2003 Jean Tourrilhes, All Rights Reserved.
  *      
- *     This program is free software; you can redistribute it and/or 
- *     modify it under the terms of the GNU General Public License as 
- *     published by the Free Software Foundation; either version 2 of 
- *     the License, or (at your option) any later version.
+ *     This header is free software; you can redistribute it and/or 
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License, or (at your option) any later version.
  *  
  *     Neither Dag Brattli nor University of Tromsø admit liability nor
  *     provide warranty for any of this software. This material is 

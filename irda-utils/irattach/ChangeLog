@@ -1,3 +1,9 @@
+2004-01-16  Jean II
+	* Changed ../include/irda.h from GPL to LGPL for external apps.
+	Dag Brattli gave me his explicit approval via e-mail, and I'm the
+	only other person having modified it.
+	Note : the rest of the code is still GPL.
+
 2003-08-18  Jean II
 	* Move start_tty before fork to get error messages on console
 	* Don't restore disc/termio in cleanup if invalid

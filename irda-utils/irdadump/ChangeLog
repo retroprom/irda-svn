@@ -1,3 +1,12 @@
+2003-12-9  JeanII
+	* Minor fixes
+
+2003-11-21  JeanII
+	* Migrate config to libglib 2.0
+	* Add -w to write out libpcap files
+	* Add -r to read libpcap file
+	* Reorg code, spin irlap.c out of irdadump.c
+
 2002-10-10  JeanII
 	* Get rid of compiler warnings
 	* Avoid printing negative time

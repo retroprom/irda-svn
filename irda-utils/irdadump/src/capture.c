@@ -10,6 +10,7 @@
  * Modified by:   Jean Tourrilhes
  * 
  *     Copyright (c) 1999 Jan Kiszka, All Rights Reserved.
+ *     Copyright (c) 2003 Jean Tourrilhes, All Rights Reserved.
  *     
  *     This program is free software; you can redistribute it and/or 
  *     modify it under the terms of the GNU General Public License as 
@@ -44,6 +45,37 @@
 
 #include <linux/types.h>
 
+/*
+ * Linux-IrDA capture type
+ */
+#define DLT_LINUX_IRDA		144
+
+/*
+ * SLL pseudo header definitions
+ */
+
+#define SLL_HDR_LEN	16		/* total header length */
+#define SLL_ADDRLEN	8		/* length of address field */
+
+struct sll_header {
+	u_int16_t sll_pkttype;		/* packet type */
+	u_int16_t sll_hatype;		/* link-layer address type */
+	u_int16_t sll_halen;		/* link-layer address length */
+	u_int8_t sll_addr[SLL_ADDRLEN];	/* link-layer address */
+	u_int16_t sll_protocol;		/* protocol */
+};
+
+/* The LINUX_SLL_ values for "sll_pkttype" - see if_packet.h */
+#define LINUX_SLL_HOST		0
+#define LINUX_SLL_BROADCAST	1
+#define LINUX_SLL_MULTICAST	2
+#define LINUX_SLL_OTHERHOST	3
+#define LINUX_SLL_OUTGOING	4
+
+/* The LINUX_SLL_ values for "sll_protocol" - see if_ether.h */
+#define LINUX_SLL_P_IRDA	0x0017	/* IrLAP frames */
+
+
 #define SENT_FRAME  0x0100
 #define RECV_FRAME  0x0101
 
@@ -54,11 +86,13 @@ struct pcaprec_hdr {
 	__u32 orig_len;
 };
 
+#if 0
 struct pseudo_hdr {
 	__u8  not_used1;
 	__u8  not_used2;
 	__u16 type;
 };
+#endif
 
 struct pcap_hdr {
 	__u32 magic;
@@ -76,18 +110,18 @@ struct pcap_hdr fileHeader = {
 	version_minor:	0,
 	thiszone:	0,
 	sigfigs:	0,
-	snaplen:	2050 + sizeof(struct pseudo_hdr),
-	network:	123
+	snaplen:	2050 + sizeof(struct sll_header),
+	network:	DLT_LINUX_IRDA
 };
 
 
 /*
- * Function capture_open ()
+ * Function capwrite_open ()
  *
  *    Open capture file and return its fd
  *
  */
-int capture_open(char *	capfilename)
+int capwrite_open(char *	capfilename)
 {
 	int capturefile;
 
@@ -100,23 +134,23 @@ int capture_open(char *	capfilename)
 }
 
 /*
- * Function capture_close ()
+ * Function capwrite_close ()
  *
  *    Close capture file if needed
  *
  */
-void capture_close(int capturefile)
+void capwrite_close(int capturefile)
 {
 	close(capturefile);
 }
 
 /*
- * Function capture_init ()
+ * Function capwrite_init ()
  *
  *    Write capture header in file
  *
  */
-int capture_init(int capturefile)
+int capwrite_init(int capturefile)
 {
 	/* Write capture file header */
 	if (write(capturefile, &fileHeader, sizeof(struct pcap_hdr)) < 0)
@@ -126,28 +160,70 @@ int capture_init(int capturefile)
 }
 
 /*
- * Function capture_dump ()
+ * Map the standard cooked Linux header to the capture format.
+ * Cut'n'pasted from libpcap (BSD license).
+ * Jean II
+ */
+int capwrite_fillsll(struct sll_header	*hdrp,
+		     struct sockaddr_ll *from)
+{
+	switch (from->sll_pkttype) {
+
+	case PACKET_HOST:
+		hdrp->sll_pkttype = htons(LINUX_SLL_HOST);
+		break;
+
+	case PACKET_BROADCAST:
+		hdrp->sll_pkttype = htons(LINUX_SLL_BROADCAST);
+		break;
+
+	case PACKET_MULTICAST:
+		hdrp->sll_pkttype = htons(LINUX_SLL_MULTICAST);
+		break;
+
+	case PACKET_OTHERHOST:
+		hdrp->sll_pkttype = htons(LINUX_SLL_OTHERHOST);
+		break;
+
+	case PACKET_OUTGOING:
+		hdrp->sll_pkttype = htons(LINUX_SLL_OUTGOING);
+		break;
+
+	default:
+		hdrp->sll_pkttype = -1;
+		break;
+	}
+
+	hdrp->sll_hatype = htons(from->sll_hatype);
+	hdrp->sll_halen = htons(from->sll_halen);
+	memcpy(hdrp->sll_addr, from->sll_addr,
+	       (from->sll_halen > SLL_ADDRLEN) ?
+	       SLL_ADDRLEN :
+	       from->sll_halen);
+	hdrp->sll_protocol = from->sll_protocol;
+}
+
+/*
+ * Function capwrite_dump ()
  *
- *    Write capture header in file
+ *    Write capture packet in file
  *
  */
-int capture_dump(int capturefile,
+int capwrite_dump(int capturefile,
 		 GNetBuf *frame_buf,
 		 int len,
 		 struct sockaddr_ll *from,
 		 struct timeval *curr_time)
 {
 	struct pcaprec_hdr rec_hdr;
-	struct pseudo_hdr  psd_hdr;
+	struct sll_header  psd_hdr;
 
 	rec_hdr.ts_sec    = curr_time->tv_sec;
 	rec_hdr.ts_usec   = curr_time->tv_usec;
 	rec_hdr.orig_len  = len + sizeof(psd_hdr);
 	rec_hdr.incl_len  = rec_hdr.orig_len;
 
-	psd_hdr.not_used1 = 0;
-	psd_hdr.not_used1 = 0;
-	psd_hdr.type      = (from->sll_pkttype) ? SENT_FRAME : RECV_FRAME;
+	capwrite_fillsll(&psd_hdr, from);
 
 	if ((write(capturefile, &rec_hdr,
 			sizeof(rec_hdr)) < 0) ||
@@ -157,6 +233,96 @@ int capture_dump(int capturefile,
 		perror("write capture file");
 		exit(-1);
 	}
+
+	return 0;
+}
+
+/*
+ * Function capread_open ()
+ *
+ *    Open capture file and return its fd
+ *
+ */
+int capread_open(char *	capfilename)
+{
+	int capturefile;
+
+	/* Open the capture file */
+	capturefile = open(capfilename, O_RDONLY, 00640);
+	if (capturefile < 0)
+		perror("Opening capture file");
+
+	return capturefile;
+}
+
+/*
+ * Function capread_close ()
+ *
+ *    Close capture file if needed
+ *
+ */
+void capread_close(int capturefile)
+{
+	close(capturefile);
+}
+
+/*
+ * Function capread_check ()
+ *
+ *    Read capture header from file and verifies it
+ *
+ */
+int capread_check(int capturefile)
+{
+	struct pcap_hdr readHeader;
+
+	/* Write capture file header */
+	if (read(capturefile, &readHeader, sizeof(struct pcap_hdr))
+	    != sizeof(struct pcap_hdr))
+		return -1;
+
+	/* Compare */
+	if((readHeader.magic != fileHeader.magic) ||
+	   (readHeader.version_major != fileHeader.version_major) ||
+	   (readHeader.version_minor != fileHeader.version_minor) ||
+	   (readHeader.network != fileHeader.network))
+		return -1;
+
+	return 0;
+}
+
+/*
+ * Function capwrite_get ()
+ *
+ *    Read capture packet from file
+ *
+ */
+int capread_get(int capturefile,
+		GNetBuf *frame_buf,
+		int *plen,
+		int *pdir,
+		int *pprot,
+		struct timeval *curr_time)
+{
+	struct pcaprec_hdr rec_hdr;
+	struct sll_header  psd_hdr;
+
+	if (read(capturefile, &rec_hdr, sizeof(rec_hdr)) != sizeof(rec_hdr))
+		return -1;
+
+	curr_time->tv_sec = rec_hdr.ts_sec;
+	curr_time->tv_usec = rec_hdr.ts_usec;
+	*plen = rec_hdr.orig_len - sizeof(psd_hdr);
+
+	if (read(capturefile, &psd_hdr, sizeof(psd_hdr)) != sizeof(psd_hdr))
+		return -1;
+
+	/* Meta-data */
+	*pdir = psd_hdr.sll_pkttype != LINUX_SLL_HOST;
+	*pprot = psd_hdr.sll_protocol;
+
+	if (read(capturefile, frame_buf->head, *plen) != *plen)
+		return -1;
 
 	return 0;
 }
