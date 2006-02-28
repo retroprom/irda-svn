@@ -27,7 +27,7 @@ include output.mak
 
 TARGET = test
 
-DIRS = irattach irdaping etc man irnetd psion tekram findchip irdadump
+DIRS = irattach irdaping etc man irnetd psion tekram findchip irdadump smcinit
 CFLAGS= -O2 -W -Wall
 
 all:
