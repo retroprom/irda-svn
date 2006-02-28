@@ -23,29 +23,27 @@
 ##     provided "AS-IS" and at no charge.
 ##     
 ######################################################################
+include output.mak
 
-DIRS = irattach irdaping etc man irnetd psion tekram findchip irdadump 
+TARGET = test
+
+DIRS = irattach irdaping etc man irnetd psion tekram findchip irdadump
 CFLAGS= -O2 -W -Wall
 
 all:
-	echo "*** Making sure some directories exists ***"
-	mkdir -p $(RPM_BUILD_ROOT)/usr/sbin
-	mkdir -p $(RPM_BUILD_ROOT)/usr/bin $(RPM_BUILD_ROOT)/usr/X11R6/bin
-## Red-Hat specific, not available on Debian
-##	mkdir -p $(RPM_BUILD_ROOT)/etc/rc.d/init.d
-	cd irdadump;CFLAGS="$(CFLAGS)" CXXFLAGS="$(CFLAGS)" ./autogen.sh --prefix=$(RPM_BUILD_ROOT)/usr
-	for i in $(DIRS); do \
-                cd $$i;make all; cd ..; \
-        done
+	@-(set -e ; for d in $(DIRS) ; do $(MAKE) $(MAKE_OUTPUT) -C $$d $@ ; done)
+
 
 install:
-	for i in $(DIRS); do \
-		cd $$i;make install; cd ..; \
-	done
+	@-(set -e ; for d in $(DIRS) ; do $(MAKE) $(MAKE_OUTPUT) -C $$d $@ ; done)
+
 
 clean:
-	set -e ; for d in $(DIRS) ; do $(MAKE) -C $$d $@ ; done
+	$(prn_clean)
+	@-(set -e ; for d in $(DIRS) ; do $(MAKE) $(MAKE_OUTPUT) -C $$d $@ ; done)
+
 
 distclean:
-	set -e ; for d in $(DIRS) ; do $(MAKE) -C $$d $@ ; done
+	$(prn_distclean)
+	@-(set -e ; for d in $(DIRS) ; do $(MAKE) $(MAKE_OUTPUT) -C $$d $@ ; done)
 

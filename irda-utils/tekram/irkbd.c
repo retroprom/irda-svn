@@ -33,7 +33,8 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/kd.h>
+
+#include <linux/types.h>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -44,8 +45,6 @@
 #include <errno.h>
 
 #include <irda.h>
-
-#include <asm/byteorder.h>
 
 #include "irkbd.h"
 
@@ -127,7 +126,7 @@ static int irkbd_discover_devices(void)
 {
 	struct irda_device_list *list;
 	unsigned char *buf;
-	int len;
+	socklen_t len;
 	int i;
 
 	len = sizeof(struct irda_device_list) +
@@ -173,7 +172,7 @@ static int irkbd_connect_request(void)
 {
 	struct sockaddr_irda peer;
 	int mtu = 0;
-	int len = sizeof(int);
+	socklen_t len = sizeof(int);
 	int ret;
 
 	/*
@@ -286,7 +285,7 @@ static inline void irkbd_handle_response(__u8 rsp)
 	case IRKBD_RSP_KBDSPEEDOK:
 		break;
 	default:
-		printf(__FUNCTION__ "(), unknown response %02x\n", rsp);
+		printf("%s(), unknown response %02x\n", __FUNCTION__, rsp);
 		break;
 	}
 }

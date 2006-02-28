@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 	unsigned char buf[2048];
 	struct sockaddr from_sa;
 	struct sockaddr_pkt from;
-	int fromlen;
+	socklen_t fromlen;
 	struct timeval time, *timep;
 	struct itimerval itime;
 	float diff;

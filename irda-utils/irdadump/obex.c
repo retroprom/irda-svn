@@ -53,7 +53,7 @@ void unicode_to_char(guint8 *buf)
  */
 int parse_obex_header(GNetBuf *buf, GString *str, int istext)
 {
-	char string[255];
+	guint8 string[255];
 	guint32 tmp_int;
 	guint16 tmp_short;
 	int len = 0;

@@ -1,14 +1,28 @@
-all: irpsion5
+include ../output.mak
+
+CC=gcc
+
+PSION_SRC= irpsion5.c
+PSION_OBJS= irpsion5.o
+PSION_TARGETS= irpsion5
+
+all: $(PSION_TARGETS)
+
 
 clean:
-	rm -f *.o *~ core
+	$(EMCD)rm -f *.o *~ core
+
 
 distclean:
-	rm -f irpsion5 *.o *~ core
+	$(ECMD)rm -f irpsion5 *.o *~ core
 
-install:
-	install irpsion5 $(ROOT)/usr/bin
+
+install: $(PSION_TARGETS)
+	$(prn_install)
+	$(ECMD)install $(PSION_TARGETS) $(ROOT)/usr/bin
+
 
 CFLAGS += -g -I../include -Wall -Wstrict-prototypes $(RPM_OPT_FLAGS)
-
-irpsion5: irpsion5.c
+irpsion5: 
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(CFLAGS) $(PSION_SRC) -o $@

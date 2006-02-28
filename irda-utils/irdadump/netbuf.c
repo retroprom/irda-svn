@@ -63,7 +63,7 @@ GNetBuf *g_netbuf_recycle(GNetBuf *msg)
 GNetBuf *g_netbuf_new(guint len)
 {
 	GNetBuf *msg;
-	gint8 *buf;
+	guint8 *buf;
 	
 	msg = g_malloc(sizeof(GNetBuf));
 	if (msg == NULL)
@@ -93,7 +93,7 @@ GNetBuf *g_netbuf_new(guint len)
  */
 GNetBuf *g_netbuf_realloc(GNetBuf *msg, guint len)
 {
-	gint8 *buf;
+	guint8 *buf;
 
 /* 	g_print("msg->head=%p\n", msg->head); */
 /* 	g_print("msg->data=%p\n", msg->data); */
@@ -141,9 +141,9 @@ void g_netbuf_free(GNetBuf *msg)
  *    Make space for more data into message
  *
  */
-gint8 *g_netbuf_put(GNetBuf *msg, guint len)
+guint8 *g_netbuf_put(GNetBuf *msg, guint len)
 {
-        gint8 *tmp = msg->tail;
+        guint8 *tmp = msg->tail;
         
 	msg->tail += len;
         msg->len += len;
@@ -161,9 +161,9 @@ gint8 *g_netbuf_put(GNetBuf *msg, guint len)
         return tmp;
 }
 
-gint8 *g_netbuf_put_data(GNetBuf *msg, gint8 *data, guint len)
+guint8 *g_netbuf_put_data(GNetBuf *msg, gint8 *data, guint len)
 {
-	gint8 *tmp;
+	guint8 *tmp;
 
 	/* Make room for more data */
 	tmp = g_netbuf_put(msg, len);
@@ -180,7 +180,7 @@ gint8 *g_netbuf_put_data(GNetBuf *msg, gint8 *data, guint len)
  *    Insert new header in front of data
  *
  */
-gint8 *g_netbuf_push(GNetBuf *msg, guint len)
+guint8 *g_netbuf_push(GNetBuf *msg, guint len)
 {
 	if ((msg->data - len) < msg->head) {
 		g_print("%s(), pushed under, trying to realloc!\n",
@@ -208,9 +208,9 @@ gint8 *g_netbuf_push(GNetBuf *msg, guint len)
  *    
  *
  */
-gint8 *g_netbuf_prepend_hdr(GNetBuf *msg, gint8 *hdr, guint len)
+guint8 *g_netbuf_prepend_hdr(GNetBuf *msg, gint8 *hdr, guint len)
 {
-	gint8 *tmp;
+	guint8 *tmp;
 	
 	/* Make room for header */
 	tmp = g_netbuf_push(msg, len);
@@ -227,7 +227,7 @@ gint8 *g_netbuf_prepend_hdr(GNetBuf *msg, gint8 *hdr, guint len)
  *    Remove header or data in front of the message
  *
  */
-gint8 *g_netbuf_pull(GNetBuf *msg, guint len)
+guint8 *g_netbuf_pull(GNetBuf *msg, guint len)
 {
 	if (len > msg->len)
                 return NULL;

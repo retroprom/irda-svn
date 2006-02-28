@@ -29,6 +29,7 @@
 ##     MA 02111-1307 USA
 ##     
 ######################################################################
+include ../output.mak
 
 CC      = gcc
 CFLAGS= $(RPM_OPT_FLAGS) $(SYS_INCLUDES) -O2 -Wall -Wstrict-prototypes
@@ -38,21 +39,31 @@ OBJS = $(SRCS:.c=.o)
 
 all: findchip
 
-findchip: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o $@
 
 .c.o:
-	$(CC) $(CFLAGS) -c $<
+	$(prn_cc)
+	$(ECMD)$(CC) $(CFLAGS) -c $<
+
+
+findchip: $(OBJS)
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(OBJS) $(CFLAGS) -o $@
+
 
 clean:
-	rm -f *.o *~ #*
+	$(ECMD)rm -f *.o *~ \#*
+
 
 distclean:
-	rm -f findchip gfindchip *.o *~ #*
+	$(ECMD)rm -f findchip gfindchip *.o *~ \#*
+
 
 install: findchip
-	cp findchip $(ROOT)/usr/sbin/
+	$(prn_install)
+	$(ECMD)install findchip $(ROOT)/usr/sbin/
+
 
 gfindchip: gfindchip.c 
-	$(CC) $(CFLAGS) `gtk-config --cflags`  $< -o $@ `gtk-config --libs`
+	$(prn_cc)
+	$(ECMD))$(CC) $(CFLAGS) `gtk-config --cflags`  $< -o $@ `gtk-config --libs`
 

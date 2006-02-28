@@ -55,7 +55,7 @@ extern int set_sysctl_param(char *name, char *value);
 extern int execute(char *msg, char *cmd);
 /* Internal prototypes */
 
-#define VERSION "0.9.16 (18.8.2003) Dag Brattli/Jean Tourrilhes"
+#define VERSION "0.9.17 (19.02.2006) Dag Brattli/Jean Tourrilhes"
 
 extern char *optarg;
 extern int optind;
@@ -239,7 +239,7 @@ static inline void clean_exit(int status)
 static void print_usage(void)
 {
 	int i;
-	fprintf(stderr, "Usage: irattach <dev> [-d dongle] [-s] [-v] [-h]\n");
+	fprintf(stderr, "Usage: irattach <dev> [-d dongle] [-s] [-b] [-v] [-h]\n");
 	fprintf(stderr, "       <dev> is tty name, device name or module name\n");
 	fprintf(stderr, "Dongles supported :\n");
 	for (i = 0; dongle_list[i].dongle != NULL; i++)
@@ -658,6 +658,7 @@ int main(int argc, char *argv[])
 	int	discovery = -1;	/* True if discovery requested */
 	int	c;
 	int	ret;
+	int     daemonize = 1;  /* Go to background by default */
 
 	//printf("%s\n", VERSION);
 	if ((argc < 2) || (argc > 5)) {
@@ -673,7 +674,7 @@ int main(int argc, char *argv[])
 	/* Look for options */
 	/* Do this before processing device, to handle "-h" and -v"
 	 * properly. Jean II */
-	while ((c = getopt(argc, argv, "d:hsv")) != -1) {
+	while ((c = getopt(argc, argv, "d:hsvb")) != -1) {
 		switch (c) {
 		case 's':
 		       	/* User wants to start discovery */
@@ -694,6 +695,10 @@ int main(int argc, char *argv[])
 		case 'h':
 			print_usage();
 			exit(0);
+		case 'b':
+		       	/* Do not fork to background */
+			daemonize = 0;
+			break;
 		default:
 			print_usage();
 			exit(-1);
@@ -725,8 +730,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Go as a background daemon */
-	fork_now(devfd);
+	if(daemonize) {
+	  	/* Go as a background daemon */
+		fork_now(devfd);
+	}
 
 	/* --- Deamon mode --- */
 	/* We can no longer print out directly to the terminal, we

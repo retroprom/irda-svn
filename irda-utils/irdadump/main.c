@@ -41,7 +41,7 @@
 #include <irdadump.h>
 #include <capture.h>
 
-#define VERSION "0.9.17 (21.11.2003) Dag Brattli/Jean Tourrilhes"
+#define VERSION "0.9.17 (19.02.2006) Dag Brattli/Jean Tourrilhes"
 
 int packets = 0;
 

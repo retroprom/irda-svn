@@ -23,12 +23,13 @@
 ##     provided "AS-IS" and at no charge.
 ##     
 ######################################################################
+include ../output.mak
 
 CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a
+RM_CMD = $(ECMD)$(RM) *.BAK *.bak *.o ,* *~ *.a
 
 INCLUDES  = $(SYS_INCLUDES) -I../include/
 LIBRARIES = $(SYS_LIBRARIES)
@@ -48,26 +49,33 @@ CFLAGS= $(RPM_OPT_FLAGS) $(SYS_INCLUDES) -Wall -Wstrict-prototypes
 # 
 SRCS = irdaping.c
 OBJS = $(SRCS:.c=.o)
+TARGETS = irdaping
 
-all:: irdaping
+all: $(TARGETS)
+
 
 irdaping: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(CFLAGS) $(OBJS) -o $@
+
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<
+	$(prn_cc)
+	$(ECMD)$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-install: all
-	install irdaping $(ROOT)/usr/sbin
+install: $(TARGETS)
+	$(prn_install)
+	$(ECMD)install irdaping $(ROOT)/usr/sbin
 
-clean::
+clean:
 	$(RM_CMD)
 
-distclean::
+distclean:
 	$(RM_CMD)
-	$(RM) irdaping
+	$(ECMD)$(RM) irdaping
 
-depend::
-	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
+depend:
+	$(prn_depend)
+	$(ECMD)makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
 
 # DO NOT DELETE

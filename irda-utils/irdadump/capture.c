@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 
 #include "netbuf.h"
 #include "capture.h"
@@ -164,8 +165,8 @@ int capwrite_init(int capturefile)
  * Cut'n'pasted from libpcap (BSD license).
  * Jean II
  */
-int capwrite_fillsll(struct sll_header	*hdrp,
-		     struct sockaddr_ll *from)
+void capwrite_fillsll(struct sll_header	*hdrp,
+		      struct sockaddr_ll *from)
 {
 	switch (from->sll_pkttype) {
 

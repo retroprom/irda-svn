@@ -83,7 +83,7 @@ int discover_devices(int fd)
 {
 	struct irda_device_list *list;
 	unsigned char *buf;
-	int len;
+	socklen_t len;
 	int i;
 
 	/* Newer include files have an irda_device_info array of size
@@ -163,7 +163,7 @@ int discover_devices(int fd)
 
 int irttp_get_mtu(int fd) {
 	int mtu;
-	int len = sizeof(int);
+	socklen_t len = sizeof(int);
 	/* Check what the IrTTP data size is */
 	if (getsockopt(fd, SOL_IRLMP, IRTTP_MAX_SDU_SIZE, 
 		       (void *)&mtu, &len)) {
@@ -575,7 +575,7 @@ int receivefile(int mode)
 	   Warning: discovery reply after 101ms
 	*/
 
-	int addrlen = sizeof(struct sockaddr_irda);
+	socklen_t addrlen = sizeof(struct sockaddr_irda);
 	int fd;
 	struct sockaddr_irda peer;
 	int cfd;

@@ -1,3 +1,6 @@
+0.10c 27.02.2006 Samuel Ortiz
+* Fixed "-v" option in man-irdadump-incl.sgml. Patch from agi (agi@debian.org)
+
 0.10b 30.4.03 Jean II
 * Revert back to docbook-to-man ; docbook2man not available on Debian stable.
 * Add my wishes to TODO

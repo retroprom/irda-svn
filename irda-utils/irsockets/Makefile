@@ -23,12 +23,13 @@
 ##     provided "AS-IS" and at no charge.
 ##     
 ######################################################################
+include ../output.mak
 
 CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o *.so ,* *~ *.a *.orig *.rej
+RM_CMD = $(ECMD)$(RM) *.BAK *.bak *.o *.so ,* *~ *.a *.orig *.rej
 
 INCLUDES  = $(SYS_INCLUDES) -I../include
 LIBRARIES = $(SYS_LIBRARIES)
@@ -43,38 +44,37 @@ SYS_LIBPATH = -L/usr/lib -L/usr/local/lib
 
 CFLAGS= $(SYS_INCLUDES) $(RPM_OPT_FLAGS) -O2 -Wall -Wstrict-prototypes
 
-# 
-# Files to make 
-# 
-PROG_SOCKET=irprintf irprintfx irscanf irscanfx irdaspray
-PROG_EXTRA=ias_query send_ultra recv_ultra
+SRCS = irprintf.c irprintfx.c irscanf.c irscanfx.c irdaspray.c ias_query.c send_ultra.c recv_ultra.c
+OBJS = $(SRCS:.c=.o)
+TARGETS = irprintf irprintfx irscanf irscanfx irdaspray ias_query send_ultra recv_ultra
 
-all:: $(PROG_SOCKET) $(PROG_EXTRA)
+
+all: $(OBJS)
+
 
 %: %.o
-	$(CC) $(XCFLAGS) -o $@ $^ $(LIBS)
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(XCFLAGS) -o $@ $^ $(LIBS)
+
+
 %.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<
+	$(prn_cc)
+	$(ECMD)$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-irprintf: irprintf.o
-irprintfx: irprintfx.o
-irscanf: irscanf.o
-irscanfx: irscanfx.o
-irdaspray: irdaspray.o
-ias_query: ias_query.o
-send_ultra: send_ultra.o
-recv_ultra: recv_ultra.o
 
-clean::
+clean:
+	$(prn_clean)
 	$(RM_CMD) 
 
-realclean::
+
+distclean:
+	$(prn_distclean)
 	$(RM_CMD) 
-	$(RM) $(PROG_SOCKET) $(PROG_EXTRA)
+	$(ECMD)$(RM) $(TARGETS)
 
-distclean:: realclean
 
-depend::
-	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
+depend:
+	$(prn_depend)
+	$(ECMD)makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
 
 # DO NOT DELETE

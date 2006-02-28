@@ -23,59 +23,63 @@
 ##     provided "AS-IS" and at no charge.
 ##     
 ######################################################################
+include ../output.mak
 
-CC = gcc
-LD = ld
-RM = rm -f
+CC           = gcc
+LD           = ld
+RM           = rm -f
+CFLAGS       = -O2 -W -Wall -Wstrict-prototypes -Wshadow $(SYS_INCLUDES)
 
-RM_CMD = $(RM) *.BAK *.bak *.o ,* *~ *.a
-
-INCLUDES  = $(SYS_INCLUDES) -I../include/
-LIBRARIES = $(SYS_LIBRARIES)
-LIBPATH   = $(SYS_LIBPATH)
-
-#
-# System stuff
-#
 SYS_INCLUDES = -I/usr/include
-SYS_LIBRARIES = 
-SYS_LIBPATH = -L/usr/lib -L/usr/local/lib 
+SYS_LIBPATH  = -L/usr/lib -L/usr/local/lib 
 
-CFLAGS= -O2 -W -Wall -Wstrict-prototypes -Wshadow $(SYS_INCLUDES)
+INCLUDES     = $(SYS_INCLUDES) -I../include/
+LIBRARIES    = $(SYS_LIBRARIES)
+LIBPATH      = $(SYS_LIBPATH)
 
-# 
-# Files to make 
-# 
-SRCS = util.c
-OBJS = $(SRCS:.c=.o)
-TARGETS = irattach dongle_attach
+TARGETS      = irattach dongle_attach
 
 all: $(TARGETS)
 
-irattach: irattach.o util.o
-	$(CC) $(CFLAGS) irattach.o util.o -o $@
-
-dongle_attach: dongle_attach.o
-	$(CC) $(CFLAGS) dongle_attach.o -o $@
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<
+	$(prn_cc)
+	$(ECMD)$(CC) $(CFLAGS) $(INCLUDES) -c $<
+
+
+irattach: irattach.o util.o
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(CFLAGS) irattach.o util.o -o $@
+
+
+
+dongle_attach: dongle_attach.o
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(CFLAGS) dongle_attach.o -o $@
+
 
 install: $(TARGETS)
-	install irattach $(ROOT)/usr/sbin
-	install dongle_attach $(ROOT)/usr/sbin
+	$(prn_install)
+	$(ECMD)install irattach $(ROOT)/usr/sbin
+	$(ECMD)install dongle_attach $(ROOT)/usr/sbin
 
-clean:
-	$(RM_CMD)
+
+clean: 
+	$(ECMD)$(RM) *.BAK *.bak *.o ,* *~ *.a
+
 
 distclean:
-	$(RM_CMD)
-	$(RM) irattach dongle_attach
+	$(ECMD)$(RM) *.BAK *.bak *.o ,* *~ *.a
+	$(ECMD)$(RM) irattach dongle_attach
+
 
 tags:
-	etags *.[hc] */*.[hc] */*/*.[hc]
+	$(prn_etags)
+	$(ECMD)etags *.[hc] */*.[hc] */*/*.[hc]
+
 
 depend:
-	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
+	$(prn_depend)
+	$(ECMD)makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
 
 # DO NOT DELETE

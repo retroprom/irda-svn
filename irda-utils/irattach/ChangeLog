@@ -1,3 +1,7 @@
+2006-02-27 Samuel Ortiz
+	* irattach can be kept in foreground. Debian patch from agi 
+	(agi@debian.org)
+
 2004-01-16  Jean II
 	* Changed ../include/irda.h from GPL to LGPL for external apps.
 	Dag Brattli gave me his explicit approval via e-mail, and I'm the

@@ -218,7 +218,7 @@ void parse_irda_frame(int type, GNetBuf *buf, int len, GString *str)
 int irdadump_loop(GString *str)
 {
 	struct sockaddr_ll from;
-	int fromlen;
+	socklen_t fromlen;
 	int len;
 
 	g_netbuf_recycle(frame_buf);

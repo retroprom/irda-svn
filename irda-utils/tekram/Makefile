@@ -23,6 +23,7 @@
 ##     provided "AS-IS" and at no charge.
 ##     
 ######################################################################
+include ../output.mak
 
 CC = gcc
 LD = ld
@@ -49,25 +50,31 @@ CFLAGS= $(RPM_OPT_FLAGS) $(SYS_INCLUDES) -Wall -Wstrict-prototypes
 SRCS = irkbd.c
 OBJS = $(SRCS:.c=.o)
 
-all:: irkbd
+all: irkbd
+
 
 irkbd: $(OBJS)
-	$(CC) $(OBJS) -o $@
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(OBJS) -o $@
+
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<
+	$(prn_cc)
+	$(ECMD)$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-install: all
-	install irkbd $(ROOT)/usr/bin
+install: irkbd
+	$(prn_install)
+	$(ECMD)install irkbd $(ROOT)/usr/bin
 
-clean::
-	$(RM_CMD)
+clean:
+	$(ECMD)$(RM_CMD)
 
-distclean::
-	$(RM_CMD)
-	$(RM) irkbd
+distclean:
+	$(ECMD)$(RM_CMD)
+	$(ECMD)$(RM) irkbd
 
-depend::
-	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
+depend:
+	$(prn_depend)
+	$(ECMD)makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
 
 # DO NOT DELETE

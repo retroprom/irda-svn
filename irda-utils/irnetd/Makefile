@@ -23,12 +23,13 @@
 ##     provided "AS-IS" and at no charge.
 ##     
 ######################################################################
+include ../output.mak
 
 CC = gcc
 LD = ld
 RM = rm -f
 
-RM_CMD = $(RM) *.BAK *.bak *.o *.so ,* *~ *.a *.orig *.rej
+RM_CMD = $(ECMD)$(RM) *.BAK *.bak *.o *.so ,* *~ *.a *.orig *.rej
 
 INCLUDES  = $(SYS_INCLUDES) -I../include
 LIBRARIES = $(SYS_LIBRARIES)
@@ -36,30 +37,38 @@ LIBPATH   = $(SYS_LIBPATH)
 
 CFLAGS= $(RPM_OPT_FLAGS) -O2 -Wall -Wstrict-prototypes
 
-# 
-# Files to make 
-# 
-PROG_SOCKET=irnetd
+OBJS = irnetd.o
+TARGETS = irnetd
 
-all:: $(PROG_SOCKET)
+all: $(TARGETS)
 
-%: %.o
-	$(CC) $(XCFLAGS) -o $@ $^ $(LIBS)
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-irnetd: irnetd.o
+.c.o:
+	$(prn_cc)
+	$(ECMD)$(CC) $(CFLAGS) $(INCLUDES) -c $<
 
-clean::
+
+irnetd: $(OBJS)
+	$(prn_cc_o)
+	$(ECMD)$(CC) $(CFLAGS) $(OBJS) -o $@
+
+
+install: irnetd
+	$(prn_install)
+	$(ECMD) install irnetd /usr/sbin/
+
+
+clean:
 	$(RM_CMD) 
 
-realclean::
+
+distclean:
 	$(RM_CMD) 
-	$(RM) $(PROG_SOCKET) $(PROG_EXTRA)
+	$(EMCD)$(RM) $(TARGETS)
 
-distclean:: realclean
 
-depend::
-	makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
+depend:
+	$(prn_depend)
+	$(ECMD)makedepend -s "# DO NOT DELETE" -- $(INCLUDES) -- $(SRCS)
 
 # DO NOT DELETE
