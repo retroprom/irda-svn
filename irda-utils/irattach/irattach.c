@@ -101,6 +101,7 @@ struct dongle_list_s dongle_list[] = {
 	{ IRDA_MCP2120_DONGLE,		"mcp2120" },
 	{ IRDA_ACT200L_DONGLE,		"act200l" },
 	{ IRDA_MA600_DONGLE,		"ma600" },
+	{ IRDA_TOIM3232_DONGLE,		"toim3232" },
 	{ -1,				NULL }
 };
 

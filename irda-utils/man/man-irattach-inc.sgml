@@ -233,6 +233,12 @@ processor (ARM based)
 </PARA>
 </LISTITEM>
 
+<LISTITEM>
+<PARA>
+<COMMAND>toim3232</COMMAND>   Vishay/Temic TOIM3232 and TOIM4232 based dongles
+</PARA>
+</LISTITEM>
+
 </ITEMIZEDLIST>
 </PARA>
 
