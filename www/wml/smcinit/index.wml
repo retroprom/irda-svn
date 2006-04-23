@@ -15,7 +15,50 @@
 
 <h1>SMCINIT</h1>
 
-<p>This package is good for you if you own a Linux machine that have SMC-IRCC based
+<h2>Kernel 2.6.x</h2>
+
+<p><b>smcinit</b> was an old userspace tool to initialize some
+chips using the smsc-ircc2 driver.
+
+<p>In kernel 2.6.17-rc2 and later, patches have been added to 
+detect faulty subsystems
+(all laptops) that have this problem. Development of the code that
+initialize uninitialized SMSC chips shall henceforth be done in
+the kernel.
+
+<p>Previously, the tool called smcinit was used to initialize the SMC 
+LPC47N227 chip with default values for SIR port, FIR port, FIR DMA, 
+FIR IRQ and some other values that differed from the power-on
+defaults. Ideally, this should have been done by the BIOS, but
+apparently some manufacturers neglected to do this. It is unclear
+how they did it since it still works: perhaps they had an 
+architecture with good PNP support (introducing PNP into the
+smsc-ircc2 driver was not successful, too many machines failed)
+which they relied on, or they put in some custom driver to do 
+it at boot in the other operating system.
+
+<p>Sometimes smcinit also had to initialize the PCI to ISA bridge
+where the chip was connected. This was typically an Intel 82801 or
+ALi 1533 bridge.
+
+<p>The affected laptops (they are all laptops) are
+typically Toshiba Satellite or Tecra variants, or the HP Compaq
+nc6000 or nc8000 laptops. The default values assigned for ports,
+IRQ, DMA etc may not always be correct, so you may need to
+supply optional arguments to the kernel module for these,
+if you previously used smcinit for this you already know
+which values to supply, for example:
+
+<p>modprobe smsc-ircc2 ircc_dma=3,ircc_irq=3,ircc_fir=0x130,ircc_sir=0x2f8,ircc_cfg=0x02e
+
+<p>Or in /etc/modprobe.conf:
+
+<p>options smsc-ircc2 ircc_dma=3 ircc_irq=3 ircc_fir=0x130 ircc_sir=0x2f8 ircc_cfg=0x02e
+
+
+<h2>Kernel 2.4.x</h2>
+
+<p>The <b>smcinit</b> package is good for you if you own a Linux machine that have SMC-IRCC based
 IrDA subsystem and the BIOS doesn't initialize it. Otherwise you don't
 need it at all.
 
