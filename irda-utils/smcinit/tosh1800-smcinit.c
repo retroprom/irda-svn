@@ -53,8 +53,8 @@
  */
 struct port_decoding_access_info {
     int port;
-    byte reg;
-    byte or_mask;
+    u8 reg;
+    u8 or_mask;
 };
 
 struct port_decoding_access_info ali1533_ports[] = {
@@ -100,7 +100,7 @@ configure_47N227_smc_ircc(int revision, int cfgbase, int sirbase,
 
 struct smc_chip_model {
     char *name;
-    byte version_id;
+    u8 version_id;
     int (*config_function) (int revision, int cfgbase, int sirbase,
                             int firbase, int dma, int irq);
 };
@@ -257,7 +257,7 @@ static int find_ali1533_port_access_info(long port, struct port_decoding_access_
 static int print_ali1533_port_status(struct pci_dev *dev)
 {
     struct port_decoding_access_info *p;
-    byte onebyte;
+    u8 onebyte;
     int i;
 
     DEBUG("printing port status");
@@ -283,7 +283,7 @@ static int print_ali1533_port_status(struct pci_dev *dev)
 static int set_ali1533_port(struct pci_dev *dev, int port, int decode)
 {
     struct port_decoding_access_info info;
-    byte previousval, onebyte, and_mask;
+    u8 previousval, onebyte, and_mask;
     int retval;
 
     DEBUG_VAL("looking for port", port);
@@ -405,7 +405,7 @@ static int configure_ali1533_smc_ports_decoding(int vendor_id, int device_id, in
 
 static int configure_47N227_smc_ircc(int revision, int cfgbase, int sirbase, int firbase, int dma, int irq)
 {
-    byte onebyte;
+    u8 onebyte;
     int retval;
 
     /* claudiuc: revision is not used yet */
@@ -504,7 +504,7 @@ static struct smc_chip_model *find_smc_chip_model(struct smc_chip_model
 static int
 configure_smc_ircc(int cfgbase, int sirbase, int firbase, int dma, int irq)
 {
-    byte version_id, revision_id;
+    u8 version_id, revision_id;
     struct smc_chip_model *chip_model;
     int retval;
 

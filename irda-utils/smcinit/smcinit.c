@@ -262,7 +262,7 @@ int set_smc(int * smc_base, int sir_io, int fir_io, int fir_irq, int fir_dma, in
 	 */
 	struct pci_access *acc;
 	struct pci_dev *dev;
-	word twobyte;
+	u16 twobyte;
 	int i = 0, chip = 0;
 	int local_sir_io, local_fir_io, local_fir_irq, local_fir_dma;
 	unsigned int *address, SMC_BASE = 0;
@@ -279,7 +279,7 @@ int set_smc(int * smc_base, int sir_io, int fir_io, int fir_irq, int fir_dma, in
 	}
 	acc = pci_alloc();
 	pci_init(acc);
-	dev = pci_get_dev(acc, BUS_LPC, LPC_DEV, LPC_FUNC);	/* 5100 also dev
+	dev = pci_get_dev(acc, 0, BUS_LPC, LPC_DEV, LPC_FUNC);	/* 5100 also dev
 								 * 1f */
 	twobyte = pci_read_word(dev, VID);
 	if (twobyte != 0x8086) {

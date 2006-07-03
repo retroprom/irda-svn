@@ -59,12 +59,12 @@ int main()
 	/* setpci.c */
 	struct pci_access *acc;
 	struct pci_dev *dev;
-	word twobyte;
+	u16 twobyte;
 	
 	acc = pci_alloc();
 	pci_init(acc);
 	
-	dev = pci_get_dev(acc, BUS_LPC, LPC_DEV, LPC_FUNC);
+	dev = pci_get_dev(acc, 0, BUS_LPC, LPC_DEV, LPC_FUNC);
 	
 	twobyte = pci_read_word(dev,VID);
 	if (twobyte != INTEL_VID){ 
