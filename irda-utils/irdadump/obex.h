@@ -64,6 +64,7 @@
 #define HEADER_TARGET	   0x46 /* - */
 #define HEADER_BODY        0x48 /* - */
 #define HEADER_BODY_END    0x49 /* - */
+#define HEADER_CONN_ID     0xcb /* OBEX connection ID */
 
 #define OBEX_HI_MASK       0xc0
 #define OBEX_UNICODE       0x00
@@ -80,6 +81,14 @@ struct obex_connect_frame {
 	guint8  version;
 	guint8  flags;
 	guint16 mtu;
+} __attribute__((packed));
+
+/* SetPath header*/
+struct obex_setpath_frame {
+	guint8  opcode;
+	guint16 len;
+	guint8  flags;
+	guint8  constants;
 } __attribute__((packed));
 
 /* Minimal Obex header */

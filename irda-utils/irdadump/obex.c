@@ -36,6 +36,12 @@
 #include <string.h>
 #include <netinet/in.h>		/* ntohs */
 
+/* 
+ * We keep track of the last command since we need to discriminate the
+ * CONNECT case.
+ */
+static guint8 last_command = 0xff;
+
 void unicode_to_char(guint8 *buf)
 {
 	guint8 *buf2 = buf;
@@ -54,37 +60,36 @@ void unicode_to_char(guint8 *buf)
 int parse_obex_header(GNetBuf *buf, GString *str, int istext)
 {
 	guint8 string[255];
-	guint32 tmp_int;
-	guint16 tmp_short;
+	guint32 obex_int;
+	guint16 string_len;
 	int len = 0;
-
-	/* g_print("%s()", __FUNCTION__);fflush(stdout); */
 
 	switch (buf->data[0] & OBEX_HI_MASK) {
 	case OBEX_UNICODE:
-		/* g_print("OBEX_UNICODE");fflush(stdout); */
-		memcpy(&tmp_short, buf->data+1, 2); /* Align value */
-		tmp_short = GINT16_FROM_BE(tmp_short) - 3;
+		memcpy(&string_len, buf->data + 1, 2); /* Align value */
+		string_len = GINT16_FROM_BE(string_len) - 3;
 		len += 3;
-		
-		memcpy(string, buf->data+3, tmp_short);
-		unicode_to_char(string);
-		len += tmp_short;
-
-		/* g_print("%s ", string);fflush(stdout); */
+		if (string_len) {
+			memcpy(string, buf->data + 3, string_len);
+			unicode_to_char(string);
+			len += string_len;
+		}
+		string[string_len] = 0;
 		g_string_sprintfa(str, "\"%s\" ", string);
 		break;
 	case OBEX_BYTE_STREAM:
                 /* g_print("OBEX_BYTE_STREAM");fflush(stdout); */
-		memcpy(&tmp_short, buf->data+1, 2); /* Align value */
-		tmp_short = GINT16_FROM_BE(tmp_short) - 3;
-		len += tmp_short + 3;
+		memcpy(&string_len, buf->data + 1, 2); /* Align value */
+		string_len = GINT16_FROM_BE(string_len) - 3;
+		len += string_len + 3;
 		if(istext) {
-			memcpy(string, buf->data+3, tmp_short);
-			string[tmp_short] = '\0';
-			g_string_sprintfa(str, "\"%s\" ", string);
+			if (string_len) {
+				memcpy(string, buf->data + 3, string_len);
+				string[string_len] = 0;
+				g_string_sprintfa(str, "\"%s\" ", string);
+			}
 		} else
-			g_string_sprintfa(str, "[%d bytes] ", tmp_short);
+			g_string_sprintfa(str, "[%d bytes] ", string_len);
 		break;
 	case OBEX_BYTE:
 		/* g_print("OBEX_BYTE");fflush(stdout); */
@@ -92,11 +97,10 @@ int parse_obex_header(GNetBuf *buf, GString *str, int istext)
                 len += 2;
 		break;
 	case OBEX_INT:
-		/* g_print("OBEX_INT");fflush(stdout); */
-		memcpy(&tmp_int, buf->data+1, 4); /* Align value */
+		memcpy(&obex_int, buf->data + 1, 4); /* Align value */
 		len += 5;
 		/* printf("%ld ", ntohl(tmp_int));fflush(stdout); */
-		g_string_sprintfa(str, "%d ", GINT32_FROM_BE(tmp_int));
+		g_string_sprintfa(str, "%d ", GINT32_FROM_BE(obex_int));
 		break;
 	default:
 		g_print("******");fflush(stdout);
@@ -107,12 +111,12 @@ int parse_obex_header(GNetBuf *buf, GString *str, int istext)
 }
 
 /*
- * Function parse_obex_put (buf)
+ * Function parse_obex_headers (buf)
  *
- *    Parse an OBEX put command
+ *    Parse OBEX headers
  *
  */
-inline void parse_obex_headers(GNetBuf *buf, GString *str)
+inline void parse_obex_headers(GNetBuf *buf, GString *str, guint8 header_offset)
 {
 	struct obex_minimal_frame *frame;
 	int final;
@@ -128,7 +132,7 @@ inline void parse_obex_headers(GNetBuf *buf, GString *str)
 	size = ntohs(frame->len);
 	
 	/* Remove the OBEX common header */
-	g_netbuf_pull(buf, 3);
+	g_netbuf_pull(buf, header_offset);
 
 	g_string_sprintfa(str, "final=%d len=%d ", final >> 7, size);
 
@@ -166,8 +170,12 @@ inline void parse_obex_headers(GNetBuf *buf, GString *str)
 			g_string_append(str, "body-end=");
 			len = parse_obex_header(buf, str, 0);
 			break;
+		case HEADER_CONN_ID:
+			g_string_append(str, "Connection ID=");
+			len = parse_obex_header(buf, str, 0);
+			break;
 		default:
-			g_string_append(str, "custom=");
+			g_string_sprintfa(str, "custom(0x%x)=", buf->data[0]);
 			len = parse_obex_header(buf, str, 0);
 			break;
 		}
@@ -210,40 +218,41 @@ inline void parse_obex_connect(GNetBuf *buf, GString *str)
  * We also need to parse the anser to GET request properly
  * Jean II
  */
-inline void parse_obex_success(GNetBuf *buf, GString *str)
+inline void parse_obex_success(GNetBuf *buf, GString *str, guint8 last_cmd)
 {
-	struct obex_connect_frame *frame;
-	guint16 length;
-	guint8 version;
-	int flags;
-	guint16 mtu;
-	
-	frame = (struct obex_connect_frame *) buf->data;
+	/* CONNECT response is different from all the other ones...*/
+	if (last_cmd == OBEX_CONNECT) {
+		struct obex_connect_frame *frame;
+		guint8 version;
 
-	length  = ntohs(frame->len);
-
-	switch(length) {
-	case 7:
-		/* Frame contains connection setup parameters */
+		frame = (struct obex_connect_frame *) buf->data;
 		version = frame->version;
-		flags   = frame->flags;
-		mtu     = ntohs(frame->mtu);
 
 		g_string_sprintfa(str,
 				  "SUCCESS len=%d ver=%d.%d flags=%d mtu=%d ", 
-				  length, ((version & 0xf0) >> 4),
-				  version & 0x0f, flags, mtu);
-		break;
-	case 3:
-		/* Frame contains nothing */
-		g_string_sprintfa(str, "SUCCESS len=%d ", length);
-		break;
-	default:
-		/* Frame contains some headers (probably a GET reply) */
-		g_string_append(str, "SUCCESS ");
-		parse_obex_headers(buf, str);
-		break;
+				  ntohs(frame->len), ((version & 0xf0) >> 4),
+				  version & 0x0f, frame->flags,
+				  ntohs(frame->mtu));
+		parse_obex_headers(buf, str, sizeof(struct obex_connect_frame));
+	} else {
+		g_string_sprintfa(str, "SUCCESS (from 0x%x) ", last_cmd);
+		parse_obex_headers(buf, str, sizeof(struct obex_minimal_frame));
 	}
+}
+
+inline void parse_obex_setpath(GNetBuf *buf, GString *str)
+{
+	struct obex_setpath_frame *frame;
+	guint16 length;
+
+	frame = (struct obex_setpath_frame *)buf->data;
+	length  = ntohs(frame->len);
+
+	g_string_sprintfa(str,
+			  "SETPATH flags=0x%x constants=%d ", 
+			  frame->flags, frame->constants);
+
+	parse_obex_headers(buf, str, sizeof(struct obex_setpath_frame));
 }
 
 /*
@@ -273,13 +282,14 @@ inline void parse_obex(GNetBuf *buf, GString *str, int cmd)
 		switch (opcode) {
 		case OBEX_CONTINUE:
 			g_string_append(str, "CONTINUE ");
-			parse_obex_headers(buf, str);
+			parse_obex_headers(buf, str,
+					   sizeof(struct obex_minimal_frame));
 			break;
 		case OBEX_SWITCH_PRO:
 			g_string_append(str, "SWITCH_PRO ");
 			break;
 		case OBEX_SUCCESS:
-			parse_obex_success(buf, str);
+			parse_obex_success(buf, str, last_command);
 			break;
 		case OBEX_CREATED:
 			g_string_append(str, "CREATED ");
@@ -302,17 +312,20 @@ inline void parse_obex(GNetBuf *buf, GString *str, int cmd)
 			break;
 		}
 	} else {
+		last_command = opcode;
 		switch (opcode) {
 		case OBEX_CONNECT:
 			parse_obex_connect(buf, str);
 			break;
 		case OBEX_PUT:
 			g_string_append(str, "PUT ");
-			parse_obex_headers(buf, str);
+			parse_obex_headers(buf, str,
+					   sizeof(struct obex_minimal_frame));
 			break;
 		case OBEX_GET:
 			g_string_append(str, "GET ");
-			parse_obex_headers(buf, str);
+			parse_obex_headers(buf, str,
+					   sizeof(struct obex_minimal_frame));
 			break;
 		case OBEX_DISCONNECT:
 			g_string_append(str, "DISC ");
@@ -321,7 +334,7 @@ inline void parse_obex(GNetBuf *buf, GString *str, int cmd)
 			g_string_append(str, "ABORT ");
 			break;
 		case OBEX_SETPATH:
-			g_string_append(str, "SETPATH ");
+			parse_obex_setpath(buf, str);
 			break;
 		default:
 			if ((opcode > 0x04) && (opcode < 0x10))
